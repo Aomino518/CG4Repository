@@ -13,10 +13,7 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> Create2D();
 
-	//Microsoft::WRL::ComPtr<ID3D12RootSignature>
-		//CreateFor3D(UINT srvCount = 128, bool denyGS = true) const;
-
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateCommon();
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> Create3D();
 
 private:
 

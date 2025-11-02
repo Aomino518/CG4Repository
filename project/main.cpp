@@ -18,49 +18,11 @@
 #include "SpriteCommon.h"
 #include "Sprite.h"
 #include "TextureManager.h"
+#include "Entity3DCommon.h"
+#include "Entity3D.h"
 #include <algorithm>
 #include <psapi.h>
 #pragma comment(lib, "Dbghelp.lib")
-
-#pragma region 構造体
-struct DirectionalLight {
-	Vector4 color;
-	Vector3 direction;
-	float intensity;
-};
-
-struct MaterialData {
-	std::string textureFilePath;
-};
-
-// モデル関係の構造体
-struct ModelData {
-	std::vector<VertexData> vertices;
-	std::vector<uint32_t> indices;
-	MaterialData material;
-};
-
-// 三つ組のキー
-struct TripletKey {
-	uint32_t v, vt, vn;
-	bool operator == (const TripletKey&) const = default;
-};
-
-struct TripletHash {
-	size_t operator()(const TripletKey& k) const noexcept {
-		size_t h = 0;
-		auto mix = [&](uint32_t x) {
-			h ^= std::hash<uint32_t>{}(x)+0x9e3779b97f4a7c15ULL + (h << 5) + (h >> 2);
-			};
-
-		mix(k.v);
-		mix(k.vt);
-		mix(k.vn);
-		return h;
-	}
-};
-
-#pragma endregion
 
 #pragma region 自作関数
 void ShowMemoryUsage() {
@@ -93,36 +55,6 @@ static LONG WINAPI ExportDump(EXCEPTION_POINTERS* exception) {
 	MiniDumpWriteDump(GetCurrentProcess(), processId, dumpFileHandle, MiniDumpNormal, &minidumpInfomation, nullptr, nullptr);
 	// 他に関連づけられているSEH例外ハンドラがあれば実行。通常はプロセスを終了する。
 	return EXCEPTION_EXECUTE_HANDLER;
-}
-
-Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
-	// 頂点リソース用のヒープを設定
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	// 頂点リソースの設定
-	D3D12_RESOURCE_DESC vertexResourceDesc{};
-	// バッファリソース。テクスチャの場合はまた別の設定をする
-	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc.Width = sizeInBytes;
-	// バッファの場合はこれらは1にする決まり
-	vertexResourceDesc.Height = 1;
-	vertexResourceDesc.DepthOrArraySize = 1;
-	vertexResourceDesc.MipLevels = 1;
-	vertexResourceDesc.SampleDesc.Count = 1;
-	// バッファの場合はこれにする決まり
-	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	// 実際に頂点リソースを作る
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
-	HRESULT hr;
-	hr = device->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexResourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexResource));
-	assert(SUCCEEDED(hr));
-	return vertexResource;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(const Microsoft::WRL::ComPtr<ID3D12Device>& device, int32_t width, int32_t height) {
@@ -194,127 +126,6 @@ void WriteSphereVertices(const uint32_t subdivision, VertexData* vertexData) {
 	}
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
-}
-
-MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
-	// 必要な変数宣言とファイルを開く
-	MaterialData materialData; // 構築するMaterialData
-	std::string line; // ファイルから読んだ1行を格納するもの
-	std::ifstream file(directoryPath + "/" + filename); // ファイルを開く
-	assert(file.is_open()); // 開けなかったら止める
-
-	// ファイルを読み、MaterialDataを構築
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		// identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilename;
-			s >> textureFilename;
-			// 連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
-		}
-	}
-
-	return materialData;
-}
-
-ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
-	ModelData modelData; // 
-	std::vector<Vector4> positions; // 位置
-	std::vector<Vector3> normals; // 法線
-	std::vector<Vector2> texcoords; // テクスチャ座標
-	std::string line; // ファイルから読んだ1行を格納するもの
-	std::ifstream file(directoryPath + "/" + filename); // ファイルを開く
-	assert(file.is_open());
-
-	std::unordered_map<TripletKey, uint32_t, TripletHash> lut;
-
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier; // 先頭の識別子を読む
-
-		if (identifier == "v") {
-			Vector4 position;
-			s >> position.x >> position.y >> position.z;
-			position.w = 1.0f;
-			positions.push_back(position);
-		} else if (identifier == "vt") {
-			Vector2 texcoord;
-			s >> texcoord.x >> texcoord.y;
-			texcoords.push_back(texcoord);
-		} else if (identifier == "vn") {
-			Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
-			normals.push_back(normal);
-		} else if (identifier == "f") {
-			//VertexData triangle[3];
-
-			struct FaceElm { uint32_t v, t, n; } f[3]{};
-
-			// 面は三角形限定。その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-				std::replace(vertexDefinition.begin(), vertexDefinition.end(), '/', ' ');
-				// 頂点の要素へのIndexは「位置/UV/法線」で格納されているので、分解してIndexを取得する
-				std::istringstream v(vertexDefinition);
-
-				v >> f[faceVertex].v >> f[faceVertex].t >> f[faceVertex].n;
-				f[faceVertex].v--;
-				f[faceVertex].t--;
-				f[faceVertex].n--;
-			}
-
-			for (int order : {2, 1, 0}) {
-				TripletKey key{ f[order].v, f[order].t, f[order].n };
-				auto it = lut.find(key);
-				uint32_t idx;
-				if (it == lut.end()) {
-					// 頂点生成
-					Vector4 p = positions[key.v];
-					Vector2 t = texcoords[key.vt];
-					Vector3 n = normals[key.vn];
-
-					p.x *= -1.0f;
-					t.y = 1.0f - t.y;
-					n.x *= -1.0f;
-
-					VertexData vtx{ p, t, n };
-					idx = (uint32_t)modelData.vertices.size();
-					modelData.vertices.push_back(vtx);
-					lut.emplace(key, idx);
-				} else {
-					idx = it->second;
-				}
-				modelData.indices.push_back(idx);
-			}
-
-		} else if (identifier == "mtllib") {
-			// materialTemplateLibraryファイルの名前を取得する
-			std::string materialFilename;
-			s >> materialFilename;
-			// 基本的にobjファイルと同一層にmtlは存在させるので、ディレクトリ名とファイル名を残す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
-		}
-	}
-
-	return modelData;
-}
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker leakCheck;
@@ -362,14 +173,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// RootSignature作成
 	rootSignatureFactory.Init(&graphics);
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = rootSignatureFactory.CreateCommon();
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs3D = rootSignatureFactory.Create3D();
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs2D = rootSignatureFactory.Create2D();
 
 	std::unique_ptr<SpriteCommon> spriteCommon = std::make_unique<SpriteCommon>();
 	std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>();
 
+	std::unique_ptr<Entity3DCommon> modelCommon = std::make_unique<Entity3DCommon>();
+	std::unique_ptr<Entity3D> model = std::make_unique<Entity3D>();
+
 	// スプライト共通部の作成
 	spriteCommon->Init(dxcCompiler, rs2D.Get());
+
+	// モデル共通部の作成
+	modelCommon->Init(dxcCompiler, rs3D.Get());
+	model->Init(modelCommon.get(), "resources", "axis.obj");
 
 	Vector4 spriteMaterial = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Vector2 positoin = {0.0f, 0.0f};
@@ -422,128 +240,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 
 #pragma region リソース設定
-	/*--モデル用のリソース設定--*/
-	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-	/*Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(graphics.GetDevice(), sizeof(Material));
-	// マテリアルにデータを書き込む
-	Material* materialData = nullptr;
-	// 書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color = Vector4(1, 1, 1, 1);
-	materialData->uvTransform = MakeIdentity4x4();
-	materialData->enableLighting = true;
-
 	// 平行光源用のリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource = CreateBufferResource(graphics.GetDevice(), sizeof(DirectionalLight));
+	/*Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource = CreateBufferResource(graphics.GetDevice(), sizeof(DirectionalLight));
 	DirectionalLight* directionalLightData = nullptr;
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
 	// 初期化値
 	directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	directionalLightData->direction = { 1.0f, 0.0f, 0.0f };
-	directionalLightData->intensity = 1.0f;
+	directionalLightData->intensity = 1.0f;*/
+#pragma endregion
 
-	// WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = CreateBufferResource(graphics.GetDevice(), sizeof(TransformationMatrix));
-	// データを書き込む
-	TransformationMatrix* wvpData = nullptr;
-	// 書き込むためのアドレスを取得
-	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	// 単位行列を書き込んでおく
-	wvpData->WVP = MakeIdentity4x4();
-
-	//const uint32_t kSubdivision = 16; // 16分割
+	/*const uint32_t kSubdivision = 16; // 16分割
 
 	//uint32_t vertexNum = (kSubdivision + 1) * (kSubdivision + 1);
 	//uint32_t indexNum = kSubdivision * kSubdivision * 6;*/
 
 	/*--Index用リソース作成--*/
 	//Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceModel = CreateBufferResource(graphics.GetDevice(), sizeof(uint32_t) * 6);
-#pragma endregion
-
-	// InputLayout
-	/*D3D12_INPUT_LAYOUT_DESC inputLayoutDesc3D{};
-	inputLayoutDesc3D = inputLayout.CreateInputLayout3D();
-
-	// BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
-	// すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	// RasterizerStateの設定
-	D3D12_RASTERIZER_DESC rasterizerDesc{};
-	// 裏面(時計回り)を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-	// 三角形の中を塗りつぶす
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-
-	// Shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vs3DBlob = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.VS.hlsl", L"vs_6_0");
-	Microsoft::WRL::ComPtr<IDxcBlob> ps3DBlob = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.PS.hlsl", L"ps_6_0");
-
-	// PSOを生成する
-	// 3D用
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc3D{};
-	psoBuilder.Init(&graphics);
-	psoDesc3D = psoBuilder.CreatePsoDesc(
-		rootSignature,
-		inputLayoutDesc3D,
-		vs3DBlob,
-		ps3DBlob,
-		blendDesc,
-		rasterizerDesc
-	);
-
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> pso3D = psoBuilder.BuildPso(psoDesc3D);
-	Logger::Write("PSO3D生成完了");*/
-
-#pragma region モデル用の頂点リソース
-	// 頂点リソース
-	/*Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(graphics.GetDevice(), sizeof(VertexData) * modelData.vertices.size());
-
-	// 頂点バッファビューを作成する
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	// リソースの先頭のアドレスから使う
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	// 1頂点あたりのサイズ
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
-	Logger::Write("VertexResource生成完了");
-
-	// インデックスモデル用の頂点リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexBufferModel = CreateBufferResource(graphics.GetDevice(), sizeof(uint32_t) * modelData.indices.size());
-
-	D3D12_INDEX_BUFFER_VIEW indexBufferViewModel{};
-	// リソースの先頭のアドレスから使う
-	indexBufferViewModel.BufferLocation = indexBufferModel->GetGPUVirtualAddress();
-	indexBufferViewModel.SizeInBytes = UINT(sizeof(uint32_t) * modelData.indices.size());
-	indexBufferViewModel.Format = DXGI_FORMAT_R32_UINT;
-	Logger::Write("indexBufferViewModel生成完了");
-
-	// モデル用の頂点リソースにデータを書き込む
-	VertexData* vertexData = nullptr;
-	// 書き込むためのアドレスを取得
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
-	vertexResource->Unmap(0, nullptr);
-	Logger::Write("VertexData生成完了");
-
-	// モデル用の頂点リソースにデータを書き込む
-	uint32_t* indexDataModel = nullptr;
-	// 書き込むためのアドレスを取得
-	indexBufferModel->Map(0, nullptr, reinterpret_cast<void**>(&indexDataModel));
-	std::memcpy(indexDataModel, modelData.indices.data(), sizeof(uint32_t) * modelData.indices.size());
-	indexBufferModel->Unmap(0, nullptr);
-
-	Logger::Write("indexDataModelに書き込み完了");*/
-#pragma endregion
 
 	//uint32_t index = 0;
 	//uint32_t* indexDataModel = nullptr;
@@ -568,7 +281,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}*/
 
 	// Transform変数を作る
-	Transform transform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	//Transform transform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	//Transform cameraTransform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, -10.0f} };
 
 	Transform uvTransformSprite = {
@@ -608,6 +321,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		sprite->SetPosition(positoin);
 		sprite->SetColor(materialColor);
 		sprite->Update();
+		model->Update();
 
 		//materialData->color.x = modelColor[0];
 		//materialData->color.y = modelColor[1];
@@ -653,6 +367,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/*-- 描画処理 --*/
 		graphics.BeginFrame();
 
+		modelCommon->DrawCommon();
+		model->Draw();
 		// RootSignatureを設定。PSOに設定しているけど別途設定が必要
 		//cmdList_->SetGraphicsRootSignature(rootSignature.Get());
 		/*cmdList_->SetPipelineState(pso3D.Get()); // PSOを設定

@@ -15,6 +15,11 @@ class TextureManager
 public:
 	static void Init(Graphics* graphics);
 
+	/// <summary>
+	/// テクスチャのロード
+	/// </summary>
+	/// <param name="filePath">テクスチャのファイルパス</param>
+	/// <returns>テクスチャハンドル</returns>
 	static uint32_t Load(const std::string& filePath);
 
 	static void Shutdown();
@@ -45,7 +50,6 @@ private:
 	static std::deque<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediasteResource_;
 
 	// 内部関数
-	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 	static DirectX::ScratchImage LoadFromFile(const std::string& filePath);
 	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 	[[nodiscard]]

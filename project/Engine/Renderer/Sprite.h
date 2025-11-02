@@ -7,33 +7,10 @@
 #include "Matrix.h"
 #include "Graphics.h"
 #include "TextureManager.h"
+#include "CreateResorceUtils.h"
 #include "Color.h"
 
 class SpriteCommon;
-
-struct Transform {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-};
-
-struct VertexData {
-	Vector4 position;
-	Vector2 texcoord;
-	Vector3 normal;
-};
-
-struct Material {
-	Vector4 color;
-	uint32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-};
-
-struct TransformationMatrix {
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-};
 
 class Sprite {
 public:
@@ -80,6 +57,13 @@ public:
 		materialData->color.z = b;
 	}
 
+	/// <summary>
+	/// スプライトを生成
+	/// </summary>
+	/// <param name="textureId">テクスチャハンドル</param>
+	/// <param name="pos">スプライトの座標</param>
+	/// <param name="color">スプライトの色</param>
+	/// <param name="size">スプライトのサイズ</param>
 	void Create(uint32_t textureId, const Vector2& pos, const Vector4& color, const Vector2& size = { 0.0f, 0.0f });
 	void Move(const Vector2& delta);
 	void Rotate(float deltaAngle);
@@ -107,8 +91,6 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_{};
 
 	Transform uvTransform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
 
 	Vector2 position_ = { 0.0f, 0.0f };
 	float rotation_ = 0.0f;

@@ -69,7 +69,7 @@ Microsoft::WRL::ComPtr<ID3D12RootSignature> RootSignatureFactory::Create2D()
 	return rootSignature;
 }
 
-Microsoft::WRL::ComPtr<ID3D12RootSignature> RootSignatureFactory::CreateCommon()
+Microsoft::WRL::ComPtr<ID3D12RootSignature> RootSignatureFactory::Create3D()
 {
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
