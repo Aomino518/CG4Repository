@@ -20,6 +20,7 @@
 #include "TextureManager.h"
 #include "Entity3DCommon.h"
 #include "Entity3D.h"
+#include "ModelManager.h"
 #include <algorithm>
 #include <psapi.h>
 #pragma comment(lib, "Dbghelp.lib")
@@ -115,13 +116,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	RootSignatureFactory rootSignatureFactory;
 	InputLayout inputLayout;
 	PsoBuilder psoBuilder;
-	std::unique_ptr<ModelCommon> modelCommon = std::make_unique<ModelCommon>();
-	std::unique_ptr<Model> model = std::make_unique<Model>();
-
+	
 	// graphicsの初期化
 	graphics.Init(app->GetHWND(), app->GetWidth(), app->GetHeight(), true);
 
 	TextureManager::Init(&graphics);
+	ModelManager::GetInstance()->Init(&graphics);
 
 	// XAudio2の初期化
 	xAudio2.Init();
@@ -147,9 +147,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	std::unique_ptr<Entity3DCommon> entityCommon = std::make_unique<Entity3DCommon>();
 	std::unique_ptr<Entity3D> entity = std::make_unique<Entity3D>();
-
-	modelCommon->Init(&graphics);
-	model->Init(modelCommon.get(), "resources", "axis.obj");
+	ModelManager::GetInstance()->LoadModel("axis.obj");
 
 	// スプライト共通部の作成
 	spriteCommon->Init(&graphics, dxcCompiler, rs2D.Get());
@@ -157,7 +155,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// モデル共通部の作成
 	entityCommon->Init(&graphics, dxcCompiler, rs3D.Get());
 	entity->Init(entityCommon.get());
-	entity->SetModel(model.get());
+	entity->SetModel("axis.obj");
 	entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
 
 	Vector4 spriteMaterial = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -278,6 +276,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		graphics.EndFrame();
 	}
+	ModelManager::GetInstance()->Shutdown();
 	TextureManager::Shutdown();
 
 	input.Shutdown();

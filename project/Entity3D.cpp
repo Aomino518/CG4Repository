@@ -1,6 +1,7 @@
 #include "Entity3D.h"
 #include "Entity3DCommon.h"
 #include "TextureManager.h"
+#include "ModelManager.h"
 
 void Entity3D::Init(Entity3DCommon* entity3DCommon)
 {
@@ -36,6 +37,11 @@ void Entity3D::Draw()
 	if (model_) {
 		model_->Draw();
 	}
+}
+
+void Entity3D::SetModel(const std::string& filePath)
+{
+	model_ = ModelManager::GetInstance()->FindModel(filePath);
 }
 
 void Entity3D::ModelResourcesSetting()

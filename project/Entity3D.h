@@ -28,7 +28,7 @@ public:
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	// setter関数
-	void SetModel(Model* model) { this->model_ = model; }
+	void SetModel(const std::string& filePath);
 	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
