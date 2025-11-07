@@ -10,6 +10,7 @@
 #include <math.h>
 #include "StringUtil.h"
 #include "Input.h"
+#include "SoundCommon.h"
 #include "Sound.h"
 #include "DxcCompiler.h"
 #include "RootSignatureFactory.h"
@@ -21,21 +22,11 @@
 #include "Entity3DCommon.h"
 #include "Entity3D.h"
 #include "ModelManager.h"
+#include "ImGuiManager.h"
 #include <algorithm>
-#include <psapi.h>
 #pragma comment(lib, "Dbghelp.lib")
 
 #pragma region 自作関数
-void ShowMemoryUsage() {
-	PROCESS_MEMORY_COUNTERS pmc;
-	if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
-		// メモリ使用量をMB単位で計算
-		double memoryUsageMB = pmc.WorkingSetSize / (1024.0 * 1024.0);
-
-		ImGui::Text("Memory Usage: %.2f MB", memoryUsageMB);
-	}
-}
-
 static LONG WINAPI ExportDump(EXCEPTION_POINTERS* exception) {
 	// 時刻を取得して、時刻をなめに入れたファイルを作成、Dumpsディレクトリ以下に出力
 	SYSTEMTIME time;
@@ -110,24 +101,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	Graphics graphics;
-	Input input;
-	Sound xAudio2;
 	DxcCompiler dxcCompiler;
 	RootSignatureFactory rootSignatureFactory;
 	InputLayout inputLayout;
 	PsoBuilder psoBuilder;
+	ImGuiManager imgui;
 	
 	// graphicsの初期化
 	graphics.Init(app->GetHWND(), app->GetWidth(), app->GetHeight(), true);
+	imgui.Init(app.get(), &graphics);
 
 	TextureManager::Init(&graphics);
 	ModelManager::GetInstance()->Init(&graphics);
 
 	// XAudio2の初期化
-	xAudio2.Init();
+	std::unique_ptr<SoundCommon> soundCommon = std::make_unique<SoundCommon>();
+	soundCommon->Init();
+	std::unique_ptr<Sound> bgm = std::make_unique<Sound>();
+	std::unique_ptr<Sound> se = std::make_unique<Sound>();
+	bgm->SetCommon(soundCommon.get());
+	se->SetCommon(soundCommon.get());
 
 	//DirectInput初期化
-	input.Init(app.get());
+	Input::GetInstance()->Init(app.get());
 
 	// デバイスの生成がうまくいかなかったので起動できない
 	assert(graphics.GetDevice() != nullptr);
@@ -160,6 +156,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Vector4 spriteMaterial = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Vector2 positoin = {0.0f, 0.0f};
+	Vector2 scale = { 100.0f, 100.0f };
 	float rotation = 0.0f;
 
 	uint32_t tHChecker = TextureManager::Load("resources/uvChecker.png");
@@ -204,7 +201,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float modelColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	// 音声読み込み
-	SoundData soundData1 = xAudio2.SoundLoad("resources/gold.mp3");
+	SoundData sHAudio1 = bgm->SoundLoad("resources/c21.mp3");
+	SoundData sHAudio2 = bgm->SoundLoad("resources/koharubiyori.mp3");
+	SoundData sHAudio3 = se->SoundLoad("resources/gold.mp3");
+	SoundData sHAudio4 = se->SoundLoad("resources/se_itemget.wav");
 	Logger::Write("音声読み込み");
 	DebugCamera debugCamera;
 	debugCamera.Initialize();
@@ -217,20 +217,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (app->ProcessMessage()) {
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-		input.Update();
+		imgui.BegineFrame();
+		Input::GetInstance()->Update();
 
 		/*-- 更新処理 --*/
-		if (input.IsPressed(DIK_SPACE)) {
-			xAudio2.SoundPlayWave(soundData1);
+		if (Input::GetInstance()->IsPressed(DIK_SPACE)) {
+			bgm->SoundPlay(sHAudio1, false);
+		}
+
+		if (Input::GetInstance()->IsPressed(DIK_N)) {
+			bgm->SoundPlay(sHAudio2, false);
+		}
+
+		if (Input::GetInstance()->IsPressed(DIK_M)) {
+			se->SoundPlay(sHAudio3, false);
+		}
+
+		if (Input::GetInstance()->IsPressed(DIK_V)) {
+			se->SoundPlay(sHAudio4, false);
+		}
+
+		if (Input::GetInstance()->IsPressed(DIK_B)) {
+			bgm->SoundStop();
+			se->SoundStop();
 		}
 
 		debugCamera.Update();
 
 		sprite->SetPosition(positoin);
 		sprite->SetColor(materialColor);
+		sprite->SetSize(scale);
+		sprite->SetRotation(rotation);
 		sprite->Update();
 
 		rotateModel += 0.01f;
@@ -249,21 +266,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::ColorEdit4("modelColor", modelColor);
 		ImGui::Checkbox("enableLighting", (bool*)&materialData->enableLighting);*/
 
-		ImGui::ColorEdit4("modelColor", (float*)&materialColor);
-		ImGui::SliderFloat2("translateSprite", (float*)&positoin, 0.0f, 1000.0f, "%.3f");
+		imgui.BegineInspector();
+		imgui.SpriteSetting("uvChecker",materialColor, positoin, rotation, scale);
+		imgui.EndInspector();
+
+		imgui.Stats();
+
+		//ImGui::ColorEdit4("modelColor", (float*)&materialColor);
+		//ImGui::SliderFloat2("translateSprite", (float*)&positoin, 0.0f, 1000.0f, "%.3f");
 		//ImGui::SliderFloat3("rotateSprite", (float*)&transformSprite.rotate, 0.0f, 10.0f, "%.3f");
 		//ImGui::SliderFloat3("scaleSprite", (float*)&transformSprite.scale, 0.0f, 10.0f, "%.3f");
-		ImGui::Text("positoin.x : %f", positoin.x);
-		ImGui::Text("positoin.y : %f", positoin.y);
-		ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-		ShowMemoryUsage();
 		//ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 		//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 		//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
 		// ImGuiの内部コマンドを生成する
-		ImGui::Render();
-
+		imgui.EndFrame();
 
 		/*-- 描画処理 --*/
 		graphics.BeginFrame();
@@ -274,16 +292,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		spriteCommon->DrawCommon();
 		sprite->Draw();
 
+		imgui.Draw();
 		graphics.EndFrame();
 	}
 	ModelManager::GetInstance()->Shutdown();
 	TextureManager::Shutdown();
 
-	input.Shutdown();
+	Input::GetInstance()->Shutdown();
 
-	xAudio2.Shutdown();
-	xAudio2.SoundUnload(&soundData1);
+	soundCommon->Shutdown();
 
+	imgui.Shutdown();
 
 	graphics.Shutdown();
 

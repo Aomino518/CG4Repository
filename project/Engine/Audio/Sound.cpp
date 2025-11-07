@@ -4,35 +4,145 @@
 #include "Logger.h"
 #include <algorithm>
 
-bool Sound::Init()
+/// <summary>
+/// 音声読み込み関数
+/// </summary>
+/// <param name="filename">ファイル名</param>
+/// <returns>サウンドハンドル</returns>
+SoundData Sound::SoundLoad(const char* filename)
 {
-	HRESULT result = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
-	result = xAudio2_->CreateMasteringVoice(&masterVoice_);
+	Logger::Write("Soundロード開始");
+	std::string path(filename ? filename : "");
+	std::string ext = ToLowerExt(path);
 
-	result = MFStartup(MF_VERSION, 0);
-	if (SUCCEEDED(result)) {
-		mfStarted_ = true;
+	SoundData soundData = {};
+
+	Logger::Write("Soundがwavかmp3か判定開始");
+	if (ext == ".wav") {
+		Logger::Write("Soundはwav");
+		soundData = SoundLoadWave(filename);
+	}
+	if (ext == ".mp3") {
+		Logger::Write("Soundはmp3");
+		std::wstring w = ToWide(filename);
+		soundData = SoundLoadMP3(w.c_str());
 	}
 
-	return true;
+	return soundData;
 }
 
-void Sound::Shutdown()
-{
-	if (masterVoice_) {
-		masterVoice_->DestroyVoice();
-		masterVoice_ = nullptr;
+/// <summary>
+/// 音声再生関数
+/// </summary>
+/// <param name="soundData">サウンドハンドル</param>
+/// <param name="isLoop">ループ判定</param>
+/// <param name="volume">音量</param>
+void Sound::SoundPlay(const SoundData& soundData, bool isLoop, float volume) {
+	if (!soundCommon_) {
+		return;
+	}
+	
+	if (isPlaying_) {
+		SoundStop();
 	}
 
-	// XAudio2解放
-	xAudio2_.Reset();
+	HRESULT result;
+	isLooping_ = isLoop;
+	currentData_ = soundData;
 
-	if (mfStarted_) {
-		MFShutdown();
-		mfStarted_ = false;
+	// 波形フォーマットを元にSourceVoiceの生成
+	pSourceVoice_ = nullptr;
+	result = soundCommon_->GetXAudio()->CreateSourceVoice(&pSourceVoice_, &soundData.wfex);
+	assert(SUCCEEDED(result));
+
+	// 再生する波形データの設定
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = soundData.pBuffer;
+	buf.AudioBytes = soundData.bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+	buf.LoopCount = isLoop ? XAUDIO2_LOOP_INFINITE : 0;
+
+	currentVolume_ = volume;
+	// 音量設定
+	pSourceVoice_->SetVolume(currentVolume_);
+
+	// 波形データの再生
+	result = pSourceVoice_->SubmitSourceBuffer(&buf);
+	result = pSourceVoice_->Start();
+	isPlaying_ = true;
+}
+
+// 音声データ解放
+void Sound::SoundUnload(SoundData* soundData) {
+	// バッファのメモリ解放
+	delete[] soundData->pBuffer;
+
+	soundData->pBuffer = 0;
+	soundData->bufferSize = 0;
+	soundData->wfex = {};
+}
+
+/// <summary>
+/// 音声停止関数
+/// </summary>
+void Sound::SoundStop()
+{
+	if (pSourceVoice_) {
+		pSourceVoice_->Stop();
+		pSourceVoice_->FlushSourceBuffers();
+		pSourceVoice_->DestroyVoice();
+		pSourceVoice_ = nullptr;
+	}
+	isPlaying_ = false;
+}
+
+/// <summary>
+/// 音声再再生関数
+/// </summary>
+void Sound::SoundRestart()
+{
+	if (!currentData_.pBuffer) {
+		return;
+	}
+
+	SoundPlay(currentData_, isLooping_);
+}
+
+/// <summary>
+/// 音量調整関数
+/// </summary>
+/// <param name="volume">音量</param>
+void Sound::SetVolume(float volume)
+{
+	currentVolume_ = std::clamp(volume, 0.0f, 1.0f);
+	if (pSourceVoice_) {
+		pSourceVoice_->SetVolume(currentVolume_);
 	}
 }
 
+std::wstring Sound::ToWide(const char* utf8) {
+	if (!utf8) {
+		return L"";
+	}
+
+	int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, nullptr, 0);
+	std::wstring w(wlen, L'\0');
+	MultiByteToWideChar(CP_UTF8, 0, utf8, -1, w.data(), wlen);
+	if (!w.empty() && w.back() == L'\0') {
+		w.pop_back();
+	}
+
+	return w;
+}
+
+std::string Sound::ToLowerExt(const std::string& path) {
+	auto pos = path.find_last_of('.');
+	std::string ext = (pos == std::string::npos) ? "" : path.substr(pos);
+	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return (char)std::tolower(c); });
+	return ext;
+}
+
+// wave読み込み
 SoundData Sound::SoundLoadWave(const char* filename) {
 	/*--ファイルオープン--*/
 	// ファイル入力ストリームのインスタンス
@@ -99,11 +209,12 @@ SoundData Sound::SoundLoadWave(const char* filename) {
 	return soundData;
 }
 
+// mp3読み込み
 SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 {
 	Logger::Write("SoundLoadMp3開始");
 	SoundData soundData = {};
-	if (!mfStarted_) {
+	if (!soundCommon_->GetIsMfStarted()) {
 		return soundData;
 	}
 
@@ -221,78 +332,4 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 	CoTaskMemFree(waveFormat);
 
 	return soundData;
-}
-
-SoundData Sound::SoundLoad(const char* filename)
-{
-	Logger::Write("Soundロード開始");
-	std::string path(filename ? filename : "");
-	std::string ext = ToLowerExt(path);
-
-	SoundData soundData = {};
-
-	Logger::Write("Soundがwavかmp3か判定開始");
-	if (ext == ".wav") {
-		Logger::Write("Soundはwav");
-		soundData = SoundLoadWave(filename);
-	}
-	if (ext == ".mp3") {
-		Logger::Write("Soundはmp3");
-		std::wstring w = ToWide(filename);
-		soundData = SoundLoadMP3(w.c_str());
-	}
-
-	return soundData;
-}
-
-// 音声再生
-void Sound::SoundPlayWave(const SoundData& soundData) {
-	HRESULT result;
-
-	// 波形フォーマットを元にSourceVoiceの生成
-	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	result = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
-	assert(SUCCEEDED(result));
-
-	// 再生する波形データの設定
-	XAUDIO2_BUFFER buf{};
-	buf.pAudioData = soundData.pBuffer;
-	buf.AudioBytes = soundData.bufferSize;
-	buf.Flags = XAUDIO2_END_OF_STREAM;
-
-	// 波形データの再生
-	result = pSourceVoice->SubmitSourceBuffer(&buf);
-	result = pSourceVoice->Start();
-}
-
-// 音声データ解放
-void Sound::SoundUnload(SoundData* soundData) {
-	// バッファのメモリ解放
-	delete[] soundData->pBuffer;
-
-	soundData->pBuffer = 0;
-	soundData->bufferSize = 0;
-	soundData->wfex = {};
-}
-
-std::wstring Sound::ToWide(const char* utf8) {
-	if (!utf8) {
-		return L"";
-	}
-
-	int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, nullptr, 0);
-	std::wstring w(wlen, L'\0');
-	MultiByteToWideChar(CP_UTF8, 0, utf8, -1, w.data(), wlen);
-	if (!w.empty() && w.back() == L'\0') {
-		w.pop_back();
-	}
-
-	return w;
-}
-
-std::string Sound::ToLowerExt(const std::string& path) {
-	auto pos = path.find_last_of('.');
-	std::string ext = (pos == std::string::npos) ? "" : path.substr(pos);
-	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return (char)std::tolower(c); });
-	return ext;
 }
