@@ -141,6 +141,15 @@ void ImGuiManager::EndInspector()
 #endif
 }
 
+void ImGuiManager::CameraSetting(Vector3& positoin, Vector3& rotation)
+{
+	if (ImGui::CollapsingHeader("DefaultCamera", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::SliderFloat3("Position", (float*)&positoin, -10.0f, 10.0f, "%.3f");
+		ImGui::SliderFloat3("Rotation", (float*)&rotation, 0.0f, 360.0f, "%.3f");
+	}
+}
+
 void ImGuiManager::StyleSetting()
 {
 #ifdef USE_IMGUI

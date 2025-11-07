@@ -23,6 +23,7 @@
 #include "Entity3D.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include "Camera.h"
 #include <algorithm>
 #pragma comment(lib, "Dbghelp.lib")
 
@@ -145,6 +146,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Entity3D> entity = std::make_unique<Entity3D>();
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 
+	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
+	Vector3 cameraPos = { 0.0f, 0.0f, -10.0f };
+	Vector3 cameraRotate = { 0.0f, 0.0f, 0.0f };
+	camera->SetRotate(cameraRotate);
+	camera->SetTranslate(cameraPos);
+	entityCommon->SetDefaultCamera(camera.get());
+
 	// スプライト共通部の作成
 	spriteCommon->Init(&graphics, dxcCompiler, rs2D.Get());
 
@@ -160,6 +168,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float rotation = 0.0f;
 
 	uint32_t tHChecker = TextureManager::Load("resources/uvChecker.png");
+
 
 	/*const uint32_t kSubdivision = 16; // 16分割
 
@@ -244,6 +253,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		debugCamera.Update();
 
+		camera->SetRotate(cameraRotate);
+		camera->SetTranslate(cameraPos);
+		camera->Update();
+
 		sprite->SetPosition(positoin);
 		sprite->SetColor(materialColor);
 		sprite->SetSize(scale);
@@ -267,6 +280,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Checkbox("enableLighting", (bool*)&materialData->enableLighting);*/
 
 		imgui.BegineInspector();
+		imgui.CameraSetting(cameraPos, cameraRotate);
 		imgui.SpriteSetting("uvChecker",materialColor, positoin, rotation, scale);
 		imgui.EndInspector();
 

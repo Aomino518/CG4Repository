@@ -26,6 +26,7 @@ public:
 	void ShowMemoryUsage();
 	void BegineInspector();
 	void EndInspector();
+	void CameraSetting(Vector3& positoin, Vector3& rotation);
 
 private:
 	void StyleSetting();

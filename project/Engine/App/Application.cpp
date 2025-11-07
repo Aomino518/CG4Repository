@@ -17,6 +17,9 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
+int Application::clientWidth_ = 1280;
+int Application::clientHeight_ = 720;
+
 LRESULT Application::WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 #ifdef USE_IMGUI

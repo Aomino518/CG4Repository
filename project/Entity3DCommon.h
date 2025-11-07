@@ -5,6 +5,7 @@
 #include <DxcCompiler.h>
 #include <InputLayout.h>
 #include "PsoBuilder.h"
+#include "Camera.h"
 
 class Entity3DCommon
 {
@@ -14,6 +15,11 @@ public:
 	void DrawCommon();
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCmdList() const { return cmdList_; }
+
+	// Getter
+	Camera* GetDefaultCamera() const { return defaultCamera_; }
+	// Setter
+	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
 
 private:
 	// グラフィックパイプラインの作成
@@ -25,5 +31,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> pso3D_;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
+
+	Camera* defaultCamera_ = nullptr;
 };
 

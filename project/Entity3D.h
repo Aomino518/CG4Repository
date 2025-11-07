@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "CreateResorceUtils.h"
 #include "Model.h"
+#include "Camera.h"
 
 class Entity3DCommon;
 class TextureManager;
@@ -32,12 +33,12 @@ public:
 	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
+	void SetCamera(Camera* camera) { this->camera_ = camera; }
 
 private:
 	void ModelResourcesSetting();
 
 	Transform transform_;
-	Transform cameraTransform_;
 
 	Entity3DCommon* entity3DCommon_ = nullptr;
 	
@@ -50,5 +51,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
 
 	Model* model_ = nullptr;
+	Camera* camera_ = nullptr;
 };
 
