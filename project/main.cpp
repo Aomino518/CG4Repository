@@ -73,10 +73,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	camera->SetTranslate(cameraPos);
 	engine.GetEntityCommon()->SetDefaultCamera(camera.get());
 
-	// デバッグカメラ
-	DebugCamera debugCamera;
-	debugCamera.Initialize();
-
 	// ウィンドウの×ボタンが押されるまでループ
 	while (engine.GetApp()->ProcessMessage()) {
 		engine.Update();
@@ -102,8 +98,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			bgm->SoundStop();
 			se->SoundStop();
 		}
-
-		debugCamera.Update();
 
 		camera->SetRotate(cameraRotate);
 		camera->SetTranslate(cameraPos);
