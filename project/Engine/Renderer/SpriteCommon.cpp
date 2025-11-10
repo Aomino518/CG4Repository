@@ -1,6 +1,5 @@
 #include "SpriteCommon.h"
 
-
 void SpriteCommon::Init(Graphics* graphics, DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignature)
 {
 	rootSignature_ = rootSignature;
