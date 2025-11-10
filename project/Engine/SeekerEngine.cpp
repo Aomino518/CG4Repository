@@ -17,7 +17,7 @@ void SeekerEngine::Init()
 
 	//DirectInput初期化
 	Input::GetInstance()->Init(app_.get());
-	TextureManager::Init(graphics_.get());
+	TextureManager::GetInstance()->Init(graphics_.get());
 	ModelManager::GetInstance()->Init(graphics_.get());
 
 	// デバイスの生成がうまくいかなかったので起動できない
@@ -52,7 +52,7 @@ void SeekerEngine::Update()
 void SeekerEngine::Shutdown()
 {
 	ModelManager::GetInstance()->Shutdown();
-	TextureManager::Shutdown();
+	TextureManager::GetInstance()->Shutdown();
 
 	Input::GetInstance()->Shutdown();
 

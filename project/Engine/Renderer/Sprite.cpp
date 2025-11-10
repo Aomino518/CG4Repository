@@ -106,7 +106,7 @@ void Sprite::Update()
 	vertexData[2].position = { right, bottom, 0.0f, 1.0f }; // 右下
 	vertexData[3].position = { right, top,    0.0f, 1.0f }; // 右上
 
-	const DirectX::TexMetadata& metaData = TextureManager::GetMetaData(textureIndex_);
+	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(textureIndex_);
 
 	// UV座標を計算
 	float tex_left = textureLeftTop_.x / metaData.width;
@@ -191,7 +191,7 @@ void Sprite::Scale(const Vector2& factor)
 
 void Sprite::AdjustTextureSize()
 {
-	const DirectX::TexMetadata& metaData = TextureManager::GetMetaData(textureIndex_);
+	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(textureIndex_);
 
 	textureSize_.x = static_cast<float>(metaData.width);
 	textureSize_.y = static_cast<float>(metaData.height);

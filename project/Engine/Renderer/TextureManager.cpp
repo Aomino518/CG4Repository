@@ -17,6 +17,16 @@ std::deque<ComPtr<ID3D12Resource>> TextureManager::intermediasteResource_;
 std::unordered_map<std::string, uint32_t> TextureManager::pathToId_;
 std::vector<TextureManager::TextureData> TextureManager::textures_;
 
+TextureManager* TextureManager::instance_ = nullptr;
+
+TextureManager* TextureManager::GetInstance()
+{
+	if (instance_ == nullptr) {
+		instance_ = new TextureManager;
+	}
+	return instance_;
+}
+
 void TextureManager::Init(Graphics* graphics)
 {	
 	device_ = graphics->GetDevice();
@@ -82,6 +92,8 @@ void TextureManager::Shutdown()
 	device_ = nullptr;
 	cmdList_ = nullptr;
 	srvHeap_ = nullptr;
+	delete instance_;
+	instance_ = nullptr;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandle(uint32_t textureId)

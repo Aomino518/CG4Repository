@@ -13,25 +13,35 @@
 class TextureManager
 {
 public:
-	static void Init(Graphics* graphics);
+	// シングルトンインスタンスの取得
+	static TextureManager* GetInstance();
+
+	void Init(Graphics* graphics);
 
 	/// <summary>
 	/// テクスチャのロード
 	/// </summary>
 	/// <param name="filePath">テクスチャのファイルパス</param>
 	/// <returns>テクスチャハンドル</returns>
-	static uint32_t Load(const std::string& filePath);
+	uint32_t Load(const std::string& filePath);
 
-	static void Shutdown();
+	void Shutdown();
 
-	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(uint32_t textureId);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(uint32_t textureId);
 
-	static void ClearIntermediate();
+	void ClearIntermediate();
 
 	// Getter関数
-	static const DirectX::TexMetadata& GetMetaData(uint32_t textureIndex);
+	const DirectX::TexMetadata& GetMetaData(uint32_t textureIndex);
 
 private:
+	static TextureManager* instance_;
+
+	TextureManager() = default;
+	~TextureManager() = default;
+	TextureManager(const TextureManager&) = delete;
+	TextureManager& operator=(const TextureManager&) = delete;
+
 	struct TextureData {
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;

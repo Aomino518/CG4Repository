@@ -10,8 +10,8 @@ void Model::Init(ModelCommon* modelCommon, const std::string& directoryPath, con
 	LoadObjFile(directoryPath, filename);
 	CreateBufferResources();
 	MaterialInit();
-	modelData_.material.textureIndex = TextureManager::Load(modelData_.material.textureFilePath);
-	textureSrvHandleGPU_ = TextureManager::GetGPUHandle(modelData_.material.textureIndex);
+	modelData_.material.textureIndex = TextureManager::GetInstance()->Load(modelData_.material.textureFilePath);
+	textureSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(modelData_.material.textureIndex);
 }
 
 void Model::Draw()

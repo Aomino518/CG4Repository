@@ -22,7 +22,7 @@ public:
 
 	void SetTexture(uint32_t textureId) { 
 		textureIndex_ = textureId;
-		textureSrvHandleGPU_ = TextureManager::GetGPUHandle(textureId);
+		textureSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(textureId);
 	}
 
 	Transform& TransformRef() { return transform_; }
