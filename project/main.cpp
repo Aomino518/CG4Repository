@@ -53,8 +53,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Sprite
 	Vector2 positoin = {0.0f, 0.0f};
 	float rotation = 0.0f;
-	uint32_t tHChecker = TextureManager::Load("resources/uvChecker.png");
 	std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>();
+	uint32_t tHChecker = TextureManager::Load("resources/uvChecker.png");
 	sprite->Create(tHChecker, positoin, Color::WHITE);
 	sprite->SetRotation(rotation);
 
