@@ -79,5 +79,6 @@ private:
 
 	std::unique_ptr<SpriteCommon> spriteCommon_;
 	std::unique_ptr<Entity3DCommon> entityCommon_;
+
 };
 
