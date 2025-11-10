@@ -57,7 +57,6 @@ public:
 		materialData->color.y = g;
 		materialData->color.z = b;
 	}
-	void SetUV(const Transform& uvTransform) { this->uvTransform_ = uvTransform; }
 
 	/// <summary>
 	/// スプライトを生成
