@@ -2,9 +2,6 @@
 
 void SeekerEngine::Init()
 {
-	D3DResourceLeakChecker leakCheck;
-	CoInitializeEx(0, COINIT_MULTITHREADED);
-	SetUnhandledExceptionFilter(ExportDump);
 	Logger::Init();
 	Logger::Write("アプリ開始");
 
