@@ -92,7 +92,6 @@ void ImGuiManager::SpriteSetting(const std::string& spriteName, Sprite* sprite)
 	sprite->SetPosition(spritePosition);
 	sprite->SetRotation(spriteRotate);
 	sprite->SetSize(spriteScale);
-	sprite->Update();
 #endif
 }
 
@@ -127,8 +126,7 @@ void ImGuiManager::ModelSetting(const std::string& modelName, Entity3D* model)
 	model->SetTranslate(modelPosition);
 	model->SetRotate(modelRotate);
 	model->SetScale(modelScale);
-	model->Update();
-
+	
 #endif
 }
 
