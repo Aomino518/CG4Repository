@@ -168,14 +168,59 @@ void ImGuiManager::EndInspector()
 #endif
 }
 
-void ImGuiManager::CameraSetting(Vector3& positoin, Vector3& rotation)
+void ImGuiManager::CameraSetting(CameraManager* cameraManager)
 {
 #ifdef USE_IMGUI
-	if (ImGui::CollapsingHeader("DefaultCamera", ImGuiTreeNodeFlags_DefaultOpen))
+	Vector3 position = cameraManager->GetActiveCamera()->GetTranslate();
+	Vector3 rotation = cameraManager->GetActiveCamera()->GetRotate();
+
+	ImGui::Begin("Camera Manager");
+
+	if (ImGui::CollapsingHeader("Debug Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::DragFloat3("Position", (float*)&positoin, 0.01f, -10.0f, 10.0f, "%.2f");
-		ImGui::DragFloat3("Rotation", (float*)&rotation, 0.01f, -360.0f, 360.0f, "%.2f");
+		bool selected = cameraManager->GetIsDebug();
+		if (ImGui::Selectable("DebugCamera", selected)) {
+			cameraManager->SetActiveCamera(true);
+		}
 	}
+
+	if (ImGui::CollapsingHeader("Normal Cameras", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		auto& cameras = cameraManager->GetCameras();
+
+		for (int i = 0; i < cameras.size(); i++)
+		{
+			bool selected = (!cameraManager->GetIsDebug() && cameraManager->GetActtiveCamIndex() == i);
+			Vector3 pos = cameras[i].camera->GetTranslate();
+			Vector3 rot = cameras[i].camera->GetRotate();
+
+			if (ImGui::Selectable(cameras[i].name.c_str(), selected))
+			{
+				cameraManager->SetActiveCamera(false, i);
+			}
+
+			// 展開してパラメータ編集
+			if (selected)
+			{
+				ImGui::PushID(cameras[i].name.c_str());
+				ImGui::Indent();
+
+				if (ImGui::DragFloat3("Position", (float*)&pos, 0.01f))
+					cameras[i].camera->SetTranslate(pos);
+
+				if (ImGui::DragFloat3("Rotation", (float*)&rot, 0.01f))
+					cameras[i].camera->SetRotate(rot);
+
+				ImGui::Unindent();
+				ImGui::PopID();
+			}
+			cameras[i].camera->SetTranslate(pos);
+			cameras[i].camera->SetRotate(rot);
+		}
+	}
+
+	ImGui::End();
+
 #endif
 }
 

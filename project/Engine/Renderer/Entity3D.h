@@ -10,6 +10,8 @@
 #include "CreateResorceUtils.h"
 #include "Model.h"
 #include "Camera.h"
+#include "DebugCamera.h"
+#include "CameraManager.h"
 
 class Entity3DCommon;
 class TextureManager;
@@ -54,5 +56,7 @@ private:
 
 	Model* model_ = nullptr;
 	Camera* camera_ = nullptr;
+	DebugCamera* debugCamera_ = nullptr;
+	CameraManager* cameraManager_ = nullptr;
 };
 

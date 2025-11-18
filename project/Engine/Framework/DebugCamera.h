@@ -1,5 +1,6 @@
 #pragma once
 #include "Matrix.h"
+#include "Application.h"
 #include <windows.h>
 
 class DebugCamera
@@ -15,7 +16,8 @@ public:
 	/// </summary>
 	void Update();
 
-	Matrix4x4 GetViewMatrix() { return viewMatrix_; }
+	const Matrix4x4& GetViewMatrix() const{ return viewMatrix_; }
+	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 
 private:
 	// X,Y,Z軸回りのローカル回転角
@@ -28,6 +30,8 @@ private:
 	Matrix4x4 viewMatrix_;
 	// 射影行列
 	Matrix4x4 projectionMatrix_;
+
+	Matrix4x4 viewProjectionMatrix_;
 
 	float moveSpeed_ = 0.5f;
 	float rotateSpeed_ = 0.01f;

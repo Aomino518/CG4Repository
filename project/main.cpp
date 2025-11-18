@@ -6,5 +6,4 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SEFramework* seFw = new Game();
 	seFw->Run();
 	delete seFw;
-	return 0;
 }

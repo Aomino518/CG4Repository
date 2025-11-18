@@ -6,6 +6,8 @@
 #include <InputLayout.h>
 #include "PsoBuilder.h"
 #include "Camera.h"
+#include "DebugCamera.h"
+#include "CameraManager.h"
 
 class Entity3DCommon
 {
@@ -18,8 +20,12 @@ public:
 
 	// Getter
 	Camera* GetDefaultCamera() const { return defaultCamera_; }
+	DebugCamera* GetDebugCamera() const { return debugCamera_; }
+	CameraManager* GetCameraManager() const { return cameraManager_; }
 	// Setter
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
+	void SetCameraManager(CameraManager* cameraManager) { this->cameraManager_ = cameraManager; }
+	void SetDebugCamera(DebugCamera* debugCamera) { this->debugCamera_ = debugCamera; }
 
 private:
 	// グラフィックパイプラインの作成
@@ -33,5 +39,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
 
 	Camera* defaultCamera_ = nullptr;
+	DebugCamera* debugCamera_ = nullptr;
+	CameraManager* cameraManager_ = nullptr;
 };
 
