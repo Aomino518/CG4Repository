@@ -26,10 +26,11 @@ void Game::Init()
     //===========================
     // Camera
     //===========================
-    camera = std::make_unique<Camera>();
-    camera->SetTranslate(cameraPos);
-    camera->SetRotate(cameraRotate);
-	engine_.GetEntityCommon()->SetDefaultCamera(camera.get());
+	cameraManager = std::make_unique<CameraManager>();
+	cameraManager->Init();
+	cameraManager->CreateCamera("EntranceCamera");
+	engine_.GetEntityCommon()->SetCameraManager(cameraManager.get());
+	engine_.GetEntityCommon()->SetDebugCamera(cameraManager->GetDebugCamera());
 
     //===========================
     // Sprite
@@ -83,18 +84,16 @@ void Game::Update()
 		se->SoundStop();
 	}
 
-	camera->SetRotate(cameraRotate);
-	camera->SetTranslate(cameraPos);
-	camera->Update();
+	cameraManager->Update();
 
 	sprite->Update();
 
-	entity->SetCamera(camera.get());
+	entity->SetCamera(cameraManager->GetActiveCamera());
 	entity->Update();
 
 	imgui.BegineFrame();
 	imgui.BegineInspector();
-	imgui.CameraSetting(cameraPos, cameraRotate);
+	imgui.CameraSetting(cameraManager.get());
 	imgui.SpriteSetting("uvChecker", sprite.get());
 	imgui.ModelSetting("axis.obj", entity.get());
 	imgui.EndInspector();

@@ -19,9 +19,9 @@ private:
     std::unique_ptr<Sound> se;
     SoundData sHAudio1, sHAudio2, sHAudio3, sHAudio4;
 
+    std::unique_ptr<CameraManager> cameraManager;
+
     ImGuiManager imgui;
 
-    Vector3 cameraPos = { 0.0f, 0.0f, -10.0f };
-    Vector3 cameraRotate = { 0.0f, 0.0f, 0.0f };
 };
 
