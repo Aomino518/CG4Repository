@@ -37,7 +37,7 @@ void Game::Init()
     //===========================
     sprite = std::make_unique<Sprite>();
     uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/uvChecker.png");
-    sprite->Create(tHChecker, { 0.0f, 0.0f }, Color::WHITE);
+    sprite->Create(engine_.GetSpriteCommon(), tHChecker, {0.0f, 0.0f}, Color::WHITE);
     sprite->SetRotation(0.0f);
 
     //===========================
@@ -48,7 +48,6 @@ void Game::Init()
     entity->Init(engine_.GetEntityCommon());
     entity->SetModel("axis.obj");
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
-
 }
 
 void Game::Shutdown()

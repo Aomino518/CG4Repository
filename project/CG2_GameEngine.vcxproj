@@ -151,6 +151,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlendStateUtils.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Engine\Framework\Camera.cpp" />
     <ClCompile Include="Engine\Utils\Color.cpp" />
@@ -247,6 +248,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlendStateUtils.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="Engine\Framework\Camera.h" />
     <ClInclude Include="Engine\Utils\Color.h" />

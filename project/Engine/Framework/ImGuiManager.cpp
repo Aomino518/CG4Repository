@@ -2,6 +2,15 @@
 #include "Logger.h"
 #include <Psapi.h>
 
+static const char* blendNames[] = {
+		"None",
+		"Normal",
+		"Add",
+		"Subtract",
+		"Multiply",
+		"Screen"
+};
+
 void ImGuiManager::Init([[maybe_unused]] Application* app, [[maybe_unused]] Graphics* graphics)
 {
 #ifdef USE_IMGUI
@@ -85,6 +94,12 @@ void ImGuiManager::SpriteSetting(const std::string& spriteName, Sprite* sprite)
 			ImGui::DragFloat2("Scale", (float*)&spriteScale, 1.00f, 0.0f, 1280.0f, "%.2f");
 			ImGui::TreePop();
 		}
+
+		int current = static_cast<int>(sprite->GetBlendMode());
+		if (ImGui::Combo("BlendMode", &current, blendNames, IM_ARRAYSIZE(blendNames))) {
+			sprite->SetBlendMode(static_cast<BlendMode>(current));
+		}
+
 		ImGui::PopID();
 	}
 
@@ -103,6 +118,7 @@ void ImGuiManager::ModelSetting(const std::string& modelName, Entity3D* model)
 	Vector3 modelPosition = model->GetTranslate();
 	Vector3 modelRotate = model->GetRotate();
 	Vector3 modelScale = model->GetScale();
+	bool isLighting = model->GetIsLighting();
 
 	if (ImGui::CollapsingHeader(modelName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -120,6 +136,9 @@ void ImGuiManager::ModelSetting(const std::string& modelName, Entity3D* model)
 			ImGui::DragFloat3("Scale", (float*)&modelScale, 0.01f, 0.0f, 1280.0f, "%.2f");
 			ImGui::TreePop();
 		}
+
+		ImGui::Checkbox("Lighting", &isLighting);
+
 		ImGui::PopID();
 	}
 
@@ -127,6 +146,7 @@ void ImGuiManager::ModelSetting(const std::string& modelName, Entity3D* model)
 	model->SetTranslate(modelPosition);
 	model->SetRotate(modelRotate);
 	model->SetScale(modelScale);
+	model->SetIsLighting(isLighting);
 	model->Update();
 
 #endif

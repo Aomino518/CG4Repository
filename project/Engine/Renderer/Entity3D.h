@@ -30,6 +30,7 @@ public:
 	const Vector3& GetRotate() const { return transform_.rotate; }
 	const Vector3& GetTranslate() const { return transform_.translate; }
 	const Vector4& GetMaterial() const { return model_->GetMaterial(); }
+	const bool GetIsLighting() const { return model_->GetIsLighting(); }
 
 	// setter関数
 	void SetModel(const std::string& filePath);
@@ -38,6 +39,7 @@ public:
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
 	void SetCamera(Camera* camera) { this->camera_ = camera; }
 	void SetMaterial(const Vector4& material) { model_->SetMaterial(material); }
+	void SetIsLighting(const bool isLighting) { model_->SetIsLighting(isLighting); }
 
 private:
 	void ModelResourcesSetting();

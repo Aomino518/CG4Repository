@@ -2,6 +2,7 @@
 
 void SpriteCommon::Init(Graphics* graphics, DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignature)
 {
+	graphics_ = graphics;
 	rootSignature_ = rootSignature;
 	CreateGraphicPipeline(graphics, dxcCompiler);
 	cmdList_ = Graphics::GetCmdList();
@@ -14,6 +15,49 @@ void SpriteCommon::DrawCommon()
 	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
+void SpriteCommon::RebuildPso()
+{
+	InputLayout inputLayout;
+	D3D12_INPUT_LAYOUT_DESC layout = inputLayout.CreateInputLayout2D();
+
+	blendDesc_ = CreateBlendDesc(mode_);
+
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+
+	PsoBuilder builder;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
+	builder.Init(graphics_);
+	psoDesc = builder.CreatePsoDesc(
+		rootSignature_.Get(),
+		layout,
+		vs2DBlob_,
+		ps2DBlob_,
+		blendDesc_,
+		rasterizerDesc
+	);
+
+	pso2D_ = builder.BuildPso(psoDesc);
+}
+
+void SpriteCommon::SetBlendMode(BlendMode mode)
+{
+	if (mode_ == mode)
+	{
+		return;
+	}
+
+	mode_ = mode;
+
+	if (psoCache_.contains(mode)) {
+		pso2D_ = psoCache_[mode];
+	} else {
+		RebuildPso();
+		psoCache_[mode] = pso2D_;
+	}
+}
+
 void SpriteCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcCompiler)
 {
 	InputLayout inputLayout;
@@ -21,17 +65,9 @@ void SpriteCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcComp
 	inputLayoutDesc2D = inputLayout.CreateInputLayout2D();
 
 	// BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
 	// すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-
+	blendDesc_ = CreateBlendDesc(mode_);
+	
 	// RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// 裏面(時計回り)を表示しない
@@ -40,8 +76,8 @@ void SpriteCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcComp
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// Shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vs2DBlob = dxcCompiler.CompileShader(L"resources/hlsl/Object2D.VS.hlsl", L"vs_6_0");
-	Microsoft::WRL::ComPtr<IDxcBlob> ps2DBlob = dxcCompiler.CompileShader(L"resources/hlsl/Object2D.PS.hlsl", L"ps_6_0");
+	vs2DBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/Object2D.VS.hlsl", L"vs_6_0");
+	ps2DBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/Object2D.PS.hlsl", L"ps_6_0");
 
 	// PSOを生成する
 	PsoBuilder builder;
@@ -51,9 +87,9 @@ void SpriteCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcComp
 	psoDesc2D = builder.CreatePsoDesc(
 		rootSignature_,
 		inputLayoutDesc2D,
-		vs2DBlob,
-		ps2DBlob,
-		blendDesc,
+		vs2DBlob_,
+		ps2DBlob_,
+		blendDesc_,
 		rasterizerDesc
 	);
 

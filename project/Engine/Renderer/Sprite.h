@@ -9,12 +9,13 @@
 #include "TextureManager.h"
 #include "CreateResorceUtils.h"
 #include "Color.h"
+#include "BlendStateUtils.h"
 
 class SpriteCommon;
 
 class Sprite {
 public:
-	void Init();
+	void Init(SpriteCommon* spriteCommon);
 
 	void Update();
 
@@ -40,6 +41,7 @@ public:
 	const Vector2& GetTextureLeftTop() const { return textureLeftTop_; }
 	const Vector2& GetTextureSize() const { return textureSize_; }
 	const Transform& GetUV() const { return uvTransform_; }
+	const BlendMode& GetBlendMode() { return mode_; }
 
 	// Setter
 	void SetPosition(const Vector2& position) { this->position_ = position; }
@@ -58,6 +60,8 @@ public:
 		materialData->color.z = b;
 	}
 
+	void SetBlendMode(BlendMode mode);
+
 	/// <summary>
 	/// スプライトを生成
 	/// </summary>
@@ -65,14 +69,14 @@ public:
 	/// <param name="pos">スプライトの座標</param>
 	/// <param name="color">スプライトの色</param>
 	/// <param name="size">スプライトのサイズ</param>
-	void Create(uint32_t textureId, const Vector2& pos, const Vector4& color, const Vector2& size = { 0.0f, 0.0f });
+	void Create(SpriteCommon* spriteCommon, uint32_t textureId, const Vector2& pos, const Vector4& color, const Vector2& size = { 0.0f, 0.0f });
 	void Move(const Vector2& delta);
 	void Rotate(float deltaAngle);
 	void Scale(float factor);
 	void Scale(const Vector2& factor);
 
 private:
-	SpriteCommon* spriteCommon = nullptr;
+	SpriteCommon* spriteCommon_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;
@@ -115,4 +119,7 @@ private:
 
 	// テクスチャサイズをイメージに合わせる
 	void AdjustTextureSize();
+
+	// ブレンドモード取得
+	BlendMode mode_ = kBlendModeNone;
 };
