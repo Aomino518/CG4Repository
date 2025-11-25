@@ -206,6 +206,10 @@
     <FxCompile Include="resources\hlsl\Object3d.VS.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle2D.PS.hlsl" />
+    <FxCompile Include="resources\hlsl\Particle2D.VS.hlsl" />
+    <FxCompile Include="resources\hlsl\Particle3D.VS.hlsl" />
+    <FxCompile Include="resources\hlsl\Particle3D.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -350,5 +354,7 @@
     <None Include="resources\hlsl\Object3d.hlsli">
       <Filter>リソース ファイル\HLSL</Filter>
     </None>
+    <None Include="resources\hlsl\Particle3D.hlsli" />
+    <None Include="resources\hlsl\Particle2D.hlsli" />
   </ItemGroup>
 </Project>
