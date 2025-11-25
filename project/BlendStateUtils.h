@@ -22,6 +22,7 @@ enum BlendMode {
 
 inline D3D12_BLEND_DESC CreateBlendDesc(BlendMode mode) {
 	D3D12_BLEND_DESC desc{};
+	desc.AlphaToCoverageEnable = TRUE;
 	desc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
 	switch (mode) {

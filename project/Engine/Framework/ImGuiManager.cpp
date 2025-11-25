@@ -137,6 +137,11 @@ void ImGuiManager::ModelSetting(const std::string& modelName, Entity3D* model)
 			ImGui::TreePop();
 		}
 
+		int current = static_cast<int>(model->GetBlendMode());
+		if (ImGui::Combo("BlendMode", &current, blendNames, IM_ARRAYSIZE(blendNames))) {
+			model->SetBlendMode(static_cast<BlendMode>(current));
+		}
+
 		ImGui::Checkbox("Lighting", &isLighting);
 
 		ImGui::PopID();

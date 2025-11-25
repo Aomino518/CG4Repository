@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <fstream>
 #include "Logger.h"
+#include <filesystem>
 
 void Model::Init(ModelCommon* modelCommon, const std::string& directoryPath, const std::string& filename)
 {
@@ -58,7 +59,19 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 	std::vector<Vector3> normals; // 法線
 	std::vector<Vector2> texcoords; // テクスチャ座標
 	std::string line; // ファイルから読んだ1行を格納するもの
-	std::ifstream file(directoryPath + "/" + filename); // ファイルを開く
+
+	std::filesystem::path objPath = std::filesystem::path(directoryPath) / (filename + ".obj");
+
+	if (!std::filesystem::exists(objPath)) {
+		objPath = std::filesystem::path(directoryPath) / filename / (filename + ".obj");
+	}
+
+	assert(std::filesystem::exists(objPath));
+
+	// OBJ のディレクトリ
+	std::string modelDir = objPath.parent_path().string();
+
+	std::ifstream file(objPath); // ファイルを開く
 	assert(file.is_open());
 
 	std::unordered_map<TripletKey, uint32_t, TripletHash> lut;
@@ -129,7 +142,7 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 			std::string materialFilename;
 			s >> materialFilename;
 			// 基本的にobjファイルと同一層にmtlは存在させるので、ディレクトリ名とファイル名を残す
-			modelData_.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+			modelData_.material = LoadMaterialTemplateFile(modelDir, materialFilename);
 		}
 	}
 }

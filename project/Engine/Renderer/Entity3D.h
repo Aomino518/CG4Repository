@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "DebugCamera.h"
 #include "CameraManager.h"
+#include "BlendStateUtils.h"
 
 class Entity3DCommon;
 class TextureManager;
@@ -31,6 +32,7 @@ public:
 	const Vector3& GetTranslate() const { return transform_.translate; }
 	const Vector4& GetMaterial() const { return model_->GetMaterial(); }
 	const bool GetIsLighting() const { return model_->GetIsLighting(); }
+	const BlendMode& GetBlendMode() { return mode_; }
 
 	// setter関数
 	void SetModel(const std::string& filePath);
@@ -40,6 +42,7 @@ public:
 	void SetCamera(Camera* camera) { this->camera_ = camera; }
 	void SetMaterial(const Vector4& material) { model_->SetMaterial(material); }
 	void SetIsLighting(const bool isLighting) { model_->SetIsLighting(isLighting); }
+	void SetBlendMode(BlendMode mode);
 
 private:
 	void ModelResourcesSetting();
@@ -60,5 +63,8 @@ private:
 	Camera* camera_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 	CameraManager* cameraManager_ = nullptr;
+
+	// ブレンドモード取得
+	BlendMode mode_ = kBlendModeNone;
 };
 

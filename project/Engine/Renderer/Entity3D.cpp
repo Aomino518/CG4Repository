@@ -10,6 +10,7 @@ void Entity3D::Init(Entity3DCommon* entity3DCommon)
 	this->debugCamera_ = entity3DCommon->GetDebugCamera();
 	this->cameraManager_ = entity3DCommon->GetCameraManager();
 	cmdList_ = entity3DCommon->GetCmdList();
+	mode_ = entity3DCommon->GetBlendMode();
 	ModelResourcesSetting();
 
 	transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
@@ -57,6 +58,12 @@ void Entity3D::Draw()
 void Entity3D::SetModel(const std::string& filePath)
 {
 	model_ = ModelManager::GetInstance()->FindModel(filePath);
+}
+
+void Entity3D::SetBlendMode(BlendMode mode)
+{
+	this->mode_ = mode;
+	entity3DCommon_->SetBlendMode(mode);
 }
 
 void Entity3D::ModelResourcesSetting()

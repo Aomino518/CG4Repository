@@ -44,9 +44,9 @@ void Game::Init()
     // Model
     //===========================
     entity = std::make_unique<Entity3D>();
-    ModelManager::GetInstance()->LoadModel("axis.obj");
+    ModelManager::GetInstance()->LoadModel("fence");
     entity->Init(engine_.GetEntityCommon());
-    entity->SetModel("axis.obj");
+    entity->SetModel("fence");
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
 }
 
@@ -94,7 +94,7 @@ void Game::Update()
 	imgui.BegineInspector();
 	imgui.CameraSetting(cameraManager.get());
 	imgui.SpriteSetting("uvChecker", sprite.get());
-	imgui.ModelSetting("axis.obj", entity.get());
+	imgui.ModelSetting("fence.obj", entity.get());
 	imgui.EndInspector();
 	imgui.Stats();
 	imgui.EndFrame();

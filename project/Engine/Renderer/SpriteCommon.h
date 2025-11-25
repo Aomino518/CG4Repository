@@ -14,8 +14,6 @@ public:
 	void DrawCommon();
 	ID3D12PipelineState* GetPipelineState() { return pipelineState_.Get(); }
 
-	void RebuildPso();
-
 	BlendMode& GetBlendMode() { return mode_; }
 
 	void SetBlendMode(BlendMode mode);
@@ -23,6 +21,8 @@ public:
 private:
 	// グラフィックパイプラインの作成
 	void CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcCompiler);
+
+	void RebuildPso();
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_;
