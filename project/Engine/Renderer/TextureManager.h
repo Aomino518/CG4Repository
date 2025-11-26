@@ -6,6 +6,7 @@
 #include <memory>
 #include <unordered_map>
 #include "Graphics.h"
+#include "SrvManager.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 #include <deque>
@@ -31,6 +32,9 @@ public:
 
 	void ClearIntermediate();
 
+	// テクスチャのアンロード
+	void Unload(uint32_t textureId);
+
 	// Getter関数
 	const DirectX::TexMetadata& GetMetaData(uint32_t textureIndex);
 
@@ -44,26 +48,25 @@ private:
 
 	struct TextureData {
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
-		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;
+		uint32_t srvIndex;
 		DirectX::TexMetadata metadata;
 	};
 	
-	static ID3D12Device* device_;
-	static ID3D12GraphicsCommandList* cmdList_;
-	static ID3D12DescriptorHeap* srvHeap_;
-	static uint32_t descriptorSize_;
-	static uint32_t textureCount_;
+	ID3D12Device* device_ = nullptr;
+	ID3D12GraphicsCommandList* cmdList_ = nullptr;
+	uint32_t descriptorSize_ = 0;
+	uint32_t textureCount_ = 1;
 
-	static std::unordered_map<std::string, uint32_t> pathToId_;
-	static std::vector<TextureData> textures_;
-	static Microsoft::WRL::ComPtr<ID3D12Resource> intermediaste_;
-	static std::deque<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediasteResource_;
+	std::unordered_map<std::string, uint32_t> pathToId_;
+	std::vector<TextureData> textures_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> intermediaste_;
+	std::deque<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediasteResource_;
 
 	// 内部関数
-	static DirectX::ScratchImage LoadFromFile(const std::string& filePath);
-	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
+	DirectX::ScratchImage LoadFromFile(const std::string& filePath);
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 	[[nodiscard]]
-	static Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
+	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
 			Microsoft::WRL::ComPtr<ID3D12Resource>& texture,
 			const DirectX::ScratchImage& mipImages);
 };

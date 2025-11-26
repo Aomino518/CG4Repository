@@ -25,9 +25,10 @@ void ImGuiManager::Init([[maybe_unused]] Application* app, [[maybe_unused]] Grap
 	ImGui_ImplDX12_Init(graphics_->GetDevice(),
 		graphics_->GetSwapChainDesc().BufferCount,
 		graphics_->GetRTVDesc().Format,
-		graphics_->GetSRVHeap().Get(),
-		graphics_->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart(),
-		graphics_->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+		SrvManager::GetInstance()->GetDiscriptorHeap(),
+		SrvManager::GetInstance()->GetDiscriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
+		SrvManager::GetInstance()->GetDiscriptorHeap()->GetGPUDescriptorHandleForHeapStart()
+	);
 	Logger::Write("ImGui初期化");
 
 	// スタイルを設定

@@ -208,6 +208,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Renderer\TextureManager.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="SEFramework.cpp" />
+    <ClCompile Include="SrvManager.cpp" />
     <ClCompile Include="StartupManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -324,6 +325,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game.h" />
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="SEFramework.h" />
+    <ClInclude Include="SrvManager.h" />
     <ClInclude Include="StartupManager.h" />
   </ItemGroup>
   <ItemGroup>
