@@ -13,6 +13,8 @@ void SeekerEngine::Init()
 	graphics_ = std::make_unique<Graphics>();
 	graphics_->Init(app_->GetHWND(), app_->GetWidth(), app_->GetHeight(), true);
 
+	SrvManager::GetInstance()->Init(graphics_.get());
+
 	// DxcCompilerの初期化
 	dxcCompiler_.Init();
 
@@ -54,6 +56,7 @@ void SeekerEngine::Shutdown()
 
 	soundCommon_->Shutdown();
 
+	SrvManager::GetInstance()->Shutdown();
 	graphics_->Shutdown();
 
 	Logger::Write("AppのShutdown");

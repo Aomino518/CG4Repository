@@ -192,6 +192,12 @@
     <ClCompile Include="BlendStateUtils.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SrvManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\hlsl\Object2D.PS.hlsl">
@@ -206,6 +212,10 @@
     <FxCompile Include="resources\hlsl\Object3d.VS.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle2D.PS.hlsl" />
+    <FxCompile Include="resources\hlsl\Particle2D.VS.hlsl" />
+    <FxCompile Include="resources\hlsl\Particle3D.VS.hlsl" />
+    <FxCompile Include="resources\hlsl\Particle3D.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -337,6 +347,12 @@
     <ClInclude Include="BlendStateUtils.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SrvManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -350,5 +366,7 @@
     <None Include="resources\hlsl\Object3d.hlsli">
       <Filter>リソース ファイル\HLSL</Filter>
     </None>
+    <None Include="resources\hlsl\Particle3D.hlsli" />
+    <None Include="resources\hlsl\Particle2D.hlsli" />
   </ItemGroup>
 </Project>
