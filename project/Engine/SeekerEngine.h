@@ -21,6 +21,7 @@
 #include "Camera.h"
 #include "StartupManager.h"
 #include "SrvManager.h"
+#include "Particle3DCommon.h"
 
 class SeekerEngine
 {
@@ -38,6 +39,9 @@ public:
 	SoundCommon* GetSoundCommon() const { return soundCommon_.get(); }
 	SpriteCommon* GetSpriteCommon() const { return spriteCommon_.get(); }
 	Entity3DCommon* GetEntityCommon() const { return entityCommon_.get(); }
+	DxcCompiler GetDxcCompiler() const { return dxcCompiler_; }
+	RootSignatureFactory GetRootSig() const { return rootSignatureFactory_; }
+	Particle3DCommon* GetPaticleCommon() const { return particleCommon_.get(); }
 
 private:
 	std::unique_ptr<Application> app_;
@@ -46,6 +50,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs3D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs2D_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsParticle_;
 
 	DxcCompiler dxcCompiler_;
 	RootSignatureFactory rootSignatureFactory_;
@@ -55,5 +60,5 @@ private:
 	std::unique_ptr<SpriteCommon> spriteCommon_;
 	std::unique_ptr<Entity3DCommon> entityCommon_;
 
+	std::unique_ptr<Particle3DCommon> particleCommon_;
 };
-

@@ -15,6 +15,8 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> Create3D();
 
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateParticle3D();
+
 private:
 
 	Graphics* graphics_;

@@ -48,6 +48,8 @@ void Game::Init()
     entity->Init(engine_.GetEntityCommon());
     entity->SetModel("fence");
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
+
+	engine_.GetPaticleCommon()->SetTexture(tHChecker);
 }
 
 void Game::Shutdown()
@@ -85,6 +87,7 @@ void Game::Update()
 
 	cameraManager->Update();
 
+	engine_.GetPaticleCommon()->UpdateInstanceData(cameraManager.get());
 	sprite->Update();
 
 	entity->SetCamera(cameraManager->GetActiveCamera());
@@ -93,8 +96,8 @@ void Game::Update()
 	imgui.BegineFrame();
 	imgui.BegineInspector();
 	imgui.CameraSetting(cameraManager.get());
-	imgui.SpriteSetting("uvChecker", sprite.get());
-	imgui.ModelSetting("fence.obj", entity.get());
+	//imgui.SpriteSetting("uvChecker", sprite.get());
+	//imgui.ModelSetting("fence.obj", entity.get());
 	imgui.EndInspector();
 	imgui.Stats();
 	imgui.EndFrame();
@@ -104,10 +107,12 @@ void Game::Draw()
 {
 	/*-- 描画処理 --*/
 	engine_.GetEntityCommon()->DrawCommon();
-	entity->Draw();
+	//entity->Draw();
+
+	engine_.GetPaticleCommon()->Draw();
 
 	engine_.GetSpriteCommon()->DrawCommon();
-	sprite->Draw();
+	//sprite->Draw();
 
 	imgui.Draw();
 }

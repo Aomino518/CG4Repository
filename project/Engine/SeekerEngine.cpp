@@ -6,7 +6,7 @@ void SeekerEngine::Init()
 	Logger::Init();
 	Logger::Write("アプリ開始");
 
-	app_ = std::make_unique<Application>(1280, 720, L"CG2");
+	app_ = std::make_unique<Application>(1280, 720, L"LE2B_27_モリ_アオト");
 	app_->Init();
 
 	// graphicsの初期化
@@ -27,6 +27,7 @@ void SeekerEngine::Init()
 	rootSignatureFactory_.Init(graphics_.get());
 	rs3D_ = rootSignatureFactory_.Create3D();
 	rs2D_ = rootSignatureFactory_.Create2D();
+	rsParticle_ = rootSignatureFactory_.CreateParticle3D();
 
 	// SoundCommon作成
 	soundCommon_ = std::make_unique<SoundCommon>();
@@ -40,6 +41,9 @@ void SeekerEngine::Init()
 
 	// モデル共通部の作成
 	entityCommon_->Init(graphics_.get(), dxcCompiler_, rs3D_.Get());
+
+	particleCommon_ = std::make_unique<Particle3DCommon>();
+	particleCommon_->Init(graphics_.get(), dxcCompiler_, rsParticle_.Get());
 }
 
 void SeekerEngine::Update()
