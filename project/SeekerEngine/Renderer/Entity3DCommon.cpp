@@ -2,9 +2,10 @@
 
 void Entity3DCommon::Init(Graphics* graphics, DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignature)
 {
+	graphics_ = graphics;
 	rootSignature_ = rootSignature;
 	CreateGraphicPipeline(graphics, dxcCompiler);
-	cmdList_ = graphics->GetCmdList();
+	cmdList_ = Graphics::GetCmdList();
 }
 
 void Entity3DCommon::DrawCommon()
@@ -14,6 +15,23 @@ void Entity3DCommon::DrawCommon()
 	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
+void Entity3DCommon::SetBlendMode(BlendMode mode)
+{
+	if (mode_ == mode)
+	{
+		return;
+	}
+
+	mode_ = mode;
+
+	if (psoCache_.contains(mode)) {
+		pso3D_ = psoCache_[mode];
+	} else {
+		RebuildPso();
+		psoCache_[mode] = pso3D_;
+	}
+}
+
 void Entity3DCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcCompiler)
 {
 	// InputLayout
@@ -21,11 +39,7 @@ void Entity3DCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcCo
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc3D{};
 	inputLayoutDesc3D = inputLayout.CreateInputLayout3D();
 
-	// BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
-	// すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	blendDesc_ = CreateBlendDesc(mode_);
 
 	// RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -35,8 +49,8 @@ void Entity3DCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcCo
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// Shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vs3DBlob = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.VS.hlsl", L"vs_6_0");
-	Microsoft::WRL::ComPtr<IDxcBlob> ps3DBlob = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.PS.hlsl", L"ps_6_0");
+	vs3DBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.VS.hlsl", L"vs_6_0");
+	ps3DBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.PS.hlsl", L"ps_6_0");
 
 	// PSOを生成する
 	// 3D用
@@ -46,12 +60,38 @@ void Entity3DCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcCo
 	psoDesc3D = builder.CreatePsoDesc(
 		rootSignature_,
 		inputLayoutDesc3D,
-		vs3DBlob,
-		ps3DBlob,
-		blendDesc,
+		vs3DBlob_,
+		ps3DBlob_,
+		blendDesc_,
 		rasterizerDesc
 	);
 
 	pso3D_ = builder.BuildPso(psoDesc3D);
 	Logger::Write("PSO3D生成完了");
+}
+
+void Entity3DCommon::RebuildPso()
+{
+	InputLayout inputLayout;
+	D3D12_INPUT_LAYOUT_DESC layout = inputLayout.CreateInputLayout3D();
+
+	blendDesc_ = CreateBlendDesc(mode_);
+
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+
+	PsoBuilder builder;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
+	builder.Init(graphics_);
+	psoDesc = builder.CreatePsoDesc(
+		rootSignature_.Get(),
+		layout,
+		vs3DBlob_,
+		ps3DBlob_,
+		blendDesc_,
+		rasterizerDesc
+	);
+
+	pso3D_ = builder.BuildPso(psoDesc);
 }

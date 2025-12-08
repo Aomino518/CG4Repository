@@ -7,7 +7,10 @@ void Entity3D::Init(Entity3DCommon* entity3DCommon)
 {
 	this->entity3DCommon_ = entity3DCommon;
 	this->camera_ = entity3DCommon->GetDefaultCamera();
+	this->debugCamera_ = entity3DCommon->GetDebugCamera();
+	this->cameraManager_ = entity3DCommon->GetCameraManager();
 	cmdList_ = entity3DCommon->GetCmdList();
+	mode_ = entity3DCommon->GetBlendMode();
 	ModelResourcesSetting();
 
 	transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
@@ -18,11 +21,22 @@ void Entity3D::Update()
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	// WVPMatrixを作る
 	Matrix4x4 worldViewProjectionMatrix;
-	if (camera_) {
-		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-		worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+	bool isDebug = cameraManager_->GetIsDebug();
+
+	if (isDebug) {
+		if (debugCamera_) {
+			const Matrix4x4& viewProjectionMatrix = debugCamera_->GetViewProjectionMatrix();
+			worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+		} else {
+			worldViewProjectionMatrix = worldMatrix;
+		}
 	} else {
-		worldViewProjectionMatrix = worldMatrix;
+		if (camera_) {
+			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+		} else {
+			worldViewProjectionMatrix = worldMatrix;
+		}
 	}
 
 	transformationMatrixData_->World = worldMatrix;
@@ -43,6 +57,12 @@ void Entity3D::Draw()
 void Entity3D::SetModel(const std::string& filePath)
 {
 	model_ = ModelManager::GetInstance()->FindModel(filePath);
+}
+
+void Entity3D::SetBlendMode(BlendMode mode)
+{
+	this->mode_ = mode;
+	entity3DCommon_->SetBlendMode(mode);
 }
 
 void Entity3D::ModelResourcesSetting()

@@ -28,7 +28,10 @@ public:
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
 	Vector4& GetMaterial() const { return materialData_->color; }
+	bool GetIsLighting() const { return materialData_->enableLighting; }
+
 	void SetMaterial(const Vector4& material) { this->materialData_->color = material; }
+	void SetIsLighting(const bool isLighting) { this->materialData_->enableLighting = isLighting; }
 
 private:
 	void CreateBufferResources();

@@ -118,7 +118,4 @@ void Application::Shutdown()
 	CloseWindow(hwnd_);
 	hwnd_ = nullptr;
 	UnregisterClass(className_.c_str(), hInstance_);
-
-	// COMの終了処理
-	CoUninitialize();
 }

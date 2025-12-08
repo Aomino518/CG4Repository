@@ -151,6 +151,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SeekerEngine\Utils\BlendStateUtils.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\CameraManager.cpp" />
     <ClCompile Include="SeekerEngine\Framework\Camera.cpp" />
     <ClCompile Include="SeekerEngine\Utils\Color.cpp" />
     <ClCompile Include="SeekerEngine\Utils\CreateResorceUtils.cpp" />
@@ -184,6 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="SeekerEngine\Input\Input.cpp" />
     <ClCompile Include="SeekerEngine\Utils\Logger.cpp" />
     <ClCompile Include="SeekerEngine\Framework\ImGuiManager.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
@@ -203,8 +206,44 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="SeekerEngine\SeekerEngine.cpp" />
     <ClCompile Include="SeekerEngine\Audio\SoundCommon.cpp" />
     <ClCompile Include="SeekerEngine\Renderer\TextureManager.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\ParticleManager.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\SEFramework.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\SrvManager.cpp" />
+    <ClCompile Include="SeekerEngine\Utils\StartupManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resources\hlsl\Particle2D.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle2D.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle3D.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle3D.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="resources\hlsl\Object2D.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -243,6 +282,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SeekerEngine\Utils\BlendStateUtils.h" />
+    <ClInclude Include="SeekerEngine\Framework\CameraManager.h" />
     <ClInclude Include="SeekerEngine\Framework\Camera.h" />
     <ClInclude Include="SeekerEngine\Utils\Color.h" />
     <ClInclude Include="SeekerEngine\Utils\CreateResorceUtils.h" />
@@ -281,11 +322,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="SeekerEngine\Math\Vector2.h" />
     <ClInclude Include="SeekerEngine\Math\Vector3.h" />
     <ClInclude Include="SeekerEngine\Math\Vector4.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="SeekerEngine\Renderer\ParticleManager.h" />
+    <ClInclude Include="SeekerEngine\Framework\SEFramework.h" />
+    <ClInclude Include="SeekerEngine\Framework\SrvManager.h" />
+    <ClInclude Include="SeekerEngine\Utils\StartupManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\hlsl\Particle2D.hlsli" />
+    <None Include="resources\hlsl\Particle3D.hlsli" />
     <None Include="resources\hlsl\Object2D.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>

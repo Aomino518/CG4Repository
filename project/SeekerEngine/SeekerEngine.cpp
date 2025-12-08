@@ -2,6 +2,7 @@
 
 void SeekerEngine::Init()
 {
+	StartupManager::Init();
 	Logger::Init();
 	Logger::Write("アプリ開始");
 
@@ -11,6 +12,8 @@ void SeekerEngine::Init()
 	// graphicsの初期化
 	graphics_ = std::make_unique<Graphics>();
 	graphics_->Init(app_->GetHWND(), app_->GetWidth(), app_->GetHeight(), true);
+
+	SrvManager::GetInstance()->Init(graphics_.get());
 
 	// DxcCompilerの初期化
 	dxcCompiler_.Init();
@@ -58,6 +61,8 @@ void SeekerEngine::Shutdown()
 
 	soundCommon_->Shutdown();
 
+	SrvManager::GetInstance()->Shutdown();
+
 	graphics_->Shutdown();
 
 	Logger::Write("AppのShutdown");
@@ -65,6 +70,9 @@ void SeekerEngine::Shutdown()
 
 	Logger::Write("アプリ終了");
 	Logger::Shutdown();
+
+	StartupManager::Shutdown();
+
 }
 
 void SeekerEngine::BegineFrame()

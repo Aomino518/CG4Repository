@@ -19,6 +19,8 @@
 #include "ModelManager.h"
 #include "ImGuiManager.h"
 #include "Camera.h"
+#include "StartupManager.h"
+#include "SrvManager.h"
 
 class SeekerEngine
 {

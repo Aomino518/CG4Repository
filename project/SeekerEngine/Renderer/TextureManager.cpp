@@ -3,19 +3,9 @@
 #include <format>
 #include "StringUtil.h"
 #include "CreateResorceUtils.h"
+#include "SrvManager.h"
 
 using namespace Microsoft::WRL;
-
-ID3D12Device* TextureManager::device_ = nullptr;
-ID3D12GraphicsCommandList* TextureManager::cmdList_ = nullptr;
-ID3D12DescriptorHeap* TextureManager::srvHeap_ = nullptr;
-uint32_t TextureManager::descriptorSize_ = 0;
-uint32_t TextureManager::textureCount_ = 1;
-ComPtr<ID3D12Resource> TextureManager::intermediaste_ = nullptr;
-std::deque<ComPtr<ID3D12Resource>> TextureManager::intermediasteResource_;
-
-std::unordered_map<std::string, uint32_t> TextureManager::pathToId_;
-std::vector<TextureManager::TextureData> TextureManager::textures_;
 
 TextureManager* TextureManager::instance_ = nullptr;
 
@@ -28,12 +18,10 @@ TextureManager* TextureManager::GetInstance()
 }
 
 void TextureManager::Init(Graphics* graphics)
-{	
+{
 	device_ = graphics->GetDevice();
 	cmdList_ = graphics->GetCmdList();
-	srvHeap_ = graphics->GetSrvHeap();
 	descriptorSize_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureCount_ = 1;
 }
 
 uint32_t TextureManager::Load(const std::string& filePath)
@@ -42,9 +30,9 @@ uint32_t TextureManager::Load(const std::string& filePath)
 		return pathToId_[filePath];
 	}
 
-	if (textureCount_ >= Graphics::kMaxSRVCount) {
+	if (textureCount_ >= SrvManager::kMaxSRVCount) {
 		Logger::Write(std::format("[TextureManager] SRV limit exceeded ({}/{})",
-			textureCount_, Graphics::kMaxSRVCount));
+			textureCount_, SrvManager::kMaxSRVCount));
 		assert(false && "SRV Descriptor Heap limit exceeded!");
 		return 0;
 	}
@@ -55,27 +43,12 @@ uint32_t TextureManager::Load(const std::string& filePath)
 	intermediaste_ = UploadTextureData(textureResource, mipImages);
 	intermediasteResource_.push_back(intermediaste_);
 
-	// metadataを基にSRVを設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-
-	// SRVを作成するDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = srvHeap_->GetCPUDescriptorHandleForHeapStart();
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = srvHeap_->GetGPUDescriptorHandleForHeapStart();
-	// 先頭はImGuiが使っているのでその次を使う
-	textureSrvHandleCPU.ptr += descriptorSize_ * textureCount_;
-	textureSrvHandleGPU.ptr += descriptorSize_ * textureCount_;
-	textureCount_++;
-
-	// SRVの生成
-	device_->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
+	uint32_t srvIndex = SrvManager::GetInstance()->Allocate();
+	SrvManager::GetInstance()->CreateSRVforTexture2D(srvIndex, textureResource.Get(), metadata.format, static_cast<UINT>(metadata.mipLevels));
 
 	// 登録してID発行
 	uint32_t id = static_cast<uint32_t>(textures_.size());
-	textures_.push_back({ textureResource, textureSrvHandleGPU, metadata});
+	textures_.push_back({ textureResource, srvIndex, metadata});
 	pathToId_[filePath] = id;
 
 	return id;
@@ -91,7 +64,6 @@ void TextureManager::Shutdown()
 
 	device_ = nullptr;
 	cmdList_ = nullptr;
-	srvHeap_ = nullptr;
 	delete instance_;
 	instance_ = nullptr;
 }
@@ -99,13 +71,23 @@ void TextureManager::Shutdown()
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandle(uint32_t textureId)
 {
 	assert(textureId < textures_.size());
-	return textures_[textureId].gpuHandle;
+	uint32_t srvIndex = textures_[textureId].srvIndex;
+	return SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex);
 }
 
 void TextureManager::ClearIntermediate()
 {
 	// Fence後に呼ぶ
 	intermediasteResource_.clear();
+}
+
+void TextureManager::Unload(uint32_t textureId)
+{
+	TextureData tex = textures_[textureId];
+	// SRVインデックスの解放
+	SrvManager::GetInstance()->Free(tex.srvIndex);
+	// DirectXのresourceを解放
+	tex.resource.Reset();
 }
 
 const DirectX::TexMetadata& TextureManager::GetMetaData(uint32_t textureIndex)

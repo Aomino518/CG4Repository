@@ -78,6 +78,11 @@ bool Graphics::Init(HWND hwnd, uint32_t width, uint32_t height, bool enableDebug
 		return false;
 	}
 
+	// デバイスの生成がうまくいかなかったので起動できない
+	assert(device_ != nullptr);
+	// 初期化完了ログ
+	Logger::Write("Complete Create D3D12Device!!!");
+
 	return true;
 }
 
@@ -89,7 +94,6 @@ void Graphics::Shutdown()
 		bb.Reset();
 	}
 	depthTex_.Reset();
-	srvHeap_.Reset();
 	dsvHeap_.Reset();
 	rtvHeap_.Reset();
 
@@ -132,8 +136,7 @@ void Graphics::BeginFrame()
 	cmdList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// 描画用のDescriptorHeapの設定
-	ID3D12DescriptorHeap* heaps[] = { srvHeap_.Get()};
-	cmdList_->SetDescriptorHeaps(_countof(heaps), heaps);
+	SrvManager::GetInstance()->PreDraw();
 
 	cmdList_->RSSetViewports(1, &viewport_); // Viewportを設定
 	cmdList_->RSSetScissorRects(1, &scissorRect_); // Scissorを設定
@@ -199,7 +202,8 @@ void Graphics::WaitGPU()
 
 	TextureManager::GetInstance()->ClearIntermediate();
 }
-static ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
+
+ComPtr<ID3D12DescriptorHeap> Graphics::CreateDescriptorHeap(
 	const Microsoft::WRL::ComPtr<ID3D12Device>& device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
 {
 	/*--ディスクリプタヒープの生成--*/
@@ -344,7 +348,6 @@ bool Graphics::CreateDevice(bool enableDebug)
 	// Descriptorサイズ取得
 	descSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-	descSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	return true;
 }
@@ -412,8 +415,6 @@ bool Graphics::CreateHeapsAndTargets()
 	device_->CreateDepthStencilView(depthTex_.Get(), &dsvDesc, dsvCpuHandle);
 
 	// SRV用のヒープでディスクリプタの数は128。SRVはShaderないで触れるものなので、ShaderVisibleはtrue
-	srvHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, Graphics::kMaxSRVCount, true);
-
 	return true;
 }
 

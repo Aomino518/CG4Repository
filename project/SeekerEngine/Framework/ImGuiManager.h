@@ -7,6 +7,8 @@
 #include "Vector4.h"
 #include "Sprite.h"
 #include "Entity3D.h"
+#include "CameraManager.h"
+#include "BlendStateUtils.h"
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -28,7 +30,7 @@ public:
 	void ShowMemoryUsage();
 	void BegineInspector();
 	void EndInspector();
-	void CameraSetting(Vector3& positoin, Vector3& rotation);
+	void CameraSetting(CameraManager* cameraManager);
 
 private:
 	void StyleSetting();

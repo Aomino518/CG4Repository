@@ -10,9 +10,6 @@
 class Graphics
 {
 public:
-	// 最大SRV数 (最大テクスチャ枚数)
-	static constexpr uint32_t kMaxSRVCount = 4096;
-
 	bool Init(HWND hwnd, uint32_t width, uint32_t height, bool enableDebug = true);
 	void Shutdown();
 
@@ -25,12 +22,10 @@ public:
 	// ゲッター
 	static ID3D12Device* GetDevice() { return device_.Get(); }
 	static ID3D12GraphicsCommandList* GetCmdList() { return cmdList_.Get(); }
-	ID3D12DescriptorHeap* GetSrvHeap() const { return srvHeap_.Get(); }
 
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentRTV() const { return rtvHandles_[backBufferIndex_]; }
 	D3D12_CPU_DESCRIPTOR_HANDLE DsvHandle() const { return dsvHeap_->GetCPUDescriptorHandleForHeapStart(); }
 
-	uint32_t GetSRVDescriptorSize() const { return descSizeSRV_; }
 	uint32_t GetRTVDescriptorSize() const { return descSizeRTV_; }
 	uint32_t GetDSVDescriptorSize() const { return descSizeDSV_; }
 
@@ -41,12 +36,11 @@ public:
 	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc() const { return swapChainDesc; }
 	D3D12_RENDER_TARGET_VIEW_DESC GetRTVDesc() const { return rtvDesc; }
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetSRVHeap() const { return srvHeap_; }
-	uint32_t GetDescriptorSizeSRV() const { return descSizeSRV_; }
-
 	D3D12_VIEWPORT GetViewport() const { return viewport_; }
 	D3D12_RECT GetScissorRect() const { return scissorRect_; }
 
+	static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
+		const Microsoft::WRL::ComPtr<ID3D12Device>& device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 private:
 	bool CreateDevice(bool enableDebug);
 	bool CreateSwapChain();
@@ -83,13 +77,11 @@ private:
 	// ヒープ・ビュー
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[kBufferCount]{};
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthTex_;
 
 	uint32_t descSizeRTV_ = 0;
 	uint32_t descSizeDSV_ = 0;
-	uint32_t descSizeSRV_ = 0;
 
 	// 同期
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
