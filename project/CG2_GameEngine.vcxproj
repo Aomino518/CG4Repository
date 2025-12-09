@@ -151,6 +151,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Particle3D.cpp" />
+    <ClCompile Include="Particle3DCommon.cpp" />
     <ClCompile Include="SeekerEngine\Utils\BlendStateUtils.cpp" />
     <ClCompile Include="SeekerEngine\Framework\CameraManager.cpp" />
     <ClCompile Include="SeekerEngine\Framework\Camera.cpp" />
@@ -283,6 +285,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Particle3D.h" />
+    <ClInclude Include="Particle3DCommon.h" />
     <ClInclude Include="SeekerEngine\Utils\BlendStateUtils.h" />
     <ClInclude Include="SeekerEngine\Framework\CameraManager.h" />
     <ClInclude Include="SeekerEngine\Framework\Camera.h" />
