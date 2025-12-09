@@ -83,7 +83,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine\App;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Renderer;$(ProjectDir)Engine\Utils;$(ProjectDir)resources\hlsl;$(ProjectDir)Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\App;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Framework;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Renderer;$(ProjectDir)SeekerEngine\Utils;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -109,7 +109,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine\App;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Renderer;$(ProjectDir)Engine\Utils;$(ProjectDir)resources\hlsl;$(ProjectDir)Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\App;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Framework;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Renderer;$(ProjectDir)SeekerEngine\Utils;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,7 +136,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>MaxSpeed</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine\App;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Renderer;$(ProjectDir)Engine\Utils;$(ProjectDir)resources\hlsl;$(ProjectDir)Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\App;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Framework;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Renderer;$(ProjectDir)SeekerEngine\Utils;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,13 +153,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="BlendStateUtils.cpp" />
     <ClCompile Include="CameraManager.cpp" />
-    <ClCompile Include="Engine\Framework\Camera.cpp" />
-    <ClCompile Include="Engine\Utils\Color.cpp" />
-    <ClCompile Include="Engine\Utils\CreateResorceUtils.cpp" />
-    <ClCompile Include="Engine\Utils\D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="Engine\App\Application.cpp" />
-    <ClCompile Include="Engine\Framework\DebugCamera.cpp" />
-    <ClCompile Include="Engine\Framework\DxcCompiler.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\Camera.cpp" />
+    <ClCompile Include="SeekerEngine\Utils\Color.cpp" />
+    <ClCompile Include="SeekerEngine\Utils\CreateResorceUtils.cpp" />
+    <ClCompile Include="SeekerEngine\Utils\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="SeekerEngine\App\Application.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\DebugCamera.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\DxcCompiler.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -181,31 +181,31 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\Graphics.cpp" />
-    <ClCompile Include="Engine\Framework\InputLayout.cpp" />
-    <ClCompile Include="Engine\Input\Input.cpp" />
-    <ClCompile Include="Engine\Utils\Logger.cpp" />
-    <ClCompile Include="Engine\Framework\ImGuiManager.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\Graphics.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\InputLayout.cpp" />
+    <ClCompile Include="SeekerEngine\Input\Input.cpp" />
+    <ClCompile Include="SeekerEngine\Utils\Logger.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\ImGuiManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix.cpp" />
-    <ClCompile Include="Engine\Framework\PsoBuilder.cpp" />
-    <ClCompile Include="Engine\Framework\RootSignatureFactory.cpp" />
-    <ClCompile Include="Engine\Audio\Sound.cpp" />
-    <ClCompile Include="Engine\Renderer\Sprite.cpp" />
-    <ClCompile Include="Engine\Renderer\SpriteCommon.cpp" />
-    <ClCompile Include="Engine\Utils\StringUtil.cpp" />
-    <ClCompile Include="Engine\Renderer\Entity3D.cpp" />
-    <ClCompile Include="Engine\Renderer\Entity3DCommon.cpp" />
-    <ClCompile Include="Engine\Renderer\Model.cpp" />
-    <ClCompile Include="Engine\Renderer\ModelCommon.cpp" />
-    <ClCompile Include="Engine\Renderer\ModelManager.cpp" />
-    <ClCompile Include="Engine\SeekerEngine.cpp" />
-    <ClCompile Include="Engine\Audio\SoundCommon.cpp" />
-    <ClCompile Include="Engine\Renderer\TextureManager.cpp" />
+    <ClCompile Include="SeekerEngine\Math\Matrix.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\PsoBuilder.cpp" />
+    <ClCompile Include="SeekerEngine\Framework\RootSignatureFactory.cpp" />
+    <ClCompile Include="SeekerEngine\Audio\Sound.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\Sprite.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\SpriteCommon.cpp" />
+    <ClCompile Include="SeekerEngine\Utils\StringUtil.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\Entity3D.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\Entity3DCommon.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\Model.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\ModelCommon.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\ModelManager.cpp" />
+    <ClCompile Include="SeekerEngine\SeekerEngine.cpp" />
+    <ClCompile Include="SeekerEngine\Audio\SoundCommon.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\TextureManager.cpp" />
     <ClCompile Include="Particle3DCommon.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="SEFramework.cpp" />
@@ -285,13 +285,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="BlendStateUtils.h" />
     <ClInclude Include="CameraManager.h" />
-    <ClInclude Include="Engine\Framework\Camera.h" />
-    <ClInclude Include="Engine\Utils\Color.h" />
-    <ClInclude Include="Engine\Utils\CreateResorceUtils.h" />
-    <ClInclude Include="Engine\Utils\D3DResourceLeakChecker.h" />
-    <ClInclude Include="Engine\App\Application.h" />
-    <ClInclude Include="Engine\Framework\DebugCamera.h" />
-    <ClInclude Include="Engine\Framework\DxcCompiler.h" />
+    <ClInclude Include="SeekerEngine\Framework\Camera.h" />
+    <ClInclude Include="SeekerEngine\Utils\Color.h" />
+    <ClInclude Include="SeekerEngine\Utils\CreateResorceUtils.h" />
+    <ClInclude Include="SeekerEngine\Utils\D3DResourceLeakChecker.h" />
+    <ClInclude Include="SeekerEngine\App\Application.h" />
+    <ClInclude Include="SeekerEngine\Framework\DebugCamera.h" />
+    <ClInclude Include="SeekerEngine\Framework\DxcCompiler.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -300,29 +300,29 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="Engine\Framework\Graphics.h" />
-    <ClInclude Include="Engine\Framework\InputLayout.h" />
-    <ClInclude Include="Engine\Input\Input.h" />
-    <ClInclude Include="Engine\Utils\Logger.h" />
-    <ClInclude Include="Engine\Math\Matrix.h" />
-    <ClInclude Include="Engine\Framework\PsoBuilder.h" />
-    <ClInclude Include="Engine\Framework\RootSignatureFactory.h" />
-    <ClInclude Include="Engine\Audio\Sound.h" />
-    <ClInclude Include="Engine\Renderer\Sprite.h" />
-    <ClInclude Include="Engine\Renderer\SpriteCommon.h" />
-    <ClInclude Include="Engine\Utils\StringUtil.h" />
-    <ClInclude Include="Engine\Renderer\Entity3D.h" />
-    <ClInclude Include="Engine\Renderer\Entity3DCommon.h" />
-    <ClInclude Include="Engine\Framework\ImGuiManager.h" />
-    <ClInclude Include="Engine\Renderer\Model.h" />
-    <ClInclude Include="Engine\Renderer\ModelCommon.h" />
-    <ClInclude Include="Engine\Renderer\ModelManager.h" />
-    <ClInclude Include="Engine\SeekerEngine.h" />
-    <ClInclude Include="Engine\Audio\SoundCommon.h" />
-    <ClInclude Include="Engine\Renderer\TextureManager.h" />
-    <ClInclude Include="Engine\Math\Vector2.h" />
-    <ClInclude Include="Engine\Math\Vector3.h" />
-    <ClInclude Include="Engine\Math\Vector4.h" />
+    <ClInclude Include="SeekerEngine\Framework\Graphics.h" />
+    <ClInclude Include="SeekerEngine\Framework\InputLayout.h" />
+    <ClInclude Include="SeekerEngine\Input\Input.h" />
+    <ClInclude Include="SeekerEngine\Utils\Logger.h" />
+    <ClInclude Include="SeekerEngine\Math\Matrix.h" />
+    <ClInclude Include="SeekerEngine\Framework\PsoBuilder.h" />
+    <ClInclude Include="SeekerEngine\Framework\RootSignatureFactory.h" />
+    <ClInclude Include="SeekerEngine\Audio\Sound.h" />
+    <ClInclude Include="SeekerEngine\Renderer\Sprite.h" />
+    <ClInclude Include="SeekerEngine\Renderer\SpriteCommon.h" />
+    <ClInclude Include="SeekerEngine\Utils\StringUtil.h" />
+    <ClInclude Include="SeekerEngine\Renderer\Entity3D.h" />
+    <ClInclude Include="SeekerEngine\Renderer\Entity3DCommon.h" />
+    <ClInclude Include="SeekerEngine\Framework\ImGuiManager.h" />
+    <ClInclude Include="SeekerEngine\Renderer\Model.h" />
+    <ClInclude Include="SeekerEngine\Renderer\ModelCommon.h" />
+    <ClInclude Include="SeekerEngine\Renderer\ModelManager.h" />
+    <ClInclude Include="SeekerEngine\SeekerEngine.h" />
+    <ClInclude Include="SeekerEngine\Audio\SoundCommon.h" />
+    <ClInclude Include="SeekerEngine\Renderer\TextureManager.h" />
+    <ClInclude Include="SeekerEngine\Math\Vector2.h" />
+    <ClInclude Include="SeekerEngine\Math\Vector3.h" />
+    <ClInclude Include="SeekerEngine\Math\Vector4.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Particle3DCommon.h" />
     <ClInclude Include="ParticleManager.h" />

@@ -96,85 +96,85 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>externals\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\App\Application.cpp">
+    <ClCompile Include="SeekerEngine\App\Application.cpp">
       <Filter>ソース ファイル\Engine\App</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utils\Logger.cpp">
+    <ClCompile Include="SeekerEngine\Utils\Logger.cpp">
       <Filter>ソース ファイル\Engine\App</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\DebugCamera.cpp">
+    <ClCompile Include="SeekerEngine\Framework\DebugCamera.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\DxcCompiler.cpp">
+    <ClCompile Include="SeekerEngine\Framework\DxcCompiler.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\Graphics.cpp">
+    <ClCompile Include="SeekerEngine\Framework\Graphics.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\InputLayout.cpp">
+    <ClCompile Include="SeekerEngine\Framework\InputLayout.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\PsoBuilder.cpp">
+    <ClCompile Include="SeekerEngine\Framework\PsoBuilder.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\RootSignatureFactory.cpp">
+    <ClCompile Include="SeekerEngine\Framework\RootSignatureFactory.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\Input.cpp">
+    <ClCompile Include="SeekerEngine\Input\Input.cpp">
       <Filter>ソース ファイル\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix.cpp">
+    <ClCompile Include="SeekerEngine\Math\Matrix.cpp">
       <Filter>ソース ファイル\Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\Sound.cpp">
+    <ClCompile Include="SeekerEngine\Audio\Sound.cpp">
       <Filter>ソース ファイル\Engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\Sprite.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\Sprite.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\SpriteCommon.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\SpriteCommon.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utils\StringUtil.cpp">
+    <ClCompile Include="SeekerEngine\Utils\StringUtil.cpp">
       <Filter>ソース ファイル\Engine\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\Camera.cpp">
+    <ClCompile Include="SeekerEngine\Framework\Camera.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utils\Color.cpp">
+    <ClCompile Include="SeekerEngine\Utils\Color.cpp">
       <Filter>ソース ファイル\Engine\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utils\CreateResorceUtils.cpp">
+    <ClCompile Include="SeekerEngine\Utils\CreateResorceUtils.cpp">
       <Filter>ソース ファイル\Engine\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utils\D3DResourceLeakChecker.cpp">
+    <ClCompile Include="SeekerEngine\Utils\D3DResourceLeakChecker.cpp">
       <Filter>ソース ファイル\Engine\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Framework\ImGuiManager.cpp">
+    <ClCompile Include="SeekerEngine\Framework\ImGuiManager.cpp">
       <Filter>ソース ファイル\Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\Entity3D.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\Entity3D.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\Entity3DCommon.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\Entity3DCommon.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\Model.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\Model.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\ModelCommon.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\ModelCommon.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\ModelManager.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\ModelManager.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\TextureManager.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\TextureManager.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Audio\SoundCommon.cpp">
+    <ClCompile Include="SeekerEngine\Audio\SoundCommon.cpp">
       <Filter>ソース ファイル\Engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\SeekerEngine.cpp">
+    <ClCompile Include="SeekerEngine\SeekerEngine.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
@@ -245,94 +245,94 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>externals\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\App\Application.h">
+    <ClInclude Include="SeekerEngine\App\Application.h">
       <Filter>ヘッダー ファイル\Engine\App</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\DebugCamera.h">
+    <ClInclude Include="SeekerEngine\Framework\DebugCamera.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\DxcCompiler.h">
+    <ClInclude Include="SeekerEngine\Framework\DxcCompiler.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\Graphics.h">
+    <ClInclude Include="SeekerEngine\Framework\Graphics.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\InputLayout.h">
+    <ClInclude Include="SeekerEngine\Framework\InputLayout.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\PsoBuilder.h">
+    <ClInclude Include="SeekerEngine\Framework\PsoBuilder.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\RootSignatureFactory.h">
+    <ClInclude Include="SeekerEngine\Framework\RootSignatureFactory.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Input\Input.h">
+    <ClInclude Include="SeekerEngine\Input\Input.h">
       <Filter>ヘッダー ファイル\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utils\Logger.h">
+    <ClInclude Include="SeekerEngine\Utils\Logger.h">
       <Filter>ヘッダー ファイル\Engine\App</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\Sound.h">
+    <ClInclude Include="SeekerEngine\Audio\Sound.h">
       <Filter>ヘッダー ファイル\Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix.h">
+    <ClInclude Include="SeekerEngine\Math\Matrix.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\Sprite.h">
+    <ClInclude Include="SeekerEngine\Renderer\Sprite.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\SpriteCommon.h">
+    <ClInclude Include="SeekerEngine\Renderer\SpriteCommon.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utils\StringUtil.h">
+    <ClInclude Include="SeekerEngine\Utils\StringUtil.h">
       <Filter>ヘッダー ファイル\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector2.h">
+    <ClInclude Include="SeekerEngine\Math\Vector2.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector3.h">
+    <ClInclude Include="SeekerEngine\Math\Vector3.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector4.h">
+    <ClInclude Include="SeekerEngine\Math\Vector4.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\Camera.h">
+    <ClInclude Include="SeekerEngine\Framework\Camera.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utils\Color.h">
+    <ClInclude Include="SeekerEngine\Utils\Color.h">
       <Filter>ヘッダー ファイル\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utils\CreateResorceUtils.h">
+    <ClInclude Include="SeekerEngine\Utils\CreateResorceUtils.h">
       <Filter>ヘッダー ファイル\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Utils\D3DResourceLeakChecker.h">
+    <ClInclude Include="SeekerEngine\Utils\D3DResourceLeakChecker.h">
       <Filter>ヘッダー ファイル\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\Entity3D.h">
+    <ClInclude Include="SeekerEngine\Renderer\Entity3D.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\Entity3DCommon.h">
+    <ClInclude Include="SeekerEngine\Renderer\Entity3DCommon.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\Model.h">
+    <ClInclude Include="SeekerEngine\Renderer\Model.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\ModelCommon.h">
+    <ClInclude Include="SeekerEngine\Renderer\ModelCommon.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\ModelManager.h">
+    <ClInclude Include="SeekerEngine\Renderer\ModelManager.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\TextureManager.h">
+    <ClInclude Include="SeekerEngine\Renderer\TextureManager.h">
       <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Framework\ImGuiManager.h">
+    <ClInclude Include="SeekerEngine\Framework\ImGuiManager.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Audio\SoundCommon.h">
+    <ClInclude Include="SeekerEngine\Audio\SoundCommon.h">
       <Filter>ヘッダー ファイル\Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\SeekerEngine.h">
+    <ClInclude Include="SeekerEngine\SeekerEngine.h">
       <Filter>ヘッダー ファイル\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
