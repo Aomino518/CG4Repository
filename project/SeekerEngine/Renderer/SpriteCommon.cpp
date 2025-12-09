@@ -23,7 +23,6 @@ void SpriteCommon::RebuildPso()
 	// 書き込みします
 	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-
 	InputLayout inputLayout;
 	D3D12_INPUT_LAYOUT_DESC layout = inputLayout.CreateInputLayout2D();
 
@@ -74,15 +73,12 @@ void SpriteCommon::CreateGraphicPipeline(Graphics* graphics, DxcCompiler dxcComp
 	// 書き込みします
 	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-
-	InputLayout inputLayout;
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc2D{};
 	inputLayoutDesc2D = inputLayout.CreateInputLayout2D();
 
 	// BlendStateの設定
 	// すべての色要素を書き込む
 	blendDesc_ = CreateBlendDesc(mode_);
-	
 	// RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// 裏面(時計回り)を表示しない

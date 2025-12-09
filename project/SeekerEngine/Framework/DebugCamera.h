@@ -15,11 +15,10 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
-
+  
 	const Matrix4x4& GetViewMatrix() const{ return viewMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 
-private:
 	// X,Y,Z軸回りのローカル回転角
 	//Vector3 rotation_ = { 0, 0, 0 };
 	// 累積回転行列

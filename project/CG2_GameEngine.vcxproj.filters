@@ -180,22 +180,22 @@
     <ClCompile Include="Game.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="StartupManager.cpp">
+    <ClCompile Include="SeekerEngine\Utils\StartupManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="SEFramework.cpp">
+    <ClCompile Include="SeekerEngine\Framework\SEFramework.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="CameraManager.cpp">
+    <ClCompile Include="SeekerEngine\Framework\CameraManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="BlendStateUtils.cpp">
+    <ClCompile Include="SeekerEngine\Utils\BlendStateUtils.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleManager.cpp">
+    <ClCompile Include="SeekerEngine\Renderer\ParticleManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="SrvManager.cpp">
+    <ClCompile Include="SeekerEngine\Framework\SrvManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Particle3DCommon.cpp">
@@ -338,22 +338,22 @@
     <ClInclude Include="Game.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="StartupManager.h">
+    <ClInclude Include="SeekerEngine\Utils\StartupManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="SEFramework.h">
+    <ClInclude Include="SeekerEngine\Framework\SEFramework.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="CameraManager.h">
+    <ClInclude Include="SeekerEngine\Framework\CameraManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="BlendStateUtils.h">
+    <ClInclude Include="SeekerEngine\Utils\BlendStateUtils.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleManager.h">
+    <ClInclude Include="SeekerEngine\Renderer\ParticleManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="SrvManager.h">
+    <ClInclude Include="SeekerEngine\Framework\SrvManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Particle3DCommon.h">

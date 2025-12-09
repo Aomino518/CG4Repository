@@ -27,6 +27,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoBuilder::CreatePsoDesc(
 
 	// DepthStencilの設定
 	desc_.DepthStencilState = depthStencilDesc;
+  
 	desc_.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 書き込むRTVの情報

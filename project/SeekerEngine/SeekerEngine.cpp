@@ -22,7 +22,7 @@ void SeekerEngine::Init()
 	Input::GetInstance()->Init(app_.get());
 	TextureManager::GetInstance()->Init(graphics_.get());
 	ModelManager::GetInstance()->Init(graphics_.get());
-
+  
 	// RootSignature作成
 	rootSignatureFactory_.Init(graphics_.get());
 	rs3D_ = rootSignatureFactory_.Create3D();
@@ -61,6 +61,7 @@ void SeekerEngine::Shutdown()
 	soundCommon_->Shutdown();
 
 	SrvManager::GetInstance()->Shutdown();
+  
 	graphics_->Shutdown();
 
 	Logger::Write("AppのShutdown");

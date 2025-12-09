@@ -59,7 +59,6 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 	std::vector<Vector3> normals; // 法線
 	std::vector<Vector2> texcoords; // テクスチャ座標
 	std::string line; // ファイルから読んだ1行を格納するもの
-
 	std::filesystem::path objPath = std::filesystem::path(directoryPath) / (filename + ".obj");
 
 	if (!std::filesystem::exists(objPath)) {
