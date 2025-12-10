@@ -152,7 +152,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Particle3D.cpp" />
-    <ClCompile Include="Particle3DCommon.cpp" />
+    <ClCompile Include="SeekerEngine\Renderer\Particle3DCommon.cpp" />
     <ClCompile Include="SeekerEngine\Utils\BlendStateUtils.cpp" />
     <ClCompile Include="SeekerEngine\Framework\CameraManager.cpp" />
     <ClCompile Include="SeekerEngine\Framework\Camera.cpp" />
@@ -208,7 +208,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="SeekerEngine\SeekerEngine.cpp" />
     <ClCompile Include="SeekerEngine\Audio\SoundCommon.cpp" />
     <ClCompile Include="SeekerEngine\Renderer\TextureManager.cpp" />
-    <ClCompile Include="SeekerEngine\Particle3DCommon.cpp" />
     <ClCompile Include="SeekerEngine\Renderer\ParticleManager.cpp" />
     <ClCompile Include="SeekerEngine\Framework\SEFramework.cpp" />
     <ClCompile Include="SeekerEngine\Framework\SrvManager.cpp" />
@@ -286,7 +285,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Particle3D.h" />
-    <ClInclude Include="Particle3DCommon.h" />
+    <ClInclude Include="SeekerEngine\Renderer\Particle3DCommon.h" />
     <ClInclude Include="SeekerEngine\Utils\BlendStateUtils.h" />
     <ClInclude Include="SeekerEngine\Framework\CameraManager.h" />
     <ClInclude Include="SeekerEngine\Framework\Camera.h" />
