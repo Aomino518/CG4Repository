@@ -285,7 +285,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Particle3D.h" />
-    <ClInclude Include="SeekerEngine\Renderer\Particle3DCommon.h" />
     <ClInclude Include="SeekerEngine\Utils\BlendStateUtils.h" />
     <ClInclude Include="SeekerEngine\Framework\CameraManager.h" />
     <ClInclude Include="SeekerEngine\Framework\Camera.h" />
