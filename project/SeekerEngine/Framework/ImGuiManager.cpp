@@ -269,8 +269,33 @@ void ImGuiManager::ParticleSetting(const std::string& name, Particle3DCommon* pa
 			particle->SetBlendMode((BlendMode)currentBlend);
 		}
 
+		Emitter& emitter = particle->GetEmitter();
+		
+		ImGui::Separator();
+		ImGui::Text("Emitter Settings");
+
+		ImGui::DragFloat3("Emitter Translate", (float*)&emitter.transform.translate, 0.1f, -100.0f, 100.0f);
+		ImGui::DragFloat3("Emitter Rotate", (float*)&emitter.transform.rotate, 0.1f, -360.0f, 360.0f);
+		ImGui::DragFloat3("Emitter Scale", (float*)&emitter.transform.scale, 0.01f, 0.0f, 10.0f);
+
+		ImGui::DragInt("Emit Count", (int*)&emitter.count, 1.0f, 1, 100);
+		ImGui::DragFloat("Frequency", &emitter.frequency, 0.01f, 0.0f, 5.0f);
+
+		if (ImGui::Button("Emit Once")) {
+			std::random_device rd;
+			std::mt19937 randomEngine(rd());
+
+			auto newParticles = particle->Emit(emitter, randomEngine);
+			auto& listRef = const_cast<std::list<Particle>&>(particle->GetPatricles());
+
+			listRef.splice(
+				listRef.end(),
+				newParticles
+			);
+		}
+
 		// 生存パーティクル数の表示
-		ImGui::Text("Alive Particles: %u", particle->GetkNumMaxInstance());
+		ImGui::Text("Alive Particles: %u", particle->GetAliveCount());
 
 		ImGui::PopID();
 	}

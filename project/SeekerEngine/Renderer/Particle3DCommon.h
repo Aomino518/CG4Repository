@@ -16,6 +16,13 @@
 #include <random>
 #include <numbers>
 
+struct Emitter {
+	Transform transform;   // 発生位置・回転・拡縮
+	uint32_t count;        // 1回の発生で何個出すか
+	float frequency;       // 発生頻度
+	float frequencyTime;   // 発生タイマー
+};
+
 class Particle3DCommon
 {
 public:
@@ -35,6 +42,9 @@ public:
 	bool GetUseBillboard() { return useBillboard_; }
 	BlendMode GetBlendMode() { return mode_; }
 	uint32_t GetkNumMaxInstance() { return kNumMaxInstance_; }
+	uint32_t GetAliveCount() const { return static_cast<uint32_t>(particles_.size()); }
+	const std::list<Particle>& GetPatricles() const { return particles_; }
+	Emitter& GetEmitter() { return emitter_; }
 
 	// Setter関数
 	void SetTexture(uint32_t textureId) {
@@ -44,7 +54,10 @@ public:
 
 	void SetUseBillboard(bool useBillboard) { this->useBillboard_ = useBillboard; }
 
-	Particle MakeNewParticle(std::mt19937& randomEngine);
+	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
+
+	std::list<Particle> Emit(const Emitter& emitter, std::mt19937& randomEngine);
+	void UpdateEmitter();
 
 private:
 	void CreateGraphicsPipeline(Graphics* graphics, DxcCompiler& dxcCompiler);
@@ -88,7 +101,7 @@ private:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_{};
 
-	Particle particle_[kNumMaxInstance_];
+	std::list<Particle> particles_;
 
 	const float kDeltaTime = 1.0f / 60.0f;
 	uint32_t numInstance = 0;
@@ -97,5 +110,7 @@ private:
 
 	// ビルボードを使用しているか
 	bool useBillboard_ = false;
+
+	Emitter emitter_;
 };
 
