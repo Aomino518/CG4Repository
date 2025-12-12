@@ -97,6 +97,7 @@ void Game::Update()
 	imgui.BegineFrame();
 	imgui.BegineInspector();
 	imgui.CameraSetting(cameraManager.get());
+	imgui.ParticleSetting("testParticle", engine_.GetPaticleCommon());
 	//imgui.SpriteSetting("uvChecker", sprite.get());
 	//imgui.ModelSetting("fence.obj", entity.get());
 	imgui.EndInspector();

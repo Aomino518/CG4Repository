@@ -1,6 +1,7 @@
 #pragma once
 #include "CreateResorceUtils.h"
 #include "Application.h"
+#include <numbers>
 
 class Camera
 {
@@ -11,14 +12,17 @@ public:
 	// Getter
 	const Vector3& GetTranslate() const { return transform_.translate; }
 	const Vector3& GetRotate() const { return transform_.rotate; }
+	const Vector3& GetScale() const { return transform_.scale; }
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
+	Matrix4x4 GetBillboardMatrix();
 
 	// Setter
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
+	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }
 	void SetFovY(float fovY) { this->fovY_ = fovY; }
 	void SetAspectRatio(float aspectRatio) { this->aspectRatio_ = aspectRatio; }
 	void SetNearClip(float nearClip) { this->nearClip_ = nearClip; }

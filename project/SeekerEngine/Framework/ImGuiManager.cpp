@@ -250,6 +250,33 @@ void ImGuiManager::CameraSetting(CameraManager* cameraManager)
 #endif
 }
 
+void ImGuiManager::ParticleSetting(const std::string& name, Particle3DCommon* particle)
+{
+#ifdef USE_IMGUI
+	if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+
+		ImGui::PushID(name.c_str());
+
+		// Billboard ON/OFF
+		bool useBillboard = particle->GetUseBillboard();
+		if (ImGui::Checkbox("Use Billboard", &useBillboard)) {
+			particle->SetUseBillboard(useBillboard);
+		}
+
+		// BlendMode
+		int currentBlend = particle->GetBlendMode();
+		if (ImGui::Combo("BlendMode", &currentBlend, blendNames, IM_ARRAYSIZE(blendNames))) {
+			particle->SetBlendMode((BlendMode)currentBlend);
+		}
+
+		// 生存パーティクル数の表示
+		ImGui::Text("Alive Particles: %u", particle->GetkNumMaxInstance());
+
+		ImGui::PopID();
+	}
+#endif
+}
+
 void ImGuiManager::StyleSetting()
 {
 #ifdef USE_IMGUI

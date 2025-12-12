@@ -9,6 +9,7 @@
 #include "Entity3D.h"
 #include "CameraManager.h"
 #include "BlendStateUtils.h"
+#include "Particle3DCommon.h"
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -31,6 +32,7 @@ public:
 	void BegineInspector();
 	void EndInspector();
 	void CameraSetting(CameraManager* cameraManager);
+	void ParticleSetting(const std::string& name, Particle3DCommon* particle);
 
 private:
 	void StyleSetting();

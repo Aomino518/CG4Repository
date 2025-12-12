@@ -1,9 +1,16 @@
 #include "CameraManager.h"
+#include <numbers>
 
 void CameraManager::Init()
 {
 	CreateCamera("MainCamera");
-	cameras_[0].camera->SetTranslate({0.0f, 0.0f, -10.0f});
+	cameras_[0].camera->SetTranslate({0.0f, 23.0f, -10.0f});
+	cameras_[0].camera->SetRotate(
+		{ std::numbers::pi_v<float> / 3.0f,
+		 0.0f,
+		 0.0f }
+	);
+	cameras_[0].camera->SetScale({ 1.0f, 1.0f, 1.0f });
 	CreateDebugCamera();
 	SetActiveCamera(false, 0);
 }

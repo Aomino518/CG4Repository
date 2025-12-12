@@ -14,6 +14,7 @@
 #include "DebugCamera.h"
 #include "TextureManager.h"
 #include <random>
+#include <numbers>
 
 class Particle3DCommon
 {
@@ -30,10 +31,18 @@ public:
 
 	void UpdateInstanceData(CameraManager* cameraManager);
 
+	// Getter関数
+	bool GetUseBillboard() { return useBillboard_; }
+	BlendMode GetBlendMode() { return mode_; }
+	uint32_t GetkNumMaxInstance() { return kNumMaxInstance_; }
+
+	// Setter関数
 	void SetTexture(uint32_t textureId) {
 		textureIndex_ = textureId;
 		textureSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(textureId);
 	}
+
+	void SetUseBillboard(bool useBillboard) { this->useBillboard_ = useBillboard; }
 
 	Particle MakeNewParticle(std::mt19937& randomEngine);
 
@@ -85,5 +94,8 @@ private:
 	uint32_t numInstance = 0;
 
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};
+
+	// ビルボードを使用しているか
+	bool useBillboard_ = false;
 };
 

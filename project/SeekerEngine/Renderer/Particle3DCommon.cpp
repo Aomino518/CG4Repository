@@ -105,60 +105,75 @@ void Particle3DCommon::RebuildPso()
 	psoParticle3D_ = builder.BuildPso(psoDesc);
 }
 
-void Particle3DCommon::UpdateInstanceData(CameraManager* cameraManager)
-{
-	cameraManager_ = cameraManager;
-	debugCamera_ = cameraManager->GetDebugCamera();
-	camera_ = cameraManager->GetActiveCamera();
+void Particle3DCommon::UpdateInstanceData(CameraManager* cameraManager)  
+{  
+   cameraManager_ = cameraManager;  
+   debugCamera_ = cameraManager->GetDebugCamera();  
+   camera_ = cameraManager->GetActiveCamera(); 
 
-	if (!instancingData_) {
-		return;
-	}
+   if (!instancingData_) {  
+       return;  
+   }  
 
-	bool isDebug = cameraManager_->GetIsDebug();
+   bool isDebug = cameraManager_->GetIsDebug();  
 
-	numInstance = 0;
-	for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {
-		if (particle_[i].lifeTime <= particle_[i].currentTime) {
-			continue;
-		}
+   numInstance = 0;  
+   for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {  
+       if (particle_[i].lifeTime <= particle_[i].currentTime) {  
+           continue;  
+       }  
 
-		particle_[i].transform.translate.x += particle_[i].velocity.x * kDeltaTime;
-		particle_[i].transform.translate.y += particle_[i].velocity.y * kDeltaTime;
-		particle_[i].transform.translate.z += particle_[i].velocity.z * kDeltaTime;
-		particle_[i].currentTime += kDeltaTime;
-		float alpha = 1.0f - (particle_[i].currentTime / particle_[i].lifeTime);
+       particle_[i].transform.translate.x += particle_[i].velocity.x * kDeltaTime;  
+       particle_[i].transform.translate.y += particle_[i].velocity.y * kDeltaTime;  
+       particle_[i].transform.translate.z += particle_[i].velocity.z * kDeltaTime;  
+       particle_[i].currentTime += kDeltaTime;  
+       float alpha = 1.0f - (particle_[i].currentTime / particle_[i].lifeTime);  
 
-		Matrix4x4 wvpMatrix;
-		// World行列
-		Matrix4x4 worldMatrix = MakeAffineMatrix(
-			particle_[i].transform.scale,
-			particle_[i].transform.rotate,
-			particle_[i].transform.translate);
+       Matrix4x4 wvpMatrix;  
+       Matrix4x4 worldMatrix;  
 
-		if (isDebug) {
-			if (debugCamera_) {
-				const Matrix4x4& viewProjectionMatrix = debugCamera_->GetViewProjectionMatrix();
-				wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);
-			} else {
-				wvpMatrix = worldMatrix;
-			}
-		} else {
-			if (camera_) {
-				const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-				wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);
-			} else {
-				wvpMatrix = worldMatrix;
-			}
-		}
+       if (useBillboard_) {  
+           Matrix4x4 scaleMatrix = MakeScaleMatrix(particle_[i].transform.scale);  
+           Matrix4x4 translateMatrix = MakeTranslateMatrix(particle_[i].transform.translate);  
 
-		// 書き込み
-		instancingData_[numInstance].World = worldMatrix;
-		instancingData_[numInstance].WVP = wvpMatrix;
-		instancingData_[numInstance].color = particle_[i].color;
-		instancingData_[numInstance].color.w = alpha;
-		++numInstance;
-	}
+           if (camera_) {  
+			   const Matrix4x4& billBoardMatrix = camera_->GetBillboardMatrix();
+               worldMatrix = scaleMatrix * billBoardMatrix * translateMatrix;
+           } else {
+               worldMatrix = scaleMatrix * translateMatrix;  
+           }  
+
+       } else {  
+           // World行列  
+           worldMatrix = MakeAffineMatrix(  
+               particle_[i].transform.scale,  
+               particle_[i].transform.rotate,  
+               particle_[i].transform.translate);  
+       }  
+
+       if (isDebug) {  
+           if (debugCamera_) {  
+               const Matrix4x4& viewProjectionMatrix = debugCamera_->GetViewProjectionMatrix();  
+               wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);  
+           } else {  
+               wvpMatrix = worldMatrix;  
+           }  
+       } else {  
+           if (camera_) {  
+               const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();  
+               wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);  
+           } else {  
+               wvpMatrix = worldMatrix;  
+           }  
+       }  
+
+       // 書き込み  
+       instancingData_[numInstance].World = worldMatrix;  
+       instancingData_[numInstance].WVP = wvpMatrix;  
+       instancingData_[numInstance].color = particle_[i].color;  
+       instancingData_[numInstance].color.w = alpha;  
+       ++numInstance;  
+   }  
 }
 
 Particle Particle3DCommon::MakeNewParticle(std::mt19937& randomEngine)
