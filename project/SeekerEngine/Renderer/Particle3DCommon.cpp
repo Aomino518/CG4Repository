@@ -22,11 +22,11 @@ void Particle3DCommon::Init(Graphics* graphics, DxcCompiler& dxcCompiler, ID3D12
 
     cmdList_ = Graphics::GetCmdList();
 
-	for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {
+	/*for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {
 		std::random_device seedGenerator;
 		std::mt19937 randomEngine(seedGenerator());
 		particle_[i] = MakeNewParticle(randomEngine);
-	}
+	}*/
 }
 
 void Particle3DCommon::DrawCommon()
@@ -118,23 +118,25 @@ void Particle3DCommon::UpdateInstanceData(CameraManager* cameraManager)
    bool isDebug = cameraManager_->GetIsDebug();  
 
    numInstance = 0;  
-   for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {  
-       if (particle_[i].lifeTime <= particle_[i].currentTime) {  
+   for (std::list<Particle>::iterator particleIterator = particles_.begin();
+	   particleIterator != particles_.end(); ) {
+       if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {  
+		   particleIterator = particles_.erase(particleIterator);
            continue;  
        }  
 
-       particle_[i].transform.translate.x += particle_[i].velocity.x * kDeltaTime;  
-       particle_[i].transform.translate.y += particle_[i].velocity.y * kDeltaTime;  
-       particle_[i].transform.translate.z += particle_[i].velocity.z * kDeltaTime;  
-       particle_[i].currentTime += kDeltaTime;  
-       float alpha = 1.0f - (particle_[i].currentTime / particle_[i].lifeTime);  
+	   particleIterator->transform.translate.x += particleIterator->velocity.x * kDeltaTime;
+	   particleIterator->transform.translate.y += particleIterator->velocity.y * kDeltaTime;
+	   particleIterator->transform.translate.z += particleIterator->velocity.z * kDeltaTime;
+	   particleIterator->currentTime += kDeltaTime;
+       float alpha = 1.0f - (particleIterator->currentTime / particleIterator->lifeTime);
 
        Matrix4x4 wvpMatrix;  
        Matrix4x4 worldMatrix;  
 
        if (useBillboard_) {  
-           Matrix4x4 scaleMatrix = MakeScaleMatrix(particle_[i].transform.scale);  
-           Matrix4x4 translateMatrix = MakeTranslateMatrix(particle_[i].transform.translate);  
+           Matrix4x4 scaleMatrix = MakeScaleMatrix(particleIterator->transform.scale);
+           Matrix4x4 translateMatrix = MakeTranslateMatrix(particleIterator->transform.translate);
 
            if (camera_) {  
 			   const Matrix4x4& billBoardMatrix = camera_->GetBillboardMatrix();
@@ -146,9 +148,9 @@ void Particle3DCommon::UpdateInstanceData(CameraManager* cameraManager)
        } else {  
            // World行列  
            worldMatrix = MakeAffineMatrix(  
-               particle_[i].transform.scale,  
-               particle_[i].transform.rotate,  
-               particle_[i].transform.translate);  
+			   particleIterator->transform.scale,
+			   particleIterator->transform.rotate,
+			   particleIterator->transform.translate);
        }  
 
        if (isDebug) {  
@@ -167,31 +169,60 @@ void Particle3DCommon::UpdateInstanceData(CameraManager* cameraManager)
            }  
        }  
 
-       // 書き込み  
-       instancingData_[numInstance].World = worldMatrix;  
-       instancingData_[numInstance].WVP = wvpMatrix;  
-       instancingData_[numInstance].color = particle_[i].color;  
-       instancingData_[numInstance].color.w = alpha;  
-       ++numInstance;  
+	   if (numInstance < kNumMaxInstance_) {
+		   // 書き込み  
+		   instancingData_[numInstance].World = worldMatrix;
+		   instancingData_[numInstance].WVP = wvpMatrix;
+		   instancingData_[numInstance].color = particleIterator->color;
+		   instancingData_[numInstance].color.w = alpha;
+		   ++numInstance;
+	   }
+
+	   ++particleIterator;
    }  
 }
 
-Particle Particle3DCommon::MakeNewParticle(std::mt19937& randomEngine)
+Particle Particle3DCommon::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate)
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
 	Particle particle;
+	Vector3 randomTranslate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+
 	// スケール（すべて同じ
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
 	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.velocity = { translate + randomTranslate };
 	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
 	particle.lifeTime = distTime(randomEngine);
 	particle.currentTime = 0;
 
 	return particle;
+}
+
+std::list<Particle> Particle3DCommon::Emit(const Emitter& emitter, std::mt19937& randomEngine)
+{
+	emitter_ = emitter;
+	std::list<Particle> particles;
+
+	for (uint32_t count = 0; count < emitter.count; ++count) {
+		particles.push_back(MakeNewParticle(randomEngine, emitter.transform.translate));
+	}
+
+	return particles;
+}
+
+void Particle3DCommon::UpdateEmitter()
+{
+	std::random_device rd;
+	std::mt19937 randomEngine(rd());
+	emitter_.frequencyTime += kDeltaTime;
+	if (emitter_.frequency <= emitter_.frequencyTime) {
+		particles_.splice(particles_.end(), Emit(emitter_, randomEngine));
+		emitter_.frequencyTime -= emitter_.frequency;
+	}
 }
 
 void Particle3DCommon::CreateGraphicsPipeline(Graphics* graphics, DxcCompiler& dxcCompiler)
@@ -297,7 +328,7 @@ void Particle3DCommon::CreateInstanceResource()
 	for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {
 		instancingData_[i].WVP = MakeIdentity4x4();
 		instancingData_[i].World = MakeIdentity4x4();
-		instancingData_[i].color = particle_[i].color;
+		instancingData_[i].color = { 1,1,1,1 };
 	}
 
 	Logger::Write("Particle instancing buffer created");

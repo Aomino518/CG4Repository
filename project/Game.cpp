@@ -88,6 +88,7 @@ void Game::Update()
 
 	cameraManager->Update();
 
+	engine_.GetPaticleCommon()->UpdateEmitter();
 	engine_.GetPaticleCommon()->UpdateInstanceData(cameraManager.get());
 	sprite->Update();
 
