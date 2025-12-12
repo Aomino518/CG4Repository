@@ -4,6 +4,11 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
+struct AABB {
+	Vector3 min;
+	Vector3 max;
+};
+
 struct Matrix3x3 {
 	float m[3][3];
 };
@@ -117,6 +122,8 @@ Vector3 Normalize(const Vector3& normal);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
 Matrix4x4 Transpose(const Matrix4x4& matrix);
+
+bool IsCollision(const AABB& aabb, const Vector3& point);
 
 // オペレーター
 Vector2& operator+=(Vector2& v1, const Vector2& v2);

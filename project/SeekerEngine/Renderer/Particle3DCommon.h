@@ -23,6 +23,11 @@ struct Emitter {
 	float frequencyTime;   // 発生タイマー
 };
 
+struct AccelerationField {
+	Vector3 acceleration;
+	AABB area;
+};
+
 class Particle3DCommon
 {
 public:
@@ -40,11 +45,13 @@ public:
 
 	// Getter関数
 	bool GetUseBillboard() { return useBillboard_; }
+	bool GetUseField() { return useField_; }
 	BlendMode GetBlendMode() { return mode_; }
 	uint32_t GetkNumMaxInstance() { return kNumMaxInstance_; }
 	uint32_t GetAliveCount() const { return static_cast<uint32_t>(particles_.size()); }
 	const std::list<Particle>& GetPatricles() const { return particles_; }
 	Emitter& GetEmitter() { return emitter_; }
+	AccelerationField& GetField() { return field_; }
 
 	// Setter関数
 	void SetTexture(uint32_t textureId) {
@@ -53,6 +60,7 @@ public:
 	}
 
 	void SetUseBillboard(bool useBillboard) { this->useBillboard_ = useBillboard; }
+	void SetUseField(bool useField) { this->useField_ = useField; }
 
 	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
 
@@ -111,6 +119,17 @@ private:
 	// ビルボードを使用しているか
 	bool useBillboard_ = false;
 
+	// 風を使用してるか
+	bool useField_ = false;
+
 	Emitter emitter_;
+
+	// フィールド
+	AccelerationField field_ = {
+	  { 15.0f, 0.0f, 0.0f },
+	  {{-1.0f, -1.0f, -1.0f},
+	  { 1.0f,  1.0f,  1.0f }}
+	};
+
 };
 

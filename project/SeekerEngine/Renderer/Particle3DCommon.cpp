@@ -125,6 +125,12 @@ void Particle3DCommon::UpdateInstanceData(CameraManager* cameraManager)
            continue;  
        }  
 
+	   if (useField_ && IsCollision(field_.area, (*particleIterator).transform.translate)) {
+			 (*particleIterator).velocity.x += field_.acceleration.x * kDeltaTime;
+			 (*particleIterator).velocity.y += field_.acceleration.y * kDeltaTime;
+			 (*particleIterator).velocity.z += field_.acceleration.z * kDeltaTime;
+	   }
+
 	   particleIterator->transform.translate.x += particleIterator->velocity.x * kDeltaTime;
 	   particleIterator->transform.translate.y += particleIterator->velocity.y * kDeltaTime;
 	   particleIterator->transform.translate.z += particleIterator->velocity.z * kDeltaTime;
@@ -193,8 +199,8 @@ Particle Particle3DCommon::MakeNewParticle(std::mt19937& randomEngine, const Vec
 	// スケール（すべて同じ
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
 	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-	particle.velocity = { translate + randomTranslate };
-	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.transform.translate = { translate + randomTranslate };
 	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
 	particle.lifeTime = distTime(randomEngine);
 	particle.currentTime = 0;

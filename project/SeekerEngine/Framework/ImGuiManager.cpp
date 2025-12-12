@@ -281,6 +281,19 @@ void ImGuiManager::ParticleSetting(const std::string& name, Particle3DCommon* pa
 		ImGui::DragInt("Emit Count", (int*)&emitter.count, 1.0f, 1, 100);
 		ImGui::DragFloat("Frequency", &emitter.frequency, 0.01f, 0.0f, 5.0f);
 
+		if (ImGui::CollapsingHeader("Field Settings")) {
+
+			bool useField = particle->GetUseField();
+			if (ImGui::Checkbox("Use Field", &useField)) {
+				particle->SetUseField(useField);
+			}
+
+			ImGui::DragFloat3("Field Accel", (float*)&particle->GetField().acceleration, 0.1f);
+
+			ImGui::DragFloat3("AABB Min", (float*)&particle->GetField().area.min, 0.1f);
+			ImGui::DragFloat3("AABB Max", (float*)&particle->GetField().area.max, 0.1f);
+		}
+
 		if (ImGui::Button("Emit Once")) {
 			std::random_device rd;
 			std::mt19937 randomEngine(rd());
