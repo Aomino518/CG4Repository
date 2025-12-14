@@ -50,7 +50,7 @@ void Game::Init()
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
 
 	uint32_t tHParticle = TextureManager::GetInstance()->Load("resources/circle.png");
-	engine_.GetPaticleCommon()->SetTexture(tHParticle);
+	ParticleManager::GetInstance()->SetTexture(tHParticle);
 }
 
 void Game::Shutdown()
@@ -88,8 +88,7 @@ void Game::Update()
 
 	cameraManager->Update();
 
-	engine_.GetPaticleCommon()->UpdateEmitter();
-	engine_.GetPaticleCommon()->UpdateInstanceData(cameraManager.get());
+	ParticleManager::GetInstance()->Update(cameraManager.get());
 	sprite->Update();
 
 	entity->SetCamera(cameraManager->GetActiveCamera());
@@ -112,7 +111,7 @@ void Game::Draw()
 	engine_.GetEntityCommon()->DrawCommon();
 	//entity->Draw();
 
-	engine_.GetPaticleCommon()->Draw();
+	ParticleManager::GetInstance()->Draw();
 
 	engine_.GetSpriteCommon()->DrawCommon();
 	//sprite->Draw();

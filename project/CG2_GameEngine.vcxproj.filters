@@ -198,12 +198,6 @@
     <ClCompile Include="SeekerEngine\Framework\SrvManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Particle3D.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SeekerEngine\Particle3DCommon.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="SeekerEngine\Renderer\Particle3DCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -363,9 +357,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Renderer\Particle3DCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Particle3D.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Renderer\Particle3DCommon.h">

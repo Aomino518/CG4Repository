@@ -22,6 +22,7 @@
 #include "StartupManager.h"
 #include "SrvManager.h"
 #include "Particle3DCommon.h"
+#include "ParticleManager.h"
 
 class SeekerEngine
 {

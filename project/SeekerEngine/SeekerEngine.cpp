@@ -43,7 +43,8 @@ void SeekerEngine::Init()
 	entityCommon_->Init(graphics_.get(), dxcCompiler_, rs3D_.Get());
 
 	particleCommon_ = std::make_unique<Particle3DCommon>();
-	particleCommon_->Init(graphics_.get(), dxcCompiler_, rsParticle_.Get());
+	
+	ParticleManager::GetInstance()->Init(particleCommon_.get(), graphics_.get(), dxcCompiler_, rsParticle_.Get());
 }
 
 void SeekerEngine::Update()
