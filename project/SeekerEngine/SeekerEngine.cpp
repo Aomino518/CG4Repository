@@ -42,9 +42,7 @@ void SeekerEngine::Init()
 	// モデル共通部の作成
 	entityCommon_->Init(graphics_.get(), dxcCompiler_, rs3D_.Get());
 
-	particleCommon_ = std::make_unique<Particle3DCommon>();
-	
-	ParticleManager::GetInstance()->Init(particleCommon_.get(), graphics_.get(), dxcCompiler_, rsParticle_.Get());
+	ParticleManager::GetInstance()->Init(graphics_.get(), dxcCompiler_, rsParticle_.Get());
 }
 
 void SeekerEngine::Update()
@@ -54,6 +52,7 @@ void SeekerEngine::Update()
 
 void SeekerEngine::Shutdown()
 {
+	ParticleManager::GetInstance()->Shutdown();
 	ModelManager::GetInstance()->Shutdown();
 	TextureManager::GetInstance()->Shutdown();
 
