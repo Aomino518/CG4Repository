@@ -21,8 +21,8 @@
 #include "Camera.h"
 #include "StartupManager.h"
 #include "SrvManager.h"
-#include "Particle3DCommon.h"
 #include "ParticleManager.h"
+#include "ParticleEmitter.h"
 
 class SeekerEngine
 {
@@ -42,7 +42,6 @@ public:
 	Entity3DCommon* GetEntityCommon() const { return entityCommon_.get(); }
 	DxcCompiler GetDxcCompiler() const { return dxcCompiler_; }
 	RootSignatureFactory GetRootSig() const { return rootSignatureFactory_; }
-	Particle3DCommon* GetPaticleCommon() const { return particleCommon_.get(); }
 
 private:
 	std::unique_ptr<Application> app_;
@@ -60,6 +59,4 @@ private:
 
 	std::unique_ptr<SpriteCommon> spriteCommon_;
 	std::unique_ptr<Entity3DCommon> entityCommon_;
-
-	std::unique_ptr<Particle3DCommon> particleCommon_;
 };

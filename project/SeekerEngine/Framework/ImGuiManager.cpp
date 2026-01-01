@@ -250,65 +250,65 @@ void ImGuiManager::CameraSetting(CameraManager* cameraManager)
 #endif
 }
 
-void ImGuiManager::ParticleSetting(const std::string& name, Particle3DCommon* particle)
+void ImGuiManager::ParticleSetting(const std::string& name, ParticleManager* particleManager, ParticleEmitter* emitter)
 {
 #ifdef USE_IMGUI
 	if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		ImGui::PushID(name.c_str());
 
+		ParticleGroup& group = particleManager->GetGroup(name);
+
 		// Billboard ON/OFF
-		bool useBillboard = particle->GetUseBillboard();
+		bool useBillboard = particleManager->GetUseBillboard(name);
 		if (ImGui::Checkbox("Use Billboard", &useBillboard)) {
-			particle->SetUseBillboard(useBillboard);
+			particleManager->SetUseBillboard(name, useBillboard);
 		}
 
 		// BlendMode
-		int currentBlend = particle->GetBlendMode();
+		int currentBlend = group.blendMode_;
 		if (ImGui::Combo("BlendMode", &currentBlend, blendNames, IM_ARRAYSIZE(blendNames))) {
-			particle->SetBlendMode((BlendMode)currentBlend);
+			particleManager->SetBlendMode(name, (BlendMode)currentBlend);
 		}
 
-		Emitter& emitter = particle->GetEmitter();
-		
 		ImGui::Separator();
 		ImGui::Text("Emitter Settings");
 
-		ImGui::DragFloat3("Emitter Translate", (float*)&emitter.transform.translate, 0.1f, -100.0f, 100.0f);
-		ImGui::DragFloat3("Emitter Rotate", (float*)&emitter.transform.rotate, 0.1f, -360.0f, 360.0f);
-		ImGui::DragFloat3("Emitter Scale", (float*)&emitter.transform.scale, 0.01f, 0.0f, 10.0f);
+		ImGui::DragFloat3("Emitter Translate", (float*)&emitter->transform_.translate, 0.1f, -100.0f, 100.0f);
+		ImGui::DragFloat3("Emitter Rotate", (float*)&emitter->transform_.rotate, 0.1f, -360.0f, 360.0f);
+		ImGui::DragFloat3("Emitter Scale", (float*)&emitter->transform_.scale, 0.01f, 0.0f, 10.0f);
 
-		ImGui::DragInt("Emit Count", (int*)&emitter.count, 1.0f, 1, 100);
-		ImGui::DragFloat("Frequency", &emitter.frequency, 0.01f, 0.0f, 5.0f);
+		ImGui::DragInt("Emit Count", (int*)&emitter->count_, 1.0f, 1, 100);
+		ImGui::DragFloat("Frequency", &emitter->frequency_, 0.01f, 0.0f, 5.0f);
 
 		if (ImGui::CollapsingHeader("Field Settings")) {
 
-			bool useField = particle->GetUseField();
+			bool useField = particleManager->GetUseField(name);
 			if (ImGui::Checkbox("Use Field", &useField)) {
-				particle->SetUseField(useField);
+				particleManager->SetUseField(name, useField);
 			}
 
-			ImGui::DragFloat3("Field Accel", (float*)&particle->GetField().acceleration, 0.1f);
+			ImGui::DragFloat3("Field Accel", (float*)&particleManager->GetField(name).acceleration, 0.1f);
 
-			ImGui::DragFloat3("AABB Min", (float*)&particle->GetField().area.min, 0.1f);
-			ImGui::DragFloat3("AABB Max", (float*)&particle->GetField().area.max, 0.1f);
+			ImGui::DragFloat3("AABB Min", (float*)&particleManager->GetField(name).area.min, 0.1f);
+			ImGui::DragFloat3("AABB Max", (float*)&particleManager->GetField(name).area.max, 0.1f);
 		}
 
 		if (ImGui::Button("Emit Once")) {
-			std::random_device rd;
-			std::mt19937 randomEngine(rd());
+			emitter->EmitOnce();
+		}
 
-			auto newParticles = particle->Emit(emitter, randomEngine);
-			auto& listRef = const_cast<std::list<Particle>&>(particle->GetPatricles());
-
-			listRef.splice(
-				listRef.end(),
-				newParticles
-			);
+		bool loop = emitter->GetIsLoop();
+		if (ImGui::Checkbox("Loop Emit", &loop)) {
+			if (loop) {
+				emitter->StartLoop();
+			} else {
+				emitter->StopLoop();
+			}
 		}
 
 		// 生存パーティクル数の表示
-		ImGui::Text("Alive Particles: %u", particle->GetAliveCount());
+		//ImGui::Text("Alive Particles: %u", particleManager->GetAliveCount());
 
 		ImGui::PopID();
 	}

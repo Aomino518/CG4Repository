@@ -37,6 +37,7 @@ void Game::Init()
     //===========================
     sprite = std::make_unique<Sprite>();
     uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/uvChecker.png");
+	uint32_t tHParticle = TextureManager::GetInstance()->Load("resources/circle.png");
     sprite->Create(engine_.GetSpriteCommon(), tHChecker, {0.0f, 0.0f}, Color::WHITE);
     sprite->SetRotation(0.0f);
 
@@ -49,8 +50,13 @@ void Game::Init()
     entity->SetModel("fence");
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
 
-	uint32_t tHParticle = TextureManager::GetInstance()->Load("resources/circle.png");
-	ParticleManager::GetInstance()->SetTexture(tHParticle);
+	//===========================
+	// Particle
+	//===========================
+	ParticleManager::GetInstance()->CreateParticleGroup("Smoke", tHParticle);
+	ParticleManager::GetInstance()->CreateParticleGroup("UV", tHChecker);
+	emitter_ = std::make_unique<ParticleEmitter>("Smoke", 10, 0.1f);
+	emitterUV_ = std::make_unique<ParticleEmitter>("UV", 10, 0.1f);
 }
 
 void Game::Shutdown()
@@ -88,16 +94,20 @@ void Game::Update()
 
 	cameraManager->Update();
 
+	emitter_->Update();
+	emitterUV_->Update();
 	ParticleManager::GetInstance()->Update(cameraManager.get());
-	sprite->Update();
 
+	//sprite->Update();
+	
 	entity->SetCamera(cameraManager->GetActiveCamera());
-	entity->Update();
+	//entity->Update();
 
 	imgui.BegineFrame();
 	imgui.BegineInspector();
 	imgui.CameraSetting(cameraManager.get());
-	imgui.ParticleSetting("testParticle", engine_.GetPaticleCommon());
+	imgui.ParticleSetting("Smoke", ParticleManager::GetInstance(), emitter_.get());
+	imgui.ParticleSetting("UV", ParticleManager::GetInstance(), emitterUV_.get());
 	//imgui.SpriteSetting("uvChecker", sprite.get());
 	//imgui.ModelSetting("fence.obj", entity.get());
 	imgui.EndInspector();
