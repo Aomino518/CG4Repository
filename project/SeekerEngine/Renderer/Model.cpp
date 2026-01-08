@@ -193,4 +193,5 @@ void Model::MaterialInit()
 	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->enableLighting = true;
+	materialData_->shininess = 32.0f;
 }

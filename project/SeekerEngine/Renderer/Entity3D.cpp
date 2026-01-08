@@ -49,6 +49,7 @@ void Entity3D::Draw()
 	// wvp用のCBufferの場所を設定
 	cmdList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 	cmdList_->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	cmdList_->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
 
 	if (model_) {
 		model_->Draw();
@@ -82,4 +83,11 @@ void Entity3D::ModelResourcesSetting()
 	directionalLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	directionalLightData_->direction = { 1.0f, 0.0f, 0.0f };
 	directionalLightData_->intensity = 1.0f;
+
+	// カメラリソース
+	cameraResource = CreateBufferResource(Graphics::GetDevice(), sizeof(CameraForGPU));
+	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
+
+	Vector3 camPos = cameraManager_->GetActiveCamera()->GetTranslate();
+	cameraData_->worldPosition = camPos;
 }

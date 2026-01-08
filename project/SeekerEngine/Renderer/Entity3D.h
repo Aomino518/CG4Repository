@@ -57,6 +57,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;
 	DirectionalLight* directionalLightData_ = nullptr;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource = nullptr;
+	CameraForGPU* cameraData_ = nullptr;
+
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
 
 	Model* model_ = nullptr;

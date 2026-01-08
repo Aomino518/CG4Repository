@@ -27,8 +27,10 @@ struct VertexData {
 struct Material {
 	Vector4 color;
 	uint32_t enableLighting;
-	float padding[3];
+	float padding0[3];
 	Matrix4x4 uvTransform;
+	float shininess;
+	float padding1[3];
 };
 
 struct TransformationMatrix {
@@ -87,6 +89,11 @@ struct ParticleForGPU
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 	Vector4 color;
+};
+
+struct CameraForGPU {
+	Vector3 worldPosition;
+	float padding;
 };
 
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);

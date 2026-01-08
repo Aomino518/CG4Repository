@@ -37,7 +37,7 @@ void Game::Init()
     //===========================
     sprite = std::make_unique<Sprite>();
     uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/uvChecker.png");
-	uint32_t tHParticle = TextureManager::GetInstance()->Load("resources/circle.png");
+	//uint32_t tHMonsterBall = TextureManager::GetInstance()->Load("resources/monsterBall.png");
     sprite->Create(engine_.GetSpriteCommon(), tHChecker, {0.0f, 0.0f}, Color::WHITE);
     sprite->SetRotation(0.0f);
 
@@ -45,18 +45,10 @@ void Game::Init()
     // Model
     //===========================
     entity = std::make_unique<Entity3D>();
-    ModelManager::GetInstance()->LoadModel("fence");
+    ModelManager::GetInstance()->LoadModel("ball");
     entity->Init(engine_.GetEntityCommon());
-    entity->SetModel("fence");
+    entity->SetModel("ball");
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
-
-	//===========================
-	// Particle
-	//===========================
-	ParticleManager::GetInstance()->CreateParticleGroup("Smoke", tHParticle);
-	ParticleManager::GetInstance()->CreateParticleGroup("UV", tHChecker);
-	emitter_ = std::make_unique<ParticleEmitter>("Smoke", 10, 0.1f);
-	emitterUV_ = std::make_unique<ParticleEmitter>("UV", 10, 0.1f);
 }
 
 void Game::Shutdown()
@@ -94,22 +86,16 @@ void Game::Update()
 
 	cameraManager->Update();
 
-	emitter_->Update();
-	emitterUV_->Update();
-	ParticleManager::GetInstance()->Update(cameraManager.get());
-
 	//sprite->Update();
 	
 	entity->SetCamera(cameraManager->GetActiveCamera());
-	//entity->Update();
+	entity->Update();
 
 	imgui.BegineFrame();
 	imgui.BegineInspector();
 	imgui.CameraSetting(cameraManager.get());
-	imgui.ParticleSetting("Smoke", ParticleManager::GetInstance(), emitter_.get());
-	imgui.ParticleSetting("UV", ParticleManager::GetInstance(), emitterUV_.get());
 	//imgui.SpriteSetting("uvChecker", sprite.get());
-	//imgui.ModelSetting("fence.obj", entity.get());
+	imgui.ModelSetting("ball.obj", entity.get());
 	imgui.EndInspector();
 	imgui.Stats();
 	imgui.EndFrame();
@@ -119,9 +105,7 @@ void Game::Draw()
 {
 	/*-- 描画処理 --*/
 	engine_.GetEntityCommon()->DrawCommon();
-	//entity->Draw();
-
-	ParticleManager::GetInstance()->Draw();
+	entity->Draw();
 
 	engine_.GetSpriteCommon()->DrawCommon();
 	//sprite->Draw();
