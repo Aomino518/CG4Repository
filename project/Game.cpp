@@ -108,6 +108,7 @@ void Game::Update()
 	imgui.ModelSetting("terrain", modelTerrain.get());
 	imgui.EndInspector();
 	imgui.Stats();
+	imgui.LightSetting();
 	imgui.EndFrame();
 }
 

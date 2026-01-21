@@ -23,12 +23,11 @@ public:
 	void SetSpotLight(SpotLight* spotLight);
 
 private:
+	static LightManager* instance_;
 	LightManager() = default;
 	~LightManager() = default;
 	LightManager(const LightManager&) = delete;
 	LightManager& operator=(const LightManager&) = delete;
-
-	static LightManager* instance_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;
 	DirectionalLight* dirLight_ = nullptr;

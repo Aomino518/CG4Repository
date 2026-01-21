@@ -34,6 +34,7 @@ public:
 	void EndInspector();
 	void CameraSetting(CameraManager* cameraManager);
 	void ParticleSetting(const std::string& name, ParticleManager* particleManager, ParticleEmitter* emitter);
+	void LightSetting();
 
 private:
 	void StyleSetting();

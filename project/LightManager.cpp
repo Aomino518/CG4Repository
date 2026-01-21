@@ -40,7 +40,7 @@ void LightManager::Init()
     spotLight_->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
     spotLight_->cosFalloffStart = 1.0f;
     spotLight_->direction = Normalize({ -1.0f, -1.0f, 0.0f });
-    spotLight_->distance = 7.0f;
+    spotLight_->distance = 20.0f;
 }
 
 void LightManager::Update()
