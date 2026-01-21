@@ -14,6 +14,7 @@ private:
     std::unique_ptr<Sprite> sprite;
     std::unique_ptr<Entity3D> entity;
     std::unique_ptr<Entity3D> modelTerrain;
+	std::unique_ptr<Entity3D> modelPlane;
     std::unique_ptr<Camera> camera;
  
     std::unique_ptr<Sound> bgm;
