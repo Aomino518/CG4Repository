@@ -15,7 +15,7 @@ void TitleScene::Init()
 void TitleScene::Update()
 {
     if (Input::GetInstance()->IsPressed(DIK_SPACE)) {
-       sceneManager_->SetNextScene(std::make_unique<PlayScene>());
+       SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
     }
 
     sprite->Update();

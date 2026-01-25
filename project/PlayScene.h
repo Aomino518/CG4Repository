@@ -1,7 +1,5 @@
 #pragma once
 #include "SeekerEngine.h"
-#include <TitleScene.h>
-#include "SceneManager.h" 
 #include "BaseScene.h"
 
 class PlayScene : public BaseScene

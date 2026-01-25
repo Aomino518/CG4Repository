@@ -1,4 +1,5 @@
 #include "SEFramework.h"
+#include <SceneFactory.h>
 
 void SEFramework::Init()
 {
@@ -18,10 +19,15 @@ void SEFramework::Run()
 
 	Init();
 
+	sceneFactory_ = std::make_unique<SceneFactory>();
+	SceneManager::GetInstance()->SetSceneFactory(std::move(sceneFactory_));
+	SceneManager::GetInstance()->ChangeScene("TITLE");
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (engine_.GetApp()->ProcessMessage()) {
 		engine_.Update();
 		Update();
+		SceneManager::GetInstance()->Update();
 
 		if (IsEndRequst()) {
 			break;
@@ -30,6 +36,7 @@ void SEFramework::Run()
 		/*-- 描画処理 --*/
 		engine_.BegineFrame();
 		Draw();
+		SceneManager::GetInstance()->Draw();
 		engine_.EndFrame();
 	}
 

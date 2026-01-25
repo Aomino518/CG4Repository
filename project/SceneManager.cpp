@@ -1,5 +1,15 @@
 #include "SceneManager.h"
 
+SceneManager* SceneManager::instance_ = nullptr;
+
+SceneManager* SceneManager::GetInstance() {
+
+	if (instance_ == nullptr) {
+		instance_ = new SceneManager;
+	}
+	return instance_;
+}
+
 void SceneManager::Update() {
 
 	if (nextScene_) {
@@ -29,14 +39,28 @@ void SceneManager::Draw() {
 	}
 }
 
+void SceneManager::Shutdown() {
+	scene_.reset();
+	nextScene_.reset();
+}
+
+void SceneManager::ChangeScene(const std::string& sceneName)
+{
+	assert(sceneFactory_);
+	assert(nextScene_ == nullptr);
+
+	nextScene_ = sceneFactory_->CreateScene(sceneName);
+}
+
 SceneManager::SceneManager()
 {
-	scene_ = std::make_unique<TitleScene>();
-	nextScene_ = std::move(scene_);
+	
 }
 
 SceneManager::~SceneManager()
 {
-	scene_->Shutdown();
-	scene_.reset();
+	if (scene_) {
+		scene_->Shutdown();
+		scene_.reset();
+	}
 }

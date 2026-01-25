@@ -1,8 +1,6 @@
 #pragma once
 #include "SeekerEngine.h"
 #include "SEFramework.h"
-#include "SceneManager.h"
-#include "SceneFactory.h"
 
 class Game : public SEFramework
 {
@@ -13,6 +11,6 @@ public:
 	void Draw() override;
 
 private:
-	std::unique_ptr<SceneManager> sceneManager_ = nullptr;
+
 };
 

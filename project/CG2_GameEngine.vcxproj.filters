@@ -413,5 +413,6 @@
     </None>
     <None Include="resources\hlsl\Particle3D.hlsli" />
     <None Include="resources\hlsl\Particle2D.hlsli" />
+    <None Include="CONTRIBUTING.md" />
   </ItemGroup>
 </Project>

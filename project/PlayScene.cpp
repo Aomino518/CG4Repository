@@ -83,7 +83,7 @@ void PlayScene::Update()
     }*/
 
     if (Input::GetInstance()->IsPressed(DIK_SPACE)) {
-        sceneManager_->SetNextScene(std::make_unique<TitleScene>());
+        SceneManager::GetInstance()->ChangeScene("TITLE");
     }
 
     cameraManager->Update();

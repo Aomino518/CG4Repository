@@ -16,13 +16,23 @@ public:
 
 	void Draw();
 
+	void Shutdown();
+
+	void ChangeScene(const std::string& sceneName);
+
 	// setter
-	void SetSceneFactory(std::unique_ptr<AbstractSceneFactory> sceneFactory) { this->sceneFactory_ = std::move(sceneFactory); }
+	void SetSceneFactory(std::unique_ptr<AbstractSceneFactory> sceneFactory) { 
+		this->sceneFactory_ = std::move(sceneFactory);
+	}
 
 	SceneManager();
 	~SceneManager();
 
 private:
+	static SceneManager* instance_;
+
+	SceneManager(const SceneManager&) = delete;
+	SceneManager& operator=(const SceneManager&) = delete;
 
 	std::unique_ptr<BaseScene> scene_;
 	std::unique_ptr<BaseScene> nextScene_;
