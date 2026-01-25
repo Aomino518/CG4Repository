@@ -1,5 +1,6 @@
 #pragma once
 #include "SeekerEngine.h"
+#include "AbstractSceneFactory.h"
 
 class SEFramework
 {
@@ -15,6 +16,7 @@ public:
 
 private:
 	bool endRequst_ = false;
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 
 protected:
 	SeekerEngine engine_;

@@ -154,6 +154,7 @@
     <ClCompile Include="BaseScene.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SeekerEngine\Renderer\ParticleEmitter.cpp" />
     <ClCompile Include="SeekerEngine\Utils\BlendStateUtils.cpp" />
@@ -288,9 +289,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractSceneFactory.h" />
     <ClInclude Include="BaseScene.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="SceneFactory.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SeekerEngine\Renderer\ParticleEmitter.h" />
     <ClInclude Include="SeekerEngine\Utils\BlendStateUtils.h" />

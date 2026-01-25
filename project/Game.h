@@ -2,6 +2,7 @@
 #include "SeekerEngine.h"
 #include "SEFramework.h"
 #include "SceneManager.h"
+#include "SceneFactory.h"
 
 class Game : public SEFramework
 {
