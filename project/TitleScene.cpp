@@ -24,6 +24,7 @@ void TitleScene::Update()
     ImGuiManager::GetInstance()->BegineInspector();
     ImGuiManager::GetInstance()->SpriteSetting("uvChecker", sprite.get());
     ImGuiManager::GetInstance()->EndInspector();
+    ImGuiManager::GetInstance()->Stats();
     ImGuiManager::GetInstance()->EndFrame();
 }
 
