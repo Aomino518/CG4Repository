@@ -33,8 +33,6 @@ public:
 	Model* FindModel(const std::string& filePath);
 
 private:
-	static ModelManager* instance_;
-	
 	ModelManager() = default;
 	~ModelManager() = default;
 	ModelManager(const ModelManager&) = delete;

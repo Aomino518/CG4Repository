@@ -64,6 +64,9 @@ public:
     // パーティクルグループの生成
     void CreateParticleGroup(const std::string& name, uint32_t textureId);
 
+    // パーティクルグループの削除
+    void RemoveParticleGroup(const std::string& name);
+
     // Getter関数
     ParticleGroup& GetGroup(const std::string& name) { return particleGroups[name]; }
     bool GetUseBillboard(const std::string& name) { return particleGroups[name].useBillboard_; }
@@ -77,8 +80,6 @@ public:
     void SetUseField(const std::string& name, bool useField) { this->particleGroups[name].useField_ = useField; }
 
 private:
-	static ParticleManager* instance_;
-
     ParticleManager() = default;
     ~ParticleManager() = default;
     ParticleManager(const ParticleManager&) = delete;

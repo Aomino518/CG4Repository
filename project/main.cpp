@@ -3,7 +3,6 @@
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	SEFramework* seFw = new Game();
+	std::unique_ptr<SEFramework> seFw = std::make_unique<Game>();
 	seFw->Run();
-	delete seFw;
 }

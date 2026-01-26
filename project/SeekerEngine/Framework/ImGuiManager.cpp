@@ -4,13 +4,9 @@
 #include <Psapi.h>
 #include "LightManager.h"
 
-ImGuiManager* ImGuiManager::instance_ = nullptr;
-
 ImGuiManager* ImGuiManager::GetInstance() {
-	if (instance_ == nullptr) {
-		instance_ = new ImGuiManager;
-	}
-	return instance_;
+	static ImGuiManager instance;
+	return &instance;
 }
 
 static const char* blendNames[] = {

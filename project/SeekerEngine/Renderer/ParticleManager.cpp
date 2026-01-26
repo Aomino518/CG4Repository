@@ -1,13 +1,9 @@
 #include "ParticleManager.h"
 
-ParticleManager* ParticleManager::instance_ = nullptr;
-
 ParticleManager* ParticleManager::GetInstance()
 {
-	if (instance_ == nullptr) {
-		instance_ = new ParticleManager();
-	}
-	return instance_;
+	static ParticleManager instance;
+	return &instance;
 }
 
 void ParticleManager::Init(Graphics* graphics, DxcCompiler& dxcCompiler, ID3D12RootSignature* rootSignature)
@@ -196,7 +192,10 @@ void ParticleManager::RebuildPso()
 void ParticleManager::CreateParticleGroup(const std::string& name, const uint32_t textureId)
 {
 	// 同名がないかチェック
-	assert(particleGroups.find(name) == particleGroups.end());
+	if (particleGroups.find(name) != particleGroups.end()) {
+		Logger::Write(Logger::LogLevel::Warning, "Particle group already exists: " + name);
+		return;
+	}
 
 	ParticleGroup group{};
 	group.textureIndex = textureId;
@@ -233,6 +232,22 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const uint32_
 	Logger::Write("Particle instancing SRV created");
 
 	particleGroups.emplace(name, std::move(group));
+}
+
+void ParticleManager::RemoveParticleGroup(const std::string& name)
+{
+	auto it = particleGroups.find(name);
+	if (it == particleGroups.end()) {
+		return;
+	}
+
+	// SRVとリソースを解放
+	SrvManager::GetInstance()->Free(it->second.srvIndexCount);
+	it->second.instanceResource.Reset();
+	// particlesのコンテナは自動的に破棄
+	particleGroups.erase(it);
+
+	Logger::Write("Particle group removed: " + name);
 }
 
 BlendMode ParticleManager::GetBlendMode(const std::string& name)

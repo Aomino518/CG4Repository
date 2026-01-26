@@ -1,13 +1,9 @@
 #include "SceneManager.h"
 
-SceneManager* SceneManager::instance_ = nullptr;
-
 SceneManager* SceneManager::GetInstance() {
 
-	if (instance_ == nullptr) {
-		instance_ = new SceneManager;
-	}
-	return instance_;
+	static SceneManager instance;
+	return &instance;
 }
 
 void SceneManager::Update() {

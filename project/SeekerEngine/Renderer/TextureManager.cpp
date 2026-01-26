@@ -7,14 +7,10 @@
 
 using namespace Microsoft::WRL;
 
-TextureManager* TextureManager::instance_ = nullptr;
-
 TextureManager* TextureManager::GetInstance()
 {
-	if (instance_ == nullptr) {
-		instance_ = new TextureManager;
-	}
-	return instance_;
+	static TextureManager instance;
+	return &instance;
 }
 
 void TextureManager::Init(Graphics* graphics)
@@ -64,8 +60,6 @@ void TextureManager::Shutdown()
 
 	device_ = nullptr;
 	cmdList_ = nullptr;
-	delete instance_;
-	instance_ = nullptr;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandle(uint32_t textureId)

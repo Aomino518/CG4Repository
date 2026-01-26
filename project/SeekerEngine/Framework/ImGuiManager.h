@@ -39,8 +39,6 @@ public:
 	void LightSetting();
 
 private:
-	static ImGuiManager* instance_;
-
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
 	ImGuiManager(const ImGuiManager&) = delete;

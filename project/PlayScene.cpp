@@ -53,8 +53,8 @@ void PlayScene::Init()
     //===========================
 
     // ※シーンをループすると毎回登録される問題が発生中
-    //ParticleManager::GetInstance()->CreateParticleGroup("Smoke", tHChecker);
-    //emitter_ = std::make_unique<ParticleEmitter>("Smoke", 10, 0.1f);
+    ParticleManager::GetInstance()->CreateParticleGroup("Smoke", tHChecker);
+    emitter_ = std::make_unique<ParticleEmitter>("Smoke", 10, 0.1f);
 	
 }
 
@@ -88,8 +88,8 @@ void PlayScene::Update()
 
     cameraManager->Update();
 
-    //emitter_->Update();
-	//ParticleManager::GetInstance()->Update(cameraManager.get());
+    emitter_->Update();
+	ParticleManager::GetInstance()->Update(cameraManager.get());
 
     sprite->Update();
 
@@ -105,7 +105,7 @@ void PlayScene::Update()
     ImGuiManager::GetInstance()->SpriteSetting("uvChecker", sprite.get());
     ImGuiManager::GetInstance()->ModelSetting("ball", entity.get());
     ImGuiManager::GetInstance()->ModelSetting("terrain", modelTerrain.get());
-    //ImGuiManager::GetInstance()->ParticleSetting("Smoke", emitter_.get());
+    ImGuiManager::GetInstance()->ParticleSetting("Smoke", emitter_.get());
     ImGuiManager::GetInstance()->EndInspector();
     ImGuiManager::GetInstance()->Stats();
     ImGuiManager::GetInstance()->LightSetting();
@@ -119,7 +119,7 @@ void PlayScene::Draw()
     entity->Draw();
     modelTerrain->Draw();
    
-    //ParticleManager::GetInstance()->Draw();
+    ParticleManager::GetInstance()->Draw();
 
     SpriteCommon::GetInstance()->DrawCommon();
     sprite->Draw();
@@ -129,4 +129,5 @@ void PlayScene::Draw()
 
 void PlayScene::Shutdown()
 {
+    ParticleManager::GetInstance()->RemoveParticleGroup("Smoke");
 }

@@ -23,7 +23,6 @@ public:
 	void SetSpotLight(SpotLight* spotLight);
 
 private:
-	static LightManager* instance_;
 	LightManager() = default;
 	~LightManager() = default;
 	LightManager(const LightManager&) = delete;

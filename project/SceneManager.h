@@ -29,8 +29,6 @@ public:
 	~SceneManager();
 
 private:
-	static SceneManager* instance_;
-
 	SceneManager(const SceneManager&) = delete;
 	SceneManager& operator=(const SceneManager&) = delete;
 

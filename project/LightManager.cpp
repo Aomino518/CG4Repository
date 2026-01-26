@@ -1,13 +1,9 @@
 #include "LightManager.h"
 
-LightManager* LightManager::instance_ = nullptr;
-
 LightManager* LightManager::GetInstance()
 {
-    if (instance_ == nullptr) {
-        instance_ = new LightManager();
-    }
-    return instance_;
+    static LightManager instance;
+    return &instance;
 }
 
 void LightManager::Init()

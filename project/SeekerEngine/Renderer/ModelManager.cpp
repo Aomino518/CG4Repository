@@ -1,19 +1,14 @@
 #include "ModelManager.h"
 
-ModelManager* ModelManager::instance_ = nullptr;
-
 ModelManager* ModelManager::GetInstance()
 {
-	if (instance_ == nullptr) {
-		instance_ = new ModelManager;
-	}
-	return instance_;
+	static ModelManager instance;
+	return &instance;
 }
 
 void ModelManager::Shutdown()
 {
-	delete instance_;
-	instance_ = nullptr;
+	modelCommon_.reset();
 }
 
 void ModelManager::Init(Graphics* graphics)
