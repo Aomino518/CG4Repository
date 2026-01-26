@@ -1,14 +1,8 @@
 #include "SoundCommon.h"
 
-SoundCommon* SoundCommon::instance_ = nullptr;
-
 SoundCommon* SoundCommon::GetInstance() {
-
-	if (instance_ == nullptr) {
-		instance_ = new SoundCommon;
-	}
-
-	return instance_;
+	static SoundCommon instance;
+	return &instance;
 }
 
 void SoundCommon::Init()

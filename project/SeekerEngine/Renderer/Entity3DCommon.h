@@ -36,8 +36,6 @@ public:
 	void SetBlendMode(BlendMode mode);
 
 private:
-	static Entity3DCommon* instance_;
-
 	Entity3DCommon() = default;
 	~Entity3DCommon() = default;
 	Entity3DCommon(const Entity3DCommon&) = delete;

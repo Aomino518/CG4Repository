@@ -24,8 +24,6 @@ public:
 	void SetBlendMode(BlendMode mode);
 
 private:
-	static SpriteCommon* instance_;
-
 	SpriteCommon() = default;
 	~SpriteCommon() = default;
 	SpriteCommon(const SpriteCommon&) = delete;

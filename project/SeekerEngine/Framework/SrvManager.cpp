@@ -1,14 +1,10 @@
 #include "SrvManager.h"
 #include <assert.h>
 
-SrvManager* SrvManager::instance_ = nullptr;
-
 SrvManager* SrvManager::GetInstance()
 {
-	if (instance_ == nullptr) {
-		instance_ = new SrvManager;
-	}
-	return instance_;
+	static SrvManager instance;
+	return &instance;
 }
 
 void SrvManager::Init(Graphics* graphics)
@@ -102,6 +98,4 @@ void SrvManager::Shutdown()
 {
 	device_.Reset();
 	descriptorHeap_.Reset();
-	delete instance_;
-	instance_ = nullptr;
 }

@@ -52,7 +52,6 @@ public:
 	bool GetIsMfStarted() const { return mfStarted_; }
 
 private:
-	static SoundCommon* instance_;
 	SoundCommon() = default;
 	~SoundCommon() = default;
 	SoundCommon(const SoundCommon&) = delete;

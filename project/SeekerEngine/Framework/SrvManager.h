@@ -33,7 +33,6 @@ public:
 	void Shutdown();
 
 private:
-	static SrvManager* instance_;
 	SrvManager() = default;
 	~SrvManager() = default;
 	SrvManager(const SrvManager&) = delete;

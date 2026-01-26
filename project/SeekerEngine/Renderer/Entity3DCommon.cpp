@@ -1,13 +1,9 @@
 #include "Entity3DCommon.h"
 
-Entity3DCommon* Entity3DCommon::instance_ = nullptr;
-
 Entity3DCommon* Entity3DCommon::GetInstance()
 {
-	if (instance_ == nullptr) {
-		instance_ = new Entity3DCommon;
-	}
-	return instance_;
+	static Entity3DCommon instance;
+	return &instance;
 }
 
 void Entity3DCommon::Init(Graphics* graphics, DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignature)
@@ -27,7 +23,6 @@ void Entity3DCommon::DrawCommon()
 
 void Entity3DCommon::Shutdown()
 {
-	instance_ = nullptr;
 	rootSignature_.Reset();
 	pipelineState_.Reset();
 	vs3DBlob_.Reset();

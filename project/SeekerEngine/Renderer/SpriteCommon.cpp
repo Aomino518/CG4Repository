@@ -1,13 +1,9 @@
 #include "SpriteCommon.h"
 
-SpriteCommon* SpriteCommon::instance_ = nullptr;
-
 SpriteCommon* SpriteCommon::GetInstance()
 {
-	if (instance_ == nullptr) {
-		instance_ = new SpriteCommon;
-	}
-	return instance_;
+	static SpriteCommon instance;
+	return &instance;
 }
 
 void SpriteCommon::Init(Graphics* graphics, DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignature)
@@ -35,7 +31,6 @@ void SpriteCommon::Shutdown()
 	psoCache_.clear();
 	pipelineState_.Reset();
 	cmdList_.Reset();
-	instance_ = nullptr;
 }	
 
 void SpriteCommon::RebuildPso()
