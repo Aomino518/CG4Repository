@@ -371,6 +371,26 @@ void ImGuiManager::LightSetting()
 #endif
 }
 
+void ImGuiManager::SoundSetting()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("Sound Manager");
+	SoundManager* soundManager = SoundManager::GetInstance();
+	auto volumeBGM = soundManager->GetCurrentBGMVolume();
+	auto volumeSE = soundManager->GetCurrentSEVolume();
+	auto volumeMaster = soundManager->GetCurrentMasterVolume();
+	
+	ImGui::DragFloat("BGM Volume", &volumeBGM, 0.01f, 0.0f, 1.0f, "%.2f");
+	ImGui::DragFloat("SE Volume", &volumeSE, 0.01f, 0.0f, 1.0f, "%.2f");
+	ImGui::DragFloat("Master Volume", &volumeMaster, 0.01f, 0.0f, 1.0f, "%.2f");
+	soundManager->SetVolumeBGM(volumeBGM);
+	soundManager->SetVolumeSE(volumeSE);
+	soundManager->SetVolumeMaster(volumeMaster);
+
+	ImGui::End();	
+#endif
+}
+
 void ImGuiManager::StyleSetting()
 {
 #ifdef USE_IMGUI

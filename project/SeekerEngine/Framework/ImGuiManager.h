@@ -37,6 +37,7 @@ public:
 	void CameraSetting(CameraManager* cameraManager);
 	void ParticleSetting(const std::string& name, ParticleEmitter* emitter);
 	void LightSetting();
+	void SoundSetting();
 
 private:
 	ImGuiManager() = default;

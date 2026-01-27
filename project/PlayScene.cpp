@@ -102,6 +102,7 @@ void PlayScene::Update()
     ImGuiManager::GetInstance()->EndInspector();
     ImGuiManager::GetInstance()->Stats();
     ImGuiManager::GetInstance()->LightSetting();
+	ImGuiManager::GetInstance()->SoundSetting();
     ImGuiManager::GetInstance()->EndFrame();
 }
 

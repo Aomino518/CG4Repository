@@ -65,9 +65,8 @@ void Sound::PlayBGM(const SoundData& data, bool loop, float volume)
 		buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
 	}
 
-	currentBGMVolume_ = volume;
-	// 音量設定
-	bgmVoice_->SetVolume(currentBGMVolume_);
+	float finalVolume = currentBGMVolume_ * currentMasterVolume_ * volume;
+	bgmVoice_->SetVolume(finalVolume);
 
 	bgmVoice_->SubmitSourceBuffer(&buffer);
 	bgmVoice_->Start();
@@ -90,9 +89,8 @@ void Sound::PlaySE(const SoundData& data, bool loop, float volume)
 		buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
 	}
 
-	currentSEVolume_ = volume;
-	// 音量設定
-	seVoice->SetVolume(currentSEVolume_);
+	float finalVolume = currentSEVolume_ * currentMasterVolume_ * volume;
+	seVoice->SetVolume(finalVolume);
 
 	seVoice->SubmitSourceBuffer(&buffer);
 	seVoice->Start();
@@ -141,6 +139,19 @@ void Sound::SetVolumeSE(float volume)
 	currentSEVolume_ = std::clamp(volume, 0.0f, 1.0f);
 	for (auto* v : seVoices_) {
 		v->SetVolume(currentSEVolume_);
+	}
+}
+
+void Sound::SetVolumeMaster(float volume)
+{
+	currentMasterVolume_ = std::clamp(volume, 0.0f, 1.0f);
+	float bgmVolume = currentBGMVolume_ * currentMasterVolume_;
+	if (bgmVoice_) {
+		bgmVoice_->SetVolume(bgmVolume);
+	}
+	float seVolume = currentSEVolume_ * currentMasterVolume_;
+	for (auto* v : seVoices_) {
+		v->SetVolume(seVolume);
 	}
 }
 

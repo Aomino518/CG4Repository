@@ -71,3 +71,7 @@ void SoundManager::SetVolumeSE(float volume) {
 void SoundManager::SetVolumeBGM(float volume) {
 	sound_.SetVolumeBGM(volume);
 }
+
+void SoundManager::SetVolumeMaster(float volume) {
+	sound_.SetVolumeMaster(volume);
+}

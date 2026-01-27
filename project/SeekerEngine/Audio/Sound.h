@@ -16,6 +16,13 @@ public:
 	void RestartBGM();
 	void SetVolumeBGM(float volume);
 	void SetVolumeSE(float volume);
+	void SetVolumeMaster(float volume);
+
+	IXAudio2SourceVoice* GetBGMVoice() const { return bgmVoice_; }
+	std::vector<IXAudio2SourceVoice*> GetSEVoices() const { return seVoices_; }
+	float GetCurrentBGMVolume() const { return currentBGMVolume_; }
+	float GetCurrentSEVolume() const { return currentSEVolume_; }
+	float GetCurrentMasterVolume() const { return currentMasterVolume_; }
 
 private:
 	// 内部用
@@ -33,6 +40,7 @@ private:
 	float currentVolume_ = 1.0f;
 	float currentBGMVolume_ = 1.0f;
 	float currentSEVolume_ = 1.0f;
+	float currentMasterVolume_ = 1.0f;
 	SoundData currentData_ = {};
 };
 
