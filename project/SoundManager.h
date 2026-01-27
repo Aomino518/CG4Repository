@@ -23,7 +23,7 @@ public:
 	void SetVolumeMaster(float volume);
 
 	IXAudio2SourceVoice* GetBGMVoice() const { return sound_.GetBGMVoice(); }
-	std::vector<IXAudio2SourceVoice*> GetSEVoices() const { return sound_.GetSEVoices(); }
+	std::vector<VoiceContext> GetSEVoices() const { return sound_.GetSEVoices(); }
 	float GetCurrentBGMVolume() const { return sound_.GetCurrentBGMVolume(); }
 	float GetCurrentSEVolume() const { return sound_.GetCurrentSEVolume(); }
 	float GetCurrentMasterVolume() const { return sound_.GetCurrentMasterVolume(); }

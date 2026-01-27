@@ -19,7 +19,7 @@ public:
 	void SetVolumeMaster(float volume);
 
 	IXAudio2SourceVoice* GetBGMVoice() const { return bgmVoice_; }
-	std::vector<IXAudio2SourceVoice*> GetSEVoices() const { return seVoices_; }
+	std::vector<VoiceContext> GetSEVoices() const { return seVoices_; }
 	float GetCurrentBGMVolume() const { return currentBGMVolume_; }
 	float GetCurrentSEVolume() const { return currentSEVolume_; }
 	float GetCurrentMasterVolume() const { return currentMasterVolume_; }
@@ -34,7 +34,7 @@ private:
 	SoundCommon* soundCommon_ = nullptr;
 	//IXAudio2SourceVoice* pSourceVoice_ = nullptr;
 	IXAudio2SourceVoice* bgmVoice_ = nullptr;
-	std::vector<IXAudio2SourceVoice*> seVoices_;
+	std::vector<VoiceContext> seVoices_;
 	
 	bool isLooping_ = false;
 	float currentVolume_ = 1.0f;

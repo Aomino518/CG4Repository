@@ -95,7 +95,7 @@ void Sound::PlaySE(const SoundData& data, bool loop, float volume)
 	seVoice->SubmitSourceBuffer(&buffer);
 	seVoice->Start();
 
-	seVoices_.push_back(seVoice);
+	seVoices_.push_back({ seVoice, volume });
 }
 
 void Sound::StopBGM() {
@@ -109,10 +109,10 @@ void Sound::StopBGM() {
 
 void Sound::StopSE()
 {
-	for (auto* v : seVoices_) {
-		v->Stop();
-		v->FlushSourceBuffers();
-		v->DestroyVoice();
+	for (auto& v : seVoices_) {
+		v.pSource->Stop();
+		v.pSource->FlushSourceBuffers();
+		v.pSource->DestroyVoice();
 	}
 	seVoices_.clear();
 }
@@ -137,8 +137,9 @@ void Sound::SetVolumeBGM(float volume)
 void Sound::SetVolumeSE(float volume)
 {
 	currentSEVolume_ = std::clamp(volume, 0.0f, 1.0f);
-	for (auto* v : seVoices_) {
-		v->SetVolume(currentSEVolume_);
+	for (auto& v : seVoices_) {
+		float finalVolume = currentSEVolume_ * currentMasterVolume_ * v.initialVolume;
+		v.pSource->SetVolume(finalVolume);
 	}
 }
 
@@ -149,9 +150,10 @@ void Sound::SetVolumeMaster(float volume)
 	if (bgmVoice_) {
 		bgmVoice_->SetVolume(bgmVolume);
 	}
-	float seVolume = currentSEVolume_ * currentMasterVolume_;
-	for (auto* v : seVoices_) {
-		v->SetVolume(seVolume);
+
+	for (auto& v : seVoices_) {
+		float finalVolume = currentSEVolume_ * currentMasterVolume_ * v.initialVolume;
+		v.pSource->SetVolume(finalVolume);
 	}
 }
 

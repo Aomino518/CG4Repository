@@ -40,6 +40,11 @@ struct SoundData {
 	unsigned int bufferSize;
 };
 
+struct VoiceContext {
+	IXAudio2SourceVoice* pSource;
+	float initialVolume;
+};
+
 class SoundCommon
 {
 public:
