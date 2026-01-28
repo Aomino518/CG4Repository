@@ -1,6 +1,8 @@
 #include "SceneFactory.h"
 #include "TitleScene.h"
 #include "PlayScene.h"
+#include "ClearScene.h"
+#include "GameOverScene.h"
 
 std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneName)
 {
@@ -8,6 +10,10 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
         return std::make_unique<TitleScene>();
     } else if (sceneName == "GAMEPLAY") {
         return std::make_unique<PlayScene>();
+    } else if (sceneName == "CLEAR") {
+        return std::make_unique<ClearScene>();
+    } else if (sceneName == "GAMEOVER") {
+        return std::make_unique<GameOverScene>();
     }
 
     return nullptr;

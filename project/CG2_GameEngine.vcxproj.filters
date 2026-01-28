@@ -9,13 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="リソース ファイル\HLSL">
-      <UniqueIdentifier>{d80eaf7a-6378-4229-8743-9c459faf768a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="externals">
       <UniqueIdentifier>{40ab11ef-14a5-439a-9832-c38bb91b1733}</UniqueIdentifier>
     </Filter>
@@ -25,14 +18,8 @@
     <Filter Include="ソース ファイル\Engine">
       <UniqueIdentifier>{71eb0e1f-ac25-4eaa-91e0-a0398b316bd1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Engine\App">
-      <UniqueIdentifier>{cf8e0572-ed91-4627-9b1e-d6c5dcd29571}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Engine\Audio">
       <UniqueIdentifier>{52517e23-9089-4d00-ac1d-f131246ef4ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\Framework">
-      <UniqueIdentifier>{c4ab5ab7-f9a1-4f80-8570-3fc799cbd595}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Engine\Input">
       <UniqueIdentifier>{ff7e9c9a-c1e7-4d93-9c86-a6c8168b0d9a}</UniqueIdentifier>
@@ -40,41 +27,99 @@
     <Filter Include="ソース ファイル\Engine\Math">
       <UniqueIdentifier>{f939e53c-190f-42a7-ae29-ea230aee0926}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Engine\Renderer">
-      <UniqueIdentifier>{eb64da43-5278-4fad-a29e-67990d61f7e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\Utils">
-      <UniqueIdentifier>{c6198900-7679-4f14-b481-697a42aff10a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Engine">
       <UniqueIdentifier>{24a1c749-eb1e-42b3-886f-51ae8debe198}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Engine\App">
-      <UniqueIdentifier>{9e7fe7a6-42bd-435d-84e9-60a66064589f}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Engine\Audio">
       <UniqueIdentifier>{95ff88ed-5aa1-4305-9728-434fc96c69d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Engine\Framework">
+    <Filter Include="ヘッダー ファイル\Engine\Math">
+      <UniqueIdentifier>{62239e76-682a-436a-a8c5-17979bc821c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Graphics">
       <UniqueIdentifier>{acabd0e4-2571-499e-b6a0-2198a68b1546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Scene">
+      <UniqueIdentifier>{a2fe2368-4d91-4d8c-bd7e-be1829018181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Utility">
+      <UniqueIdentifier>{8ea90864-fdc7-4b9b-874c-1c8342b0ae16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル\HLSL">
+      <UniqueIdentifier>{d80eaf7a-6378-4229-8743-9c459faf768a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Core">
+      <UniqueIdentifier>{9e7fe7a6-42bd-435d-84e9-60a66064589f}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Engine\Input">
       <UniqueIdentifier>{70b8259d-2483-4718-bfce-18293ae9b05d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Engine\Math">
-      <UniqueIdentifier>{62239e76-682a-436a-a8c5-17979bc821c1}</UniqueIdentifier>
+    <Filter Include="ヘッダー ファイル\Application">
+      <UniqueIdentifier>{8126c646-763d-4821-8a4c-ff15e6665022}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Engine\Renderer">
-      <UniqueIdentifier>{a2fe2368-4d91-4d8c-bd7e-be1829018181}</UniqueIdentifier>
+    <Filter Include="ヘッダー ファイル\Application\Scenes">
+      <UniqueIdentifier>{2dc4d60d-db49-44ca-9c70-6bda83167331}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Engine\Utils">
-      <UniqueIdentifier>{8ea90864-fdc7-4b9b-874c-1c8342b0ae16}</UniqueIdentifier>
+    <Filter Include="ヘッダー ファイル\Application\GameObject">
+      <UniqueIdentifier>{9796a1f8-a80c-4f9a-81d1-c175b8e7eb4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Objects">
+      <UniqueIdentifier>{4fd185d2-47f8-4c15-81dc-22dcf4c85ef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\GameObject\2D">
+      <UniqueIdentifier>{f9d52404-6c1d-4ba2-bea9-d6fa72388afa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\GameObject\3D">
+      <UniqueIdentifier>{44e9d7d1-1cb8-48ab-8a79-94c7dac53a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\GameObject\Effect">
+      <UniqueIdentifier>{8e60e2d4-d798-46b1-b4a5-bb0dca78b89e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\GameObject\Light">
+      <UniqueIdentifier>{4c520b6f-30fe-42d2-9e23-42941ab836e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Core">
+      <UniqueIdentifier>{cf8e0572-ed91-4627-9b1e-d6c5dcd29571}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Graphics">
+      <UniqueIdentifier>{c4ab5ab7-f9a1-4f80-8570-3fc799cbd595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Scene">
+      <UniqueIdentifier>{eb64da43-5278-4fad-a29e-67990d61f7e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Utility">
+      <UniqueIdentifier>{c6198900-7679-4f14-b481-697a42aff10a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application">
+      <UniqueIdentifier>{af18872f-d883-4b15-aef7-49dff6430bf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\GameObject">
+      <UniqueIdentifier>{3037a88b-909a-487d-a517-adac14b8d8a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Objects">
+      <UniqueIdentifier>{495f4bc3-cce8-4962-90fa-f89d29a348fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Scenes">
+      <UniqueIdentifier>{6ffd5d5c-83ee-420e-8977-2b46defd76db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\GameObject\2D">
+      <UniqueIdentifier>{1f7d3141-8b9e-4a28-9530-38e55363ee3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\GameObject\3D">
+      <UniqueIdentifier>{b1447642-872c-4c0c-99c2-2486dd52750e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\GameObject\Effect">
+      <UniqueIdentifier>{ca30a9e5-264c-49c9-9b7b-8cdcdf877aa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\GameObject\Light">
+      <UniqueIdentifier>{b7c545a0-66c0-4ac7-8608-8491e76c0881}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>externals\imgui</Filter>
     </ClCompile>
@@ -96,29 +141,50 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>externals\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\App\Application.cpp">
-      <Filter>ソース ファイル\Engine\App</Filter>
+    <ClCompile Include="SeekerEngine\Audio\Sound.cpp">
+      <Filter>ソース ファイル\Engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Utils\Logger.cpp">
-      <Filter>ソース ファイル\Engine\App</Filter>
+    <ClCompile Include="SeekerEngine\Audio\SoundManager.cpp">
+      <Filter>ソース ファイル\Engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\DebugCamera.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="SeekerEngine\Core\Application.cpp">
+      <Filter>ソース ファイル\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\DxcCompiler.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="SeekerEngine\Core\SeekerEngine.cpp">
+      <Filter>ソース ファイル\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\Graphics.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="SeekerEngine\Core\SEFramework.cpp">
+      <Filter>ソース ファイル\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\InputLayout.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="SeekerEngine\Core\StartupManager.cpp">
+      <Filter>ソース ファイル\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\PsoBuilder.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="SeekerEngine\Graphics\BlendStateUtils.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\RootSignatureFactory.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="SeekerEngine\Graphics\D3DResourceLeakChecker.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\Graphics\DxcCompiler.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\Graphics\Graphics.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\Graphics\ImGuiManager.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\Graphics\InputLayout.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\Graphics\PsoBuilder.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\Graphics\RootSignatureFactory.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\Graphics\SrvManager.cpp">
+      <Filter>ソース ファイル\Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Input\Input.cpp">
       <Filter>ソース ファイル\Engine\Input</Filter>
@@ -126,98 +192,86 @@
     <ClCompile Include="SeekerEngine\Math\Matrix.cpp">
       <Filter>ソース ファイル\Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Audio\Sound.cpp">
-      <Filter>ソース ファイル\Engine\Audio</Filter>
+    <ClCompile Include="SeekerEngine\Scene\SceneManager.cpp">
+      <Filter>ソース ファイル\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\Sprite.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="SeekerEngine\Scene\SceneFactory.cpp">
+      <Filter>ソース ファイル\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\SpriteCommon.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp">
+      <Filter>ソース ファイル\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Utils\StringUtil.cpp">
-      <Filter>ソース ファイル\Engine\Utils</Filter>
+    <ClCompile Include="SeekerEngine\Utility\Color.cpp">
+      <Filter>ソース ファイル\Engine\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\Camera.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="SeekerEngine\Utility\CreateResorceUtils.cpp">
+      <Filter>ソース ファイル\Engine\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Utils\Color.cpp">
-      <Filter>ソース ファイル\Engine\Utils</Filter>
+    <ClCompile Include="SeekerEngine\Utility\Logger.cpp">
+      <Filter>ソース ファイル\Engine\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Utils\CreateResorceUtils.cpp">
-      <Filter>ソース ファイル\Engine\Utils</Filter>
+    <ClCompile Include="SeekerEngine\Utility\StringUtil.cpp">
+      <Filter>ソース ファイル\Engine\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Utils\D3DResourceLeakChecker.cpp">
-      <Filter>ソース ファイル\Engine\Utils</Filter>
+    <ClCompile Include="Game\GameObject\3D\Camera.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\ImGuiManager.cpp">
-      <Filter>ソース ファイル\Engine\Framework</Filter>
+    <ClCompile Include="Game\GameObject\3D\CameraManager.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\Entity3D.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="Game\GameObject\3D\DebugCamera.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\Entity3DCommon.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="Game\GameObject\3D\Entity3D.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\Model.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="Game\GameObject\3D\Entity3DCommon.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\ModelCommon.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="Game\GameObject\3D\Model.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\ModelManager.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="Game\GameObject\3D\ModelCommon.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\TextureManager.cpp">
-      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    <ClCompile Include="Game\GameObject\3D\ModelManager.cpp">
+      <Filter>ソース ファイル\Application\GameObject\3D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\SeekerEngine.cpp">
-      <Filter>ソース ファイル\Engine</Filter>
+    <ClCompile Include="Game\GameObject\2D\Sprite.cpp">
+      <Filter>ソース ファイル\Application\GameObject\2D</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\GameObject\2D\SpriteCommon.cpp">
+      <Filter>ソース ファイル\Application\GameObject\2D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Utils\StartupManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\GameObject\2D\TextureManager.cpp">
+      <Filter>ソース ファイル\Application\GameObject\2D</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\SEFramework.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\Scenes\ClearScene.cpp">
+      <Filter>ソース ファイル\Application\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\CameraManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\Scenes\GameOverScene.cpp">
+      <Filter>ソース ファイル\Application\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Utils\BlendStateUtils.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\Scenes\PlayScene.cpp">
+      <Filter>ソース ファイル\Application\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\ParticleManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\Scenes\TitleScene.cpp">
+      <Filter>ソース ファイル\Application\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Framework\SrvManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\GameObject\Effect\ParticleManager.cpp">
+      <Filter>ソース ファイル\Application\GameObject\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Renderer\ParticleEmitter.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\GameObject\Effect\ParticleEmitter.cpp">
+      <Filter>ソース ファイル\Application\GameObject\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="LightManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\GameObject\Light\LightManager.cpp">
+      <Filter>ソース ファイル\Application\GameObject\Light</Filter>
     </ClCompile>
-    <ClCompile Include="PlayScene.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Game\Game.cpp">
+      <Filter>ソース ファイル\Application</Filter>
     </ClCompile>
-    <ClCompile Include="TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneFactory.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル\Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,10 +287,18 @@
     <FxCompile Include="resources\hlsl\Object3d.VS.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="resources\hlsl\Particle2D.PS.hlsl" />
-    <FxCompile Include="resources\hlsl\Particle2D.VS.hlsl" />
-    <FxCompile Include="resources\hlsl\Particle3D.VS.hlsl" />
-    <FxCompile Include="resources\hlsl\Particle3D.PS.hlsl" />
+    <FxCompile Include="resources\hlsl\Particle2D.PS.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle2D.VS.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle3D.PS.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\Particle3D.VS.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -263,140 +325,146 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>externals\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\App\Application.h">
-      <Filter>ヘッダー ファイル\Engine\App</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\DebugCamera.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\DxcCompiler.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\Graphics.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\InputLayout.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\PsoBuilder.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\RootSignatureFactory.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Input\Input.h">
-      <Filter>ヘッダー ファイル\Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Utils\Logger.h">
-      <Filter>ヘッダー ファイル\Engine\App</Filter>
+    <ClInclude Include="SeekerEngine\Audio\SoundManager.h">
+      <Filter>ヘッダー ファイル\Engine\Audio</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Audio\Sound.h">
       <Filter>ヘッダー ファイル\Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Math\Matrix.h">
-      <Filter>ヘッダー ファイル\Engine\Math</Filter>
+    <ClInclude Include="SeekerEngine\Core\Application.h">
+      <Filter>ヘッダー ファイル\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\Sprite.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="SeekerEngine\Core\SEFramework.h">
+      <Filter>ヘッダー ファイル\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\SpriteCommon.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="SeekerEngine\Core\SeekerEngine.h">
+      <Filter>ヘッダー ファイル\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Utils\StringUtil.h">
-      <Filter>ヘッダー ファイル\Engine\Utils</Filter>
+    <ClInclude Include="SeekerEngine\Core\StartupManager.h">
+      <Filter>ヘッダー ファイル\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Math\Vector2.h">
+    <ClInclude Include="SeekerEngine\Graphics\BlendStateUtils.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\D3DResourceLeakChecker.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\DxcCompiler.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\ImGuiManager.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\InputLayout.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\PsoBuilder.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\RootSignatureFactory.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\SrvManager.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Graphics\Graphics.h">
+      <Filter>ヘッダー ファイル\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Input\Input.h">
+      <Filter>ヘッダー ファイル\Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\Math\Vector4.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\Vector3.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Math\Vector4.h">
+    <ClInclude Include="SeekerEngine\Math\Vector2.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\Camera.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
+    <ClInclude Include="SeekerEngine\Math\Matrix.h">
+      <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Utils\Color.h">
-      <Filter>ヘッダー ファイル\Engine\Utils</Filter>
+    <ClInclude Include="SeekerEngine\Scene\SceneManager.h">
+      <Filter>ヘッダー ファイル\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Utils\CreateResorceUtils.h">
-      <Filter>ヘッダー ファイル\Engine\Utils</Filter>
+    <ClInclude Include="SeekerEngine\Scene\SceneFactory.h">
+      <Filter>ヘッダー ファイル\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Utils\D3DResourceLeakChecker.h">
-      <Filter>ヘッダー ファイル\Engine\Utils</Filter>
+    <ClInclude Include="SeekerEngine\Scene\AbstractSceneFactory.h">
+      <Filter>ヘッダー ファイル\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\Entity3D.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="SeekerEngine\Scene\BaseScene.h">
+      <Filter>ヘッダー ファイル\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\Entity3DCommon.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="SeekerEngine\Utility\Color.h">
+      <Filter>ヘッダー ファイル\Engine\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\Model.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="SeekerEngine\Utility\CreateResorceUtils.h">
+      <Filter>ヘッダー ファイル\Engine\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\ModelCommon.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="SeekerEngine\Utility\Logger.h">
+      <Filter>ヘッダー ファイル\Engine\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\ModelManager.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="SeekerEngine\Utility\StringUtil.h">
+      <Filter>ヘッダー ファイル\Engine\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\TextureManager.h">
-      <Filter>ヘッダー ファイル\Engine\Renderer</Filter>
+    <ClInclude Include="Game\Scenes\ClearScene.h">
+      <Filter>ヘッダー ファイル\Application\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\ImGuiManager.h">
-      <Filter>ヘッダー ファイル\Engine\Framework</Filter>
+    <ClInclude Include="Game\Scenes\TitleScene.h">
+      <Filter>ヘッダー ファイル\Application\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\SeekerEngine.h">
-      <Filter>ヘッダー ファイル\Engine</Filter>
+    <ClInclude Include="Game\Scenes\PlayScene.h">
+      <Filter>ヘッダー ファイル\Application\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\Scenes\GameOverScene.h">
+      <Filter>ヘッダー ファイル\Application\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Utils\StartupManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\CameraManager.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\SEFramework.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\Camera.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\CameraManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\DebugCamera.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Utils\BlendStateUtils.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\Entity3D.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\ParticleManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\Entity3DCommon.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Framework\SrvManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\Model.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Renderer\ParticleEmitter.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\ModelCommon.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="LightManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\3D\ModelManager.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\3D</Filter>
     </ClInclude>
-    <ClInclude Include="PlayScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\2D\TextureManager.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\2D</Filter>
     </ClInclude>
-    <ClInclude Include="TitleScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\2D\SpriteCommon.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\2D</Filter>
     </ClInclude>
-    <ClInclude Include="BaseScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\2D\Sprite.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\2D</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\Light\LightManager.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\Light</Filter>
     </ClInclude>
-    <ClInclude Include="AbstractSceneFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\Effect\ParticleManager.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="SceneFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\GameObject\Effect\ParticleEmitter.h">
+      <Filter>ヘッダー ファイル\Application\GameObject\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Game\Game.h">
+      <Filter>ヘッダー ファイル\Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -411,7 +479,11 @@
     <None Include="resources\hlsl\Object3d.hlsli">
       <Filter>リソース ファイル\HLSL</Filter>
     </None>
-    <None Include="resources\hlsl\Particle3D.hlsli" />
-    <None Include="resources\hlsl\Particle2D.hlsli" />
+    <None Include="resources\hlsl\Particle2D.hlsli">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </None>
+    <None Include="resources\hlsl\Particle3D.hlsli">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

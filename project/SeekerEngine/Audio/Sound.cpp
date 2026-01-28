@@ -281,23 +281,20 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 
 	Microsoft::WRL::ComPtr<IMFSourceReader> pMFSourceReader{ nullptr };
 	MFCreateSourceReaderFromURL(wpath, nullptr, &pMFSourceReader);
-	Logger::Write("MFCreateSourceReaderFromURL通った");
-
+	
 	// ストリーム選択
 	HRESULT hr = pMFSourceReader->SetStreamSelection(static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS), FALSE);
 
 	if (FAILED(hr)) {
 		return soundData;
 	}
-	Logger::Write("MF_SOURCE_READER_ALL_STREAMS通った");
-
+	
 	hr = pMFSourceReader->SetStreamSelection(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), TRUE);
 
 	if (FAILED(hr)) {
 		return soundData;
 	}
-	Logger::Write("MF_SOURCE_READER_FIRST_AUDIO_STREAM通った");
-
+	
 	// ネイティブ型からch/rateを取っておく
 	Microsoft::WRL::ComPtr<IMFMediaType> pMFMediaType{ nullptr };
 	UINT32 ch = 2, rate = 48000;
@@ -315,10 +312,9 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 	hr = MFCreateMediaType(&pMFMediaType);
 
 	if (FAILED(hr)) {
-		Logger::Write("MFCreateMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "MFCreateMediaTypeエラー");
 		return soundData;
 	}
-	Logger::Write("MFCreateMediaType通った");
 
 	pMFMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
 	pMFMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
@@ -331,25 +327,23 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 	hr = pMFSourceReader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pMFMediaType.Get());
 	
 	if (FAILED(hr)) {
-		Logger::Write("SetCurrentMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "SetCurrentMediaTypeエラー");
 		return soundData;
 	}
-	Logger::Write("SetCurrentMediaType通った");
-
+	
 	Microsoft::WRL::ComPtr<IMFMediaType> finalType;
 	hr = pMFSourceReader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &finalType);
 	
 	if (FAILED(hr)) {
-		Logger::Write("GetCurrentMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "GetCurrentMediaTypeエラー");
 		return soundData;
 	}
-	Logger::Write("GetCurrentMediaType通った");
-
+	
 	WAVEFORMATEX* waveFormat{ nullptr };
 	hr = MFCreateWaveFormatExFromMFMediaType(finalType.Get(), &waveFormat, nullptr);
 
 	if (FAILED(hr) || waveFormat == nullptr) {
-		Logger::Write("waveFormatがnullptrかMFCreateWaveFormatExFromMFMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "waveFormatがnullptrかMFCreateWaveFormatExFromMFMediaTypeエラー");
 		return soundData;
 	}
 
