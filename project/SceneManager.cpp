@@ -37,6 +37,8 @@ void SceneManager::Draw() {
 void SceneManager::Shutdown() {
 	scene_.reset();
 	nextScene_.reset();
+	sceneFactory_.reset();
+	Logger::Write("SceneManager Shutdown");
 }
 
 void SceneManager::ChangeScene(const std::string& sceneName)
@@ -45,17 +47,4 @@ void SceneManager::ChangeScene(const std::string& sceneName)
 	assert(nextScene_ == nullptr);
 
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
-}
-
-SceneManager::SceneManager()
-{
-	
-}
-
-SceneManager::~SceneManager()
-{
-	if (scene_) {
-		scene_->Shutdown();
-		scene_.reset();
-	}
 }

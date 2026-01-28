@@ -36,6 +36,7 @@ void Input::Shutdown()
 	if (keyboard_) {
 		keyboard_->Unacquire();
 	}
+	Logger::Write("InputManager Shutdown");
 }
 
 void Input::Update()

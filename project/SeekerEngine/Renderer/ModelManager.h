@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include "Graphics.h"
+#include "Logger.h"
 
 class ModelManager
 {

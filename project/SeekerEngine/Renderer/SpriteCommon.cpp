@@ -31,6 +31,7 @@ void SpriteCommon::Shutdown()
 	psoCache_.clear();
 	pipelineState_.Reset();
 	cmdList_.Reset();
+	Logger::Write("SpriteCommon Shutdown");
 }	
 
 void SpriteCommon::RebuildPso()

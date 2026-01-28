@@ -60,6 +60,7 @@ void TextureManager::Shutdown()
 
 	device_ = nullptr;
 	cmdList_ = nullptr;
+	Logger::Write("TextureManager Shutdown");
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandle(uint32_t textureId)

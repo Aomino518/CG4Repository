@@ -1,5 +1,5 @@
 #pragma once
-#include "SoundCommon.h"
+#include "Logger.h"
 #include "Sound.h"
 #include <string>
 #include <unordered_map>

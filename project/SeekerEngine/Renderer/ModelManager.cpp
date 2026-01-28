@@ -9,6 +9,7 @@ ModelManager* ModelManager::GetInstance()
 void ModelManager::Shutdown()
 {
 	modelCommon_.reset();
+	Logger::Write("ModelManager Shutdown");
 }
 
 void ModelManager::Init(Graphics* graphics)

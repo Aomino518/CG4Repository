@@ -171,9 +171,6 @@
     <ClCompile Include="SeekerEngine\Renderer\TextureManager.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Audio\SoundCommon.cpp">
-      <Filter>ソース ファイル\Engine\Audio</Filter>
-    </ClCompile>
     <ClCompile Include="SeekerEngine\SeekerEngine.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
@@ -349,9 +346,6 @@
     </ClInclude>
     <ClInclude Include="SeekerEngine\Framework\ImGuiManager.h">
       <Filter>ヘッダー ファイル\Engine\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Audio\SoundCommon.h">
-      <Filter>ヘッダー ファイル\Engine\Audio</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\SeekerEngine.h">
       <Filter>ヘッダー ファイル\Engine</Filter>

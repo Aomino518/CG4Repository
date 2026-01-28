@@ -96,6 +96,7 @@ void SrvManager::SetGraphicsRootDescriptorTable(UINT rootPramatorIndex, uint32_t
 
 void SrvManager::Shutdown()
 {
-	device_.Reset();
 	descriptorHeap_.Reset();
+	device_.Reset();
+	Logger::Write("SrvManager Shutdown");
 }

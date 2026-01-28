@@ -46,9 +46,10 @@ void LightManager::Update()
 
 void LightManager::Shutdown()
 {
-    directionalLightResource_->Release();
-    pointLightResource_->Release();
-    spotLightResource_->Release();
+    directionalLightResource_.Reset();
+    pointLightResource_.Reset();
+    spotLightResource_.Reset();
+    Logger::Write("LightManager Shutdown");
 }
 
 void LightManager::SetDirectionalLight(DirectionalLight* dirLight)

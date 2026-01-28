@@ -5,13 +5,21 @@ SoundManager* SoundManager::GetInstance() {
 	return &instance;
 }
 
+void SoundManager::Init() {
+	sound_.Init();
+}
+
 void SoundManager::Shutdown() {
 	for (auto& [name, data] : soundDatas_) {
 		sound_.SoundUnload(&data);
 	}
 
+	sound_.StopBGM();
+	sound_.StopSE();
+	sound_.Shutdown();
 	soundDatas_.clear();
 	currentBGM_ = nullptr;
+	Logger::Write("SoundManager Shutdown");
 }
 
 void SoundManager::Load(const std::string& name, const std::string& filepath) {

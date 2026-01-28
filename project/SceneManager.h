@@ -25,10 +25,10 @@ public:
 		this->sceneFactory_ = std::move(sceneFactory);
 	}
 
-	SceneManager();
-	~SceneManager();
 
 private:
+	SceneManager() = default;
+	~SceneManager() = default;
 	SceneManager(const SceneManager&) = delete;
 	SceneManager& operator=(const SceneManager&) = delete;
 

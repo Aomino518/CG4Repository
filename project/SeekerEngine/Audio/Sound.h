@@ -1,14 +1,60 @@
 #pragma once
-#include "SoundCommon.h"
+#include <Windows.h>
+#include <wrl.h>
+#include <xAudio2.h>
+#include <fstream>
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+#include "Logger.h"
 #include <vector>
+#pragma comment(lib, "xaudio2.lib")
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "Mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
+
+// チャンクヘッダ
+struct ChunkHeader {
+	char id[4]; // チャンク毎のID
+	int32_t size; // チャンクサイズ
+};
+
+// RIFFヘッダチャンク
+struct RiffHeader {
+	ChunkHeader chunk; // "RIFF"
+	char type[4]; // "WAVE"
+};
+
+// FMTチャンク
+struct FormatChunk {
+	ChunkHeader chunk; // "fmt"
+	WAVEFORMATEX fmt; // 波形フォーマット
+};
+
+// 音声データ
+struct SoundData {
+	// 波形フォーマット
+	WAVEFORMATEX wfex;
+	// バッファの先頭アドレス
+	std::vector<BYTE> pBuffer;
+};
+
+struct VoiceContext {
+	IXAudio2SourceVoice* pSource;
+	float initialVolume;
+};
 
 class Sound
 {
 public:
 	Sound();
+
+	void Init();
+	void Shutdown();
+
 	SoundData SoundLoad(const char* filename);
 	void SoundUnload(SoundData* soundData);
-	
+
 	void PlayBGM(const SoundData& data, bool loop = false, float volume = 1.0f);
 	void PlaySE(const SoundData& data, bool loop = false, float volume = 1.0f);
 	void StopBGM();
@@ -26,13 +72,14 @@ public:
 
 private:
 	// 内部用
+	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
+	bool mfStarted_ = false;
 	static std::wstring ToWide(const char* utf8);
 	static std::string  ToLowerExt(const std::string& path);
 	SoundData SoundLoadMP3(const wchar_t* wpath);
 	SoundData SoundLoadWave(const char* filename);
 
-	SoundCommon* soundCommon_ = nullptr;
-	//IXAudio2SourceVoice* pSourceVoice_ = nullptr;
+	IXAudio2MasteringVoice* masterVoice_ = nullptr;
 	IXAudio2SourceVoice* bgmVoice_ = nullptr;
 	std::vector<VoiceContext> seVoices_;
 	

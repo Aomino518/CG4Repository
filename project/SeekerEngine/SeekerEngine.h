@@ -5,7 +5,6 @@
 #include "DebugCamera.h"
 #include "StringUtil.h"
 #include "Input.h"
-#include "SoundCommon.h"
 #include "Sound.h"
 #include "DxcCompiler.h"
 #include "RootSignatureFactory.h"

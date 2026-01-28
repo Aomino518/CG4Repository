@@ -1,5 +1,6 @@
 #pragma once
 #include "Graphics.h"
+#include "Logger.h"
 #include <stack>
 
 class SrvManager

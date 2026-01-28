@@ -29,6 +29,7 @@ void Entity3DCommon::Shutdown()
 	ps3DBlob_.Reset();
 	pso3D_.Reset();
 	cmdList_.Reset();
+	Logger::Write("Entity3DCommon Shutdown");
 }
 
 void Entity3DCommon::SetBlendMode(BlendMode mode)

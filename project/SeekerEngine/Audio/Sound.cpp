@@ -1,11 +1,43 @@
 #include "Sound.h"
-#include <vector>
 #include <assert.h>
-#include "Logger.h"
 #include <algorithm>
 
 Sound::Sound() {
-	soundCommon_ = SoundCommon::GetInstance();
+}
+
+void Sound::Init() {
+	HRESULT hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
+	if (FAILED(hr)) {
+		Logger::Write(Logger::LogLevel::Error, "XAudio2Create Failed");
+		return;
+	}
+
+	hr = xAudio2_->CreateMasteringVoice(&masterVoice_);
+	if (FAILED(hr)) {
+		Logger::Write(Logger::LogLevel::Error, "CreateMasteringVoice Failed");
+		return;
+	}
+
+	hr = MFStartup(MF_VERSION, 0);
+	if (SUCCEEDED(hr)) {
+		mfStarted_ = true;
+	}
+}
+
+void Sound::Shutdown() {
+	if (masterVoice_) {
+		masterVoice_->DestroyVoice();
+		masterVoice_ = nullptr;
+	}
+
+	// XAudio2解放
+	xAudio2_.Reset();
+
+	if (mfStarted_) {
+		MFShutdown();
+		mfStarted_ = false;
+	}
+	Logger::Write("Sound Shutdown");
 }
 
 /// <summary>
@@ -37,29 +69,26 @@ SoundData Sound::SoundLoad(const char* filename)
 
 // 音声データ解放
 void Sound::SoundUnload(SoundData* soundData) {
-	// バッファのメモリ解放
-	delete[] soundData->pBuffer;
-
-	soundData->pBuffer = 0;
-	soundData->bufferSize = 0;
+	soundData->pBuffer.clear();
+	soundData->pBuffer.shrink_to_fit();
 	soundData->wfex = {};
 }
 
 void Sound::PlayBGM(const SoundData& data, bool loop, float volume)
 {
 	StopBGM();
-	
+
 	isLooping_ = loop;
 	currentData_ = data;
 
-	SoundCommon::GetInstance()->GetXAudio()->CreateSourceVoice(
+	xAudio2_->CreateSourceVoice(
 		&bgmVoice_,
 		&data.wfex
 	);
 
 	XAUDIO2_BUFFER buffer = {};
-	buffer.pAudioData = data.pBuffer;
-	buffer.AudioBytes = data.bufferSize;
+	buffer.pAudioData = data.pBuffer.data();
+	buffer.AudioBytes = (UINT32)data.pBuffer.size();
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	if (loop) {
 		buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
@@ -76,14 +105,14 @@ void Sound::PlaySE(const SoundData& data, bool loop, float volume)
 {
 	IXAudio2SourceVoice* seVoice = nullptr;
 
-	SoundCommon::GetInstance()->GetXAudio()->CreateSourceVoice(
+	xAudio2_->CreateSourceVoice(
 		&seVoice,
 		&data.wfex
 	);
 
 	XAUDIO2_BUFFER buffer = {};
-	buffer.pAudioData = data.pBuffer;
-	buffer.AudioBytes = data.bufferSize;
+	buffer.pAudioData = data.pBuffer.data();
+	buffer.AudioBytes = (UINT32)data.pBuffer.size();
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	if (loop) {
 		buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
@@ -119,7 +148,7 @@ void Sound::StopSE()
 
 void Sound::RestartBGM()
 {
-	if (!currentData_.pBuffer) {
+	if (!currentData_.pBuffer.empty()) {
 		return;
 	}
 
@@ -228,21 +257,15 @@ SoundData Sound::SoundLoadWave(const char* filename) {
 		assert(0);
 	}
 
-	// Dataチャンクのデータ部(波形データ)の読み込み
-	char* pBuffer = new char[data.size];
-	file.read(pBuffer, data.size);
-
-	// WAVEファイルを閉じる
-	file.close();
-
 	/*--読み込んだ音声データをリターン--*/
 	// returnするための音声データ
 	SoundData soundData = {};
 
 	soundData.wfex = format.fmt;
-	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
-	soundData.bufferSize = data.size;
+	soundData.pBuffer.resize(data.size);
+	file.read(reinterpret_cast<char*>(soundData.pBuffer.data()), data.size);
 
+	file.close();
 	return soundData;
 }
 
@@ -251,7 +274,8 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 {
 	Logger::Write("SoundLoadMp3開始");
 	SoundData soundData = {};
-	if (!soundCommon_->GetIsMfStarted()) {
+	if (!mfStarted_) {
+		Logger::Write(Logger::LogLevel::Error, "Media Foundation is not started!");
 		return soundData;
 	}
 
@@ -353,19 +377,12 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 			std::memcpy(mediaData.data() + old, pBuffer, cbCurrentLength);
 		}
 
-		//mediaData.resize(static_cast<size_t>(mediaData.size()) + static_cast<size_t>(cbCurrentLength));
-		//memcpy(mediaData.data() + mediaData.size() - static_cast<size_t>(cbCurrentLength), pBuffer, static_cast<size_t>(cbCurrentLength));
-
 		pMFMediaBuffer->Unlock();
 	}
 
-	BYTE* heap = new BYTE[mediaData.size()];
-	memcpy(heap, mediaData.data(), mediaData.size());
-
 	soundData.wfex = *waveFormat;
-	soundData.pBuffer = heap;
-	soundData.bufferSize = static_cast<unsigned int>(mediaData.size());
-
+	soundData.pBuffer = std::move(mediaData);
+	
 	CoTaskMemFree(waveFormat);
 
 	return soundData;

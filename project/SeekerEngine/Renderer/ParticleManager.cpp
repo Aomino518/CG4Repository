@@ -115,6 +115,7 @@ void ParticleManager::Shutdown()
 	materialResource.Reset();
 	vertexBuffer_.Reset();
 	indexBuffer_.Reset();
+	Logger::Write("ParticleManager Shutdown");
 }
 
 void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count)

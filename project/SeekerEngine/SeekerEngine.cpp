@@ -29,9 +29,8 @@ void SeekerEngine::Init()
 	rs2D_ = rootSignatureFactory_.Create2D();
 	rsParticle_ = rootSignatureFactory_.CreateParticle3D();
 
-	// SoundCommon作成
-	SoundCommon::GetInstance()->Init();
-	
+	SoundManager::GetInstance()->Init();
+
 	// スプライト共通部の作成
 	SpriteCommon::GetInstance()->Init(graphics_.get(), dxcCompiler_, rs2D_.Get());
 
@@ -56,20 +55,16 @@ void SeekerEngine::Shutdown()
 	ParticleManager::GetInstance()->Shutdown();
 	Entity3DCommon::GetInstance()->Shutdown();
 	SpriteCommon::GetInstance()->Shutdown();
+	SoundManager::GetInstance()->Shutdown();
 	ModelManager::GetInstance()->Shutdown();
 	TextureManager::GetInstance()->Shutdown();
-
 	Input::GetInstance()->Shutdown();
-
-	SoundManager::GetInstance()->Shutdown();
-	SoundCommon::GetInstance()->Shutdown();
-	
 	SrvManager::GetInstance()->Shutdown();
   
 	graphics_->Shutdown();
-
-	Logger::Write("AppのShutdown");
+	Logger::Write("Graphics Shutdown");
 	app_->Shutdown();
+	Logger::Write("AppのShutdown");
 
 	Logger::Write("アプリ終了");
 	Logger::Shutdown();

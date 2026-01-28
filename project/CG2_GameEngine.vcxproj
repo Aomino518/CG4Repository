@@ -210,7 +210,6 @@
     <ClCompile Include="SeekerEngine\Renderer\ModelCommon.cpp" />
     <ClCompile Include="SeekerEngine\Renderer\ModelManager.cpp" />
     <ClCompile Include="SeekerEngine\SeekerEngine.cpp" />
-    <ClCompile Include="SeekerEngine\Audio\SoundCommon.cpp" />
     <ClCompile Include="SeekerEngine\Renderer\TextureManager.cpp" />
     <ClCompile Include="SeekerEngine\Renderer\ParticleManager.cpp" />
     <ClCompile Include="SeekerEngine\Framework\SEFramework.cpp" />
@@ -332,7 +331,6 @@
     <ClInclude Include="SeekerEngine\Renderer\ModelCommon.h" />
     <ClInclude Include="SeekerEngine\Renderer\ModelManager.h" />
     <ClInclude Include="SeekerEngine\SeekerEngine.h" />
-    <ClInclude Include="SeekerEngine\Audio\SoundCommon.h" />
     <ClInclude Include="SeekerEngine\Renderer\TextureManager.h" />
     <ClInclude Include="SeekerEngine\Math\Vector2.h" />
     <ClInclude Include="SeekerEngine\Math\Vector3.h" />
