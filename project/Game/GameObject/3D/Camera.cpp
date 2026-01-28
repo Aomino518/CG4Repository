@@ -1,9 +1,10 @@
 #include "Camera.h"
+#include "Application.h"
 
 Camera::Camera()
 	: transform_({ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }),
 	fovY_(0.45f),
-	aspectRatio_(float(Application::GetWidth()) / float(Application::GetHeight())),
+	aspectRatio_(float(Application::GetInstance()->GetWidth()) / float(Application::GetInstance()->GetHeight())),
 	nearClip_(0.1f),
 	farClip_(100.0f),
 	worldMatrix_(MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate)),

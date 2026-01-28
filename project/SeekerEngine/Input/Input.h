@@ -2,10 +2,10 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <assert.h>
-#include "Application.h"
 #include <wrl.h>
 #include "Logger.h"
 
+class Application;
 class Input
 {
 public:
@@ -14,7 +14,7 @@ public:
 public:
 	static Input* GetInstance();
 
-	void Init(Application* app);
+	void Init();
 	void Shutdown();
 
 	void Update();

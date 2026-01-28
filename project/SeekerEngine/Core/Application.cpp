@@ -17,6 +17,11 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 int Application::clientWidth_ = 1280;
 int Application::clientHeight_ = 720;
 
+Application* Application::GetInstance() {
+	static Application instance;
+	return &instance;
+}
+
 LRESULT Application::WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 #ifdef USE_IMGUI
@@ -37,19 +42,12 @@ LRESULT Application::WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 	return DefWindowProc(hWnd, msg, wp, lp);
 }
 
-Application::Application(int width, int height, const wchar_t* title)
+void Application::Init(int width, int height, const wchar_t* title)
 {
 	clientWidth_ = width;
 	clientHeight_ = height;
 	title_ = title;
-}
 
-Application::~Application()
-{
-}
-
-void Application::Init()
-{
 	/*--ウィンドウクラスの登録--*/
 
 	// ウィンドウプロシージャ

@@ -1,6 +1,5 @@
 #pragma once
 #include "CreateResorceUtils.h"
-#include "Application.h"
 #include <numbers>
 
 class Camera

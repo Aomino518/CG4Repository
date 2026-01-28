@@ -1,4 +1,5 @@
 #include "Graphics.h"
+#include "Application.h"
 #include "Logger.h"
 #include "StringUtil.h"
 #include "TextureManager.h"
@@ -14,14 +15,14 @@ ComPtr<ID3D12GraphicsCommandList> Graphics::cmdList_ = nullptr;
 uint32_t Graphics::width_ = 0;
 uint32_t Graphics::height_ = 0;
 
-bool Graphics::Init(HWND hwnd, uint32_t width, uint32_t height, bool enableDebug)
+bool Graphics::Init(bool enableDebug)
 {
 	// FPSの固定初期化
 	InitFixFPS();
 
-	width_ = width;
-	height_ = height;
-	hwnd_ = hwnd;
+	width_ = Application::GetInstance()->GetWidth();
+	height_ = Application::GetInstance()->GetHeight();
+	hwnd_ = Application::GetInstance()->GetHWND();
 
 #ifdef _DEBUG
 	if (enableDebug) {

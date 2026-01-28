@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "Application.h"
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
@@ -8,9 +9,9 @@ Input* Input::GetInstance()
 	return &instance;
 }
 
-void Input::Init(Application* app)
+void Input::Init()
 {
-	app_ = app;
+	app_ = Application::GetInstance();
 	//========================================
 	// DirectInputの初期化
 	//========================================

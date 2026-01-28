@@ -10,7 +10,7 @@
 class Graphics
 {
 public:
-	bool Init(HWND hwnd, uint32_t width, uint32_t height, bool enableDebug = true);
+	bool Init(bool enableDebug = true);
 	void Shutdown();
 
 	void BeginFrame();

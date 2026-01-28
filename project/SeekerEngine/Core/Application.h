@@ -10,11 +10,11 @@
 class Application
 {
 public:
-	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
-	Application(int width, int height, const wchar_t* title);
-	~Application();
+	static Application* GetInstance();
 
-	void Init();			// ウィンドウ作成
+	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+
+	void Init(int width, int height, const wchar_t* title); // ウィンドウ作成
 	bool ProcessMessage();  // メッセージポンプ
 	void Shutdown();		// 明示終了
 
@@ -25,6 +25,11 @@ public:
 	static int GetHeight() { return clientHeight_; }
 
 private:
+	Application() = default;
+	~Application() = default;
+	Application(const Application&) = delete;
+	Application& operator=(const Application&) = delete;
+
 	HINSTANCE hInstance_ = nullptr;
 	HWND hwnd_ = nullptr;
 	WNDCLASS wndclass{};

@@ -37,13 +37,12 @@ public:
 	void EndFrame();
 
 	// Getter
-	Application* GetApp() const { return app_.get(); }
+	Application* GetApp() const { return Application::GetInstance(); }
 	Graphics* GetGraphics() const { return graphics_.get(); }
 	DxcCompiler GetDxcCompiler() const { return dxcCompiler_; }
 	RootSignatureFactory GetRootSig() const { return rootSignatureFactory_; }
 
 private:
-	std::unique_ptr<Application> app_;
 	std::unique_ptr<Graphics> graphics_;
 	
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs3D_;

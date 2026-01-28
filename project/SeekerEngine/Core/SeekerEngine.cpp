@@ -6,12 +6,11 @@ void SeekerEngine::Init()
 	Logger::Init();
 	Logger::Write("アプリ開始");
 
-	app_ = std::make_unique<Application>(1280, 720, L"CG2");
-	app_->Init();
+	Application::GetInstance()->Init(1280, 720, L"CG2");
 
 	// graphicsの初期化
 	graphics_ = std::make_unique<Graphics>();
-	graphics_->Init(app_->GetHWND(), app_->GetWidth(), app_->GetHeight(), true);
+	graphics_->Init(true);
 
 	SrvManager::GetInstance()->Init(graphics_.get());
 
@@ -19,7 +18,7 @@ void SeekerEngine::Init()
 	dxcCompiler_.Init();
 
 	//DirectInput初期化
-	Input::GetInstance()->Init(app_.get());
+	Input::GetInstance()->Init();
 	TextureManager::GetInstance()->Init(graphics_.get());
 	ModelManager::GetInstance()->Init(graphics_.get());
   
@@ -39,7 +38,7 @@ void SeekerEngine::Init()
 
 	ParticleManager::GetInstance()->Init(graphics_.get(), dxcCompiler_, rsParticle_.Get());
 	LightManager::GetInstance()->Init();
-	ImGuiManager::GetInstance()->Init(app_.get(), graphics_.get());
+	ImGuiManager::GetInstance()->Init(graphics_.get());
 }
 
 void SeekerEngine::Update()
@@ -63,7 +62,7 @@ void SeekerEngine::Shutdown()
   
 	graphics_->Shutdown();
 	Logger::Write("Graphics Shutdown");
-	app_->Shutdown();
+	Application::GetInstance()->Shutdown();
 	Logger::Write("AppのShutdown");
 
 	Logger::Write("アプリ終了");

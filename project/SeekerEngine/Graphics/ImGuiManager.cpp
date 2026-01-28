@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include <Psapi.h>
 #include "LightManager.h"
+#include "Application.h"
 
 ImGuiManager* ImGuiManager::GetInstance() {
 	static ImGuiManager instance;
@@ -18,10 +19,10 @@ static const char* blendNames[] = {
 		"Screen"
 };
 
-void ImGuiManager::Init([[maybe_unused]] Application* app, [[maybe_unused]] Graphics* graphics)
+void ImGuiManager::Init([[maybe_unused]] Graphics* graphics)
 {
 #ifdef USE_IMGUI
-	app_ = app;
+	app_ = Application::GetInstance();
 	graphics_ = graphics;
 
 	// ImGuiの初期化

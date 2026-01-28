@@ -1,6 +1,5 @@
 #pragma once
 #include "Graphics.h"
-#include "Application.h"
 #include <stdlib.h>
 #include "Vector2.h"
 #include "Vector3.h"
@@ -16,13 +15,14 @@
 #include "externals/imgui/imgui_impl_win32.h"
 #endif
 
+class Application;
 class Entity3D;
 class ImGuiManager
 {
 public:
 	static ImGuiManager* GetInstance();
 
-	void Init(Application* app, Graphics* graphics);
+	void Init(Graphics* graphics);
 	void BegineFrame();
 	void EndFrame();
 	void Draw();
