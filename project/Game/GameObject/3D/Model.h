@@ -27,7 +27,7 @@ public:
 	/// <returns>マテリアルデータ</returns>
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
-	void LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& path);
+	void LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& extension);
 
 	Vector4& GetMaterial() const { return materialData_->color; }
 	bool GetIsLighting() const { return materialData_->enableLighting; }

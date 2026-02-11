@@ -22,7 +22,7 @@ public:
 	/// モデルファイルの読み込み
 	/// </summary>
 	/// <param name="filePath">ファイルパス</param>
-	void LoadModel(const std::string& filePath, const std::string& path);
+	void LoadModel(const std::string& filePath);
 
 	/// <summary>
 	/// モデル検索
@@ -36,6 +36,14 @@ private:
 	~ModelManager() = default;
 	ModelManager(const ModelManager&) = delete;
 	ModelManager& operator=(const ModelManager&) = delete;
+
+	/// <summary>
+	/// 文字列を分離する関数
+	/// </summary>
+	/// <param name="str">文字列</param>
+	/// <param name="del">区切る対象文字</param>
+	/// <returns>分離した文字列</returns>
+	std::vector<std::string> Split(std::string str, char del);
 
 	// モデルデータ
 	std::map<std::string, std::unique_ptr<Model>> models_;

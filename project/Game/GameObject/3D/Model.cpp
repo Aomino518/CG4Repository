@@ -19,15 +19,15 @@ void Model::Draw()
 {
 	cmdList_->IASetVertexBuffers(0, 1, &vertexBufferView_); // VBVを設定
 	// 一旦Index化はコメントアウト
-	//cmdList_->IASetIndexBuffer(&indexBufferView_);
+	cmdList_->IASetIndexBuffer(&indexBufferView_);
 	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定する。
 	cmdList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 	cmdList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 	// 描画 (DrawCall)。
 	// 一旦Index化はコメントアウト
-	//cmdList_->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
-	cmdList_->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
+	cmdList_->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
+	//cmdList_->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
 }
 
 MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
@@ -56,10 +56,10 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 	return materialData;
 }
 
-void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& path)
+void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& extension)
 {
 	Assimp::Importer importer;
-	std::string filePath = directoryPath + "/" + filename + "/" + filename + path;
+	std::string	filePath = directoryPath + "/" + filename + "/" + filename + "." + extension;
 	Logger::Write(filePath);
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 
@@ -69,25 +69,30 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals()); // 法線がないMeshは非対応
 		assert(mesh->HasTextureCoords(0)); // TexcoordがないMeshは非対応
+		uint32_t baseVertex = uint32_t(modelData_.vertices.size());
+
+		for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
+			aiVector3D& p = mesh->mVertices[i];
+			aiVector3D& n = mesh->mNormals[i];
+			aiVector3D& uv = mesh->mTextureCoords[0][i];
+
+			VertexData vertex{};
+			vertex.position = { -p.x, p.y, p.z, 1.0f };
+			vertex.normal = { -n.x, n.y, n.z };
+			vertex.texcoord = { uv.x, uv.y };
+
+			modelData_.vertices.push_back(vertex);
+		}
 
 		// Meshの中身の解析を行う
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
 			aiFace& face = mesh->mFaces[faceIndex];
 			assert(face.mNumIndices == 3); // 三角形のみサポート
-			// faceの中身を解析を行う
-			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
-				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D& position = mesh->mVertices[vertexIndex];
-				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
-				VertexData vertex;
-				vertex.position = { position.x, position.y, position.z, 1.0f };
-				vertex.normal = { normal.x, normal.y, normal.z };
-				vertex.texcoord = { texcoord.x, texcoord.y };
-				// 右手から左手に変換するので手動で対処
-				vertex.position.x *= -1.0f;
-				vertex.normal.x *= -1.0f;
-				modelData_.vertices.push_back(vertex);
+			
+			for (uint32_t i = 0; i < 3; ++i) {
+				modelData_.indices.push_back(
+					baseVertex + face.mIndices[i]
+				);
 			}
 		}
 	}
@@ -98,7 +103,8 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			std::string fullPath = directoryPath + "/" + filename + "/" + textureFilePath.C_Str();
+			std::string fullPath;
+			fullPath = directoryPath + "/" + filename + "/" + textureFilePath.C_Str();
 			Logger::Write("Trying to load texture from: " + fullPath);
 			modelData_.material.textureFilePath = fullPath;
 		}
@@ -120,13 +126,13 @@ void Model::CreateBufferResources()
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 	Logger::Write("モデルのVertexResource生成完了");
 
-	/*indexResource_ = CreateBufferResource(Graphics::GetDevice(), sizeof(uint32_t) * modelData_.indices.size());
+	indexResource_ = CreateBufferResource(Graphics::GetDevice(), sizeof(uint32_t) * modelData_.indices.size());
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewModel{};
 	// リソースの先頭のアドレスから使う
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.indices.size());
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-	Logger::Write("モデルのindexResource生成完了");*/
+	Logger::Write("モデルのindexResource生成完了");
 
 	// モデル用の頂点リソースにデータを書き込む
 	// 書き込むためのアドレスを取得
@@ -138,11 +144,11 @@ void Model::CreateBufferResources()
 
 	// モデル用の頂点リソースにデータを書き込む
 	// 書き込むためのアドレスを取得
-	/*indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 	std::memcpy(indexData_, modelData_.indices.data(), sizeof(uint32_t) * modelData_.indices.size());
 	indexResource_->Unmap(0, nullptr);
 	indexData_ = nullptr;
-	Logger::Write("モデルのindexDataに書き込み完了");*/
+	Logger::Write("モデルのindexDataに書き込み完了");
 }
 
 void Model::MaterialInit()

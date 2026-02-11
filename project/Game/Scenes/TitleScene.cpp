@@ -7,7 +7,7 @@ void TitleScene::Init()
     // Sprite
     //===========================
     sprite = std::make_unique<Sprite>();
-    uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/uvChecker.png");
+    uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/sprites/uvChecker.png");
     sprite->Create(tHChecker, { 0.0f, 0.0f }, Color::WHITE);
     sprite->SetRotation(0.0f);
 }

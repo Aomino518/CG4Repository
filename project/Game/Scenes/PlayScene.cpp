@@ -23,7 +23,7 @@ void PlayScene::Init()
     // Sprite
     //===========================
     sprite = std::make_unique<Sprite>();
-    uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/uvChecker.png");
+    uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/sprites/uvChecker.png");
     sprite->Create(tHChecker, { 0.0f, 0.0f }, Color::WHITE);
     sprite->SetRotation(0.0f);
 
@@ -31,17 +31,17 @@ void PlayScene::Init()
     // Model
     //===========================
     entity = std::make_unique<Entity3D>();
-    ModelManager::GetInstance()->LoadModel("plane", ".gltf");
+    ModelManager::GetInstance()->LoadModel("ball.obj");
     entity->Init();
-    entity->SetModel("plane");
+    entity->SetModel("ball.obj");
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
-    entity->SetIsLighting(false);
+    //entity->SetIsLighting(false);
 
-    //modelTerrain = std::make_unique<Entity3D>();
-    //ModelManager::GetInstance()->LoadModel("terrain");
-    //modelTerrain->Init();
-    //modelTerrain->SetModel("terrain");
-    //modelTerrain->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
+    modelTerrain = std::make_unique<Entity3D>();
+    ModelManager::GetInstance()->LoadModel("terrain.obj");
+    modelTerrain->Init();
+    modelTerrain->SetModel("terrain.obj");
+    modelTerrain->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     //modelTerrain->SetIsLighting(false);
 
     //===========================
@@ -91,8 +91,8 @@ void PlayScene::Update()
     entity->SetCamera(cameraManager->GetActiveCamera());
     entity->Update();
 
-    //modelTerrain->SetCamera(cameraManager->GetActiveCamera());
-    //modelTerrain->Update();
+    modelTerrain->SetCamera(cameraManager->GetActiveCamera());
+    modelTerrain->Update();
 
     ImGuiManager::GetInstance()->BegineFrame();
     ImGuiManager::GetInstance()->BegineInspector();
@@ -113,7 +113,7 @@ void PlayScene::Draw()
     /*-- 描画処理 --*/
     Entity3DCommon::GetInstance()->DrawCommon();
     entity->Draw();
-    //modelTerrain->Draw();
+    modelTerrain->Draw();
    
     ParticleManager::GetInstance()->Draw();
 
