@@ -23,14 +23,14 @@ void ModelManager::LoadModel(const std::string& filePath)
 		return;
 	}
 
-	std::vector<std::string> firstFilePath = Split(filePath, '.');
+	std::vector<std::string> filePaths = Split(filePath, '.');
 	
 	// モデル生成とファイル読み込み、初期化
 	std::unique_ptr<Model> model = std::make_unique<Model>();
-	model->Init("resources/models", firstFilePath[0], firstFilePath[1]);
+	model->Init("resources/models", filePaths[0], filePaths[1]);
 
 	// モデルをマップコンテナに格納する
-	models_.insert(std::make_pair(firstFilePath[0], std::move(model)));
+	models_.insert(std::make_pair(filePaths[0], std::move(model)));
 }
 
 Model* ModelManager::FindModel(const std::string& filePath)
