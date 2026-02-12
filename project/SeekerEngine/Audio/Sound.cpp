@@ -40,6 +40,23 @@ void Sound::Shutdown() {
 	Logger::Write("Sound Shutdown");
 }
 
+void Sound::Update() {
+	auto it = seVoices_.begin();
+	while (it != seVoices_.end()) {
+		XAUDIO2_VOICE_STATE state;
+		it->pSource->GetState(&state);
+
+		// 再生終了したボイスチェック
+		if (state.BuffersQueued == 0) {
+			it->pSource->Stop();
+			it->pSource->DestroyVoice();
+			it = seVoices_.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
 /// <summary>
 /// 音声読み込み関数
 /// </summary>
@@ -103,6 +120,10 @@ void Sound::PlayBGM(const SoundData& data, bool loop, float volume)
 
 void Sound::PlaySE(const SoundData& data, bool loop, float volume)
 {
+	if (seVoices_.size() > 32) {
+		return;
+	}
+
 	IXAudio2SourceVoice* seVoice = nullptr;
 
 	xAudio2_->CreateSourceVoice(

@@ -32,6 +32,8 @@ void TitleScene::Update()
        SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
     }
 
+    SoundManager::GetInstance()->Update();
+
     sprite->Update();
 
     ImGuiManager::GetInstance()->BegineFrame();
@@ -51,5 +53,5 @@ void TitleScene::Draw()
 
 void TitleScene::Shutdown()
 {
-    SoundManager::GetInstance()->Unload("bgm1");
+
 }
