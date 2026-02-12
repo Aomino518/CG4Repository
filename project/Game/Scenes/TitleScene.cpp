@@ -6,7 +6,7 @@ void TitleScene::Init()
     //===========================
     // Sound
     //===========================
-    SoundManager::GetInstance()->Load("bgm1", "resources/sound5.wav");
+    SoundManager::GetInstance()->Load("bgm1", "sound5.wav");
 
     //===========================
     // Sprite

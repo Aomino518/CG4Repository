@@ -31,7 +31,9 @@ void SoundManager::Load(const std::string& name, const std::string& filepath) {
 		return;
 	}
 
-	soundDatas_[name] = sound_.SoundLoad(filepath.c_str());
+	std::string soundFilePath = "resources/sounds/" + filepath;
+
+	soundDatas_[name] = sound_.SoundLoad(soundFilePath.c_str());
 }
 
 void SoundManager::PlaySE(const std::string& name, float volume) {
