@@ -1,6 +1,11 @@
 #include "CameraManager.h"
 #include <numbers>
 
+CameraManager* CameraManager::GetInstance() {
+	static CameraManager instance;
+	return &instance;
+}
+
 void CameraManager::Init()
 {
 	CreateCamera("MainCamera");
@@ -24,6 +29,12 @@ void CameraManager::Update()
 	}
 }
 
+void CameraManager::Shutdown()
+{
+	cameras_.clear();
+	debugCamera_.reset();
+}	
+
 void CameraManager::CreateCamera(const std::string& cameraName)
 {
 	CameraInfo cameraInfo;
@@ -46,6 +57,18 @@ void CameraManager::SetActiveCamera(bool isDebug, int index)
 	activeCamIndex_ = index;
 }
 
+void CameraManager::SetActiveCameraByName(const std::string& name)
+{
+	for (int i = 0; i < cameras_.size(); ++i) {
+		if (cameras_[i].name == name) {
+			activeCamIndex_ = i;
+			activeIsDebug_ = false;
+			return;
+		}
+	}
+	assert(false && "指定された名前のカメラが存在しません");
+}
+
 Camera* CameraManager::GetActiveCamera() const
 {
 	if (activeIsDebug_) {
@@ -53,4 +76,16 @@ Camera* CameraManager::GetActiveCamera() const
 	}
 
 	return  cameras_[activeCamIndex_].camera.get();
+}
+
+Camera* CameraManager::GetCamera(const std::string& name)
+{
+	for(auto& cam : cameras_) {
+		if (cam.name == name) {
+			return cam.camera.get();
+		}
+	}
+
+	assert(false && "指定された名前のカメラが見つかりません");
+	return nullptr;
 }

@@ -13,11 +13,10 @@ void PlayScene::Init()
     //===========================
     // Camera
     //===========================
-    cameraManager = std::make_unique<CameraManager>();
-    cameraManager->Init();
-    cameraManager->CreateCamera("EntranceCamera");
-    Entity3DCommon::GetInstance()->SetCameraManager(cameraManager.get());
-    Entity3DCommon::GetInstance()->SetDebugCamera(cameraManager->GetDebugCamera());
+    auto camMgr = CameraManager::GetInstance();
+    camMgr->CreateCamera("EntranceCamera");
+    Entity3DCommon::GetInstance()->SetCameraManager(camMgr);
+    Entity3DCommon::GetInstance()->SetDebugCamera(camMgr->GetDebugCamera());
 
     //===========================
     // Sprite
@@ -83,22 +82,21 @@ void PlayScene::Update()
 
     SoundManager::GetInstance()->Update();
 
-    cameraManager->Update();
-
     emitter_->Update();
-	ParticleManager::GetInstance()->Update(cameraManager.get());
+    auto camMgr = CameraManager::GetInstance();
+	ParticleManager::GetInstance()->Update(camMgr);
 
     sprite->Update();
 
-    entity->SetCamera(cameraManager->GetActiveCamera());
+    entity->SetCamera(camMgr->GetActiveCamera());
     entity->Update();
 
-    modelTerrain->SetCamera(cameraManager->GetActiveCamera());
+    modelTerrain->SetCamera(camMgr->GetActiveCamera());
     modelTerrain->Update();
 
     ImGuiManager::GetInstance()->BegineFrame();
     ImGuiManager::GetInstance()->BegineInspector();
-    ImGuiManager::GetInstance()->CameraSetting(cameraManager.get());
+    ImGuiManager::GetInstance()->CameraSetting(camMgr);
     ImGuiManager::GetInstance()->SpriteSetting("uvChecker", sprite.get());
     //ImGuiManager::GetInstance()->ModelSetting("plane", entity.get());
     //ImGuiManager::GetInstance()->ModelSetting("terrain", modelTerrain.get());

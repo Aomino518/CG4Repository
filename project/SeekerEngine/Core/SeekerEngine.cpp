@@ -29,6 +29,8 @@ void SeekerEngine::Init()
 
 	SoundManager::GetInstance()->Init();
 
+	CameraManager::GetInstance()->Init();
+
 	// スプライト共通部の作成
 	SpriteCommon::GetInstance()->Init(dxcCompiler_, rs2D_.Get());
 
@@ -43,6 +45,7 @@ void SeekerEngine::Init()
 void SeekerEngine::Update()
 {
 	Input::GetInstance()->Update();
+	CameraManager::GetInstance()->Update();
 }
 
 void SeekerEngine::Shutdown()
@@ -53,6 +56,7 @@ void SeekerEngine::Shutdown()
 	ParticleManager::GetInstance()->Shutdown();
 	Entity3DCommon::GetInstance()->Shutdown();
 	SpriteCommon::GetInstance()->Shutdown();
+	CameraManager::GetInstance()->Shutdown();
 	SoundManager::GetInstance()->Shutdown();
 	ModelManager::GetInstance()->Shutdown();
 	TextureManager::GetInstance()->Shutdown();

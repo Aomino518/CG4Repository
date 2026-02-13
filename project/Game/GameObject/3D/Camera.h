@@ -17,6 +17,7 @@ public:
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 	Matrix4x4 GetBillboardMatrix();
+	const Transform& GetTransform() { return transform_; }
 
 	// Setter
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
@@ -26,6 +27,7 @@ public:
 	void SetAspectRatio(float aspectRatio) { this->aspectRatio_ = aspectRatio; }
 	void SetNearClip(float nearClip) { this->nearClip_ = nearClip; }
 	void SetFarClip(float farClip) { this->farClip_ = farClip; }
+	void SetTransform(const Transform& transform) { this->transform_ = transform; }
 
 private:
 	Transform transform_;

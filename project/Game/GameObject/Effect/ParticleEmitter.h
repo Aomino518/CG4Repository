@@ -14,6 +14,7 @@ public:
 
 	bool GetIsLoop() { return isLoop_; }
 
+
 	Transform transform_;
 	uint32_t count_; // 1回の発生個数
 	float frequency_; // 発生頻度

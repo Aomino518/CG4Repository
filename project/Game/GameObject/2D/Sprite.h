@@ -42,6 +42,8 @@ public:
 	const Vector2& GetTextureSize() const { return textureSize_; }
 	const Transform& GetUV() const { return uvTransform_; }
 	const BlendMode& GetBlendMode() { return mode_; }
+	const Transform& GetTransform() { return transform_; }
+
 	// Setter
 	void SetPosition(const Vector2& position) { this->position_ = position; }
 	void SetRotation(float rotation) { this->rotation_ = rotation; }
@@ -58,8 +60,8 @@ public:
 		materialData->color.y = g;
 		materialData->color.z = b;
 	}
-
 	void SetBlendMode(BlendMode mode);
+	void SetTransform(Transform& transform) { this->transform_ = transform; }
 
 	/// <summary>
 	/// スプライトを生成

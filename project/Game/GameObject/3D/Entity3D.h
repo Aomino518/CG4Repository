@@ -39,6 +39,7 @@ public:
 	const BlendMode& GetBlendMode() { return mode_; }
 	const Vector3& GetLightDirection() const { return directionalLightData_->direction; }
 	const Vector3& GetPointLightPos() const { return pointLightData_->position; }
+	const Transform& GetTransform() const { return transform_; }
 
 	// setter関数
 	void SetModel(const std::string& filePath);
@@ -51,6 +52,7 @@ public:
 	void SetBlendMode(BlendMode mode);
 	void SetLightDirection(const Vector3& pos) { this->directionalLightData_->direction = pos; }
 	void SetPointLightPos(const Vector3& pos) { this->pointLightData_->position = pos; }
+	void SetTransform(const Transform& transform) { this->transform_ = transform; }
 
 private:
 	void ModelResourcesSetting();
