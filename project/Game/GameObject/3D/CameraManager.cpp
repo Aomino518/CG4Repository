@@ -37,6 +37,12 @@ void CameraManager::Shutdown()
 
 void CameraManager::CreateCamera(const std::string& cameraName)
 {
+	for (int i = 0; i < cameras_.size(); ++i) {
+		if (cameras_[i].name == cameraName) {
+			return;
+		}
+	}
+
 	CameraInfo cameraInfo;
 	cameraInfo.name = cameraName;
 	cameraInfo.camera = std::make_unique<Camera>();
