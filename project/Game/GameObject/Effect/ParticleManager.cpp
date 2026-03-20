@@ -58,7 +58,14 @@ void ParticleManager::Update(CameraManager* cameraManager)
 			particleIterator->transform.translate.y += particleIterator->velocity.y * kDeltaTime;
 			particleIterator->transform.translate.z += particleIterator->velocity.z * kDeltaTime;
 			particleIterator->currentTime += kDeltaTime;
-			float alpha = 1.0f - (particleIterator->currentTime / particleIterator->lifeTime);
+
+			float t = particleIterator->currentTime / particleIterator->lifeTime;
+			t = std::clamp(t, 0.0f, 1.0f);
+			Vector4 color = particleIterator->startColor * (1.0f - t) + particleIterator->endColor * t;
+
+			// スケール補間
+			Vector3 scale = particleIterator->startScale * (1.0f - t) + particleIterator->endScale * t;
+			particleIterator->transform.scale = scale;
 
 			Matrix4x4 worldMatrix = CalculateWorldMatrix(*particleIterator, name, isDebug);
 			Matrix4x4 wvpMatrix = CalculateWVPMatrix(worldMatrix, isDebug);
@@ -68,7 +75,7 @@ void ParticleManager::Update(CameraManager* cameraManager)
 				group.instanceData[group.instanceCount].World = worldMatrix;
 				group.instanceData[group.instanceCount].WVP = wvpMatrix;
 				group.instanceData[group.instanceCount].color = particleIterator->color;
-				group.instanceData[group.instanceCount].color.w = alpha;
+				group.instanceData[group.instanceCount].color = color;
 				++group.instanceCount;
 			}
 
@@ -119,9 +126,17 @@ void ParticleManager::Shutdown()
 	Logger::Write("ParticleManager Shutdown");
 }
 
-void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count)
+void ParticleManager::Emit(const std::string name, 
+	const Vector3& position, 
+	const Vector4& startColor,
+	const Vector4& endColor,
+	const Vector3& startScale,
+	const Vector3& endScale, 
+	const float plusRange,
+	const float minusRange,
+	uint32_t count)
 {
-	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	std::uniform_real_distribution<float> distribution(minusRange, plusRange);
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
 	Vector3 randomTranslate = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
@@ -136,9 +151,13 @@ void ParticleManager::Emit(const std::string name, const Vector3& position, uint
 
 		particle.transform.translate = { position + randomTranslate };
 		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
+		particle.transform.scale = startScale;
 		particle.velocity = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
 		particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_), 1.0f };
+		particle.startColor = startColor;
+		particle.endColor = endColor;
+		particle.startScale = startScale;
+		particle.endScale = endScale;
 		particle.lifeTime = distTime(randomEngine_);
 		particle.currentTime = 0;
 

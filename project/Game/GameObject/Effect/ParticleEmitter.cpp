@@ -1,8 +1,22 @@
 #include "ParticleEmitter.h"
 
-ParticleEmitter::ParticleEmitter(const std::string& groupName, uint32_t count, float frequency) :
+ParticleEmitter::ParticleEmitter(const std::string& groupName, 
+	uint32_t count, 
+	const Vector4& startColor,
+	const Vector4& endColor,
+	const Vector3& startScale,
+	const Vector3& endScale,
+	const float plusRange,
+	const float minusRange,
+	float frequency) :
 groupName_(groupName),
 count_(count),
+startColor_(startColor),
+endColor_(endColor),
+startScale_(startScale),
+endScale_(endScale),
+plusRange_(plusRange),
+minusRange_(minusRange),
 frequency_(frequency),
 frequencyTime_(0.0f)
 {
@@ -13,7 +27,15 @@ frequencyTime_(0.0f)
 
 void ParticleEmitter::EmitOnce()
 {
-	ParticleManager::GetInstance()->Emit(groupName_, transform_.translate, count_);
+	ParticleManager::GetInstance()->Emit(groupName_, 
+		transform_.translate, 
+		startColor_,
+		endColor_,
+		startScale_,
+		endScale_,
+		plusRange_,
+		minusRange_,
+		count_);
 }
 
 void ParticleEmitter::StartLoop()
@@ -33,7 +55,15 @@ void ParticleEmitter::Update()
 		frequencyTime_ += kDeltaTime;
 
 		while (frequency_ <= frequencyTime_) {
-			ParticleManager::GetInstance()->Emit(groupName_, transform_.translate, count_);
+			ParticleManager::GetInstance()->Emit(groupName_, 
+				transform_.translate, 
+				startColor_,
+				endColor_,
+				startScale_,
+				endScale_, 
+				plusRange_,
+				minusRange_,
+				count_);
 			frequencyTime_ -= frequency_;
 		}
 	}

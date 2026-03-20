@@ -54,7 +54,15 @@ public:
 
     void Shutdown();
 
-    void Emit(const std::string name, const Vector3& position, uint32_t count);
+    void Emit(const std::string name, 
+        const Vector3& position, 
+        const Vector4& startColor,
+        const Vector4& endColor,
+        const Vector3& startScale,
+        const Vector3& endScale,
+        const float plusRange,
+        const float minusRange,
+        uint32_t count);
 
     void SetBlendMode(const std::string& name, BlendMode mode);
 

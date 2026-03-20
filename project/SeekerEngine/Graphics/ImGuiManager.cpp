@@ -290,7 +290,7 @@ void ImGuiManager::ParticleSetting(const std::string& name, ParticleEmitter* emi
 		ImGui::DragFloat3("Emitter Scale", (float*)&emitter->transform_.scale, 0.01f, 0.0f, 10.0f);
 
 		ImGui::DragInt("Emit Count", (int*)&emitter->count_, 1.0f, 1, 100);
-		ImGui::DragFloat("Frequency", &emitter->frequency_, 0.01f, 0.0f, 5.0f);
+		ImGui::DragFloat("Frequency", &emitter->frequency_, 0.01f, 0.01f, 5.0f);
 
 		if (ImGui::CollapsingHeader("Field Settings")) {
 

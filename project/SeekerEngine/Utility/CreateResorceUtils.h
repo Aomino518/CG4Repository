@@ -109,6 +109,10 @@ struct Particle {
 	Transform transform;
 	Vector3 velocity;
 	Vector4 color;
+	Vector4 startColor;
+	Vector4 endColor;
+	Vector3 startScale;
+	Vector3 endScale;
 	float lifeTime;
 	float currentTime;
 };
