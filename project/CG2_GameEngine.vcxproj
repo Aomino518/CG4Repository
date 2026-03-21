@@ -155,6 +155,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ImGuiUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp" />
     <ClCompile Include="Game\Scenes\ClearScene.cpp" />
@@ -369,6 +370,7 @@
     <ClInclude Include="externals\assimp\include\assimp\XmlParser.h" />
     <ClInclude Include="externals\assimp\include\assimp\XMLTools.h" />
     <ClInclude Include="externals\assimp\include\assimp\ZipArchiveIOSystem.h" />
+    <ClInclude Include="ImGuiUtils.h" />
     <ClInclude Include="SeekerEngine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="SeekerEngine\Scene\BaseScene.h" />
     <ClInclude Include="Game\Scenes\ClearScene.h" />

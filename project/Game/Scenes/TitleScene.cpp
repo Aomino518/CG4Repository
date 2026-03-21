@@ -15,6 +15,11 @@ void TitleScene::Init()
     uint32_t tHChecker = TextureManager::GetInstance()->Load("resources/sprites/uvChecker.png");
     sprite->Create(tHChecker, { 0.0f, 0.0f }, Color::WHITE);
     sprite->SetRotation(0.0f);
+
+    spr_monsterBall = std::make_unique<Sprite>();
+    uint32_t tHMonsterBall = TextureManager::GetInstance()->Load("resources/sprites/monsterBall.png");
+    spr_monsterBall->Create(tHMonsterBall, { 360.0f, 0.0f }, Color::WHITE);
+    spr_monsterBall->SetRotation(0.0f);
 }
 
 void TitleScene::Update()
@@ -35,10 +40,12 @@ void TitleScene::Update()
     SoundManager::GetInstance()->Update();
 
     sprite->Update();
+    spr_monsterBall->Update();
 
-    ImGuiManager::GetInstance()->BegineFrame();
-    ImGuiManager::GetInstance()->BegineInspector();
-    ImGuiManager::GetInstance()->SpriteSetting("uvChecker", sprite.get());
+    ImGuiManager::GetInstance()->BeginFrame();
+    ImGuiManager::GetInstance()->BeginInspector();
+    ImGuiManager::GetInstance()->DrawSpriteInspector("uvChecker", sprite.get());
+    ImGuiManager::GetInstance()->DrawSpriteInspector("monsterBall", spr_monsterBall.get());
     ImGuiManager::GetInstance()->EndInspector();
     ImGuiManager::GetInstance()->Stats();
     ImGuiManager::GetInstance()->EndFrame();
@@ -48,6 +55,7 @@ void TitleScene::Draw()
 {
     SpriteCommon::GetInstance()->DrawCommon();
     sprite->Draw();
+    spr_monsterBall->Draw();
     ImGuiManager::GetInstance()->Draw();
 }
 

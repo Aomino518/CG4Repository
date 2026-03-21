@@ -41,7 +41,7 @@ public:
 	const Vector2& GetTextureLeftTop() const { return textureLeftTop_; }
 	const Vector2& GetTextureSize() const { return textureSize_; }
 	const Transform& GetUV() const { return uvTransform_; }
-	const BlendMode& GetBlendMode() { return mode_; }
+	const BlendMode& GetBlendMode() const { return mode_; }
 	const Transform& GetTransform() { return transform_; }
 
 	// Setter

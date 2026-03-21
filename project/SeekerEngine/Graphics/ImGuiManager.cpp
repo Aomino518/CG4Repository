@@ -11,15 +11,6 @@ ImGuiManager* ImGuiManager::GetInstance() {
 	return &instance;
 }
 
-static const char* blendNames[] = {
-		"None",
-		"Normal",
-		"Add",
-		"Subtract",
-		"Multiply",
-		"Screen"
-};
-
 void ImGuiManager::Init()
 {
 #ifdef USE_IMGUI
@@ -41,11 +32,11 @@ void ImGuiManager::Init()
 	Logger::Write("ImGui初期化");
 
 	// スタイルを設定
-	StyleSetting();
+	ApplyStyle();
 #endif
 }
 
-void ImGuiManager::BegineFrame()
+void ImGuiManager::BeginFrame()
 {
 #ifdef USE_IMGUI
 	ImGui_ImplDX12_NewFrame();
@@ -81,7 +72,7 @@ void ImGuiManager::Shutdown()
 #endif
 }
 
-void ImGuiManager::SpriteSetting(const std::string& spriteName, Sprite* sprite)
+void ImGuiManager::DrawSpriteInspector(const std::string& spriteName, Sprite* sprite)
 {
 #ifdef USE_IMGUI
 	Vector4 spriteMaterial = sprite->GetColor();
@@ -94,21 +85,15 @@ void ImGuiManager::SpriteSetting(const std::string& spriteName, Sprite* sprite)
 		ImGui::PushID(spriteName.c_str());
 		if (ImGui::TreeNode("Material"))
 		{
-			ImGui::ColorEdit4("Color", (float*)&spriteMaterial);
+			ImGuiUtils::DrawColor4("Color", spriteMaterial);
 			ImGui::TreePop();
 		}
 
-		if (ImGui::TreeNode("Transform"))
-		{
-			ImGui::DragFloat2("Position", (float*)&spritePosition, 1.00f, -1280.0f, 1280.0f, "%.2f");
-			ImGui::SliderAngle("Rotation", (float*)&spriteRotate, 0.0f, 360.0f, "%.3f");
-			ImGui::DragFloat2("Scale", (float*)&spriteScale, 1.00f, 0.0f, 1280.0f, "%.2f");
-			ImGui::TreePop();
-		}
+		ImGuiUtils::DrawTransform2D(spritePosition, spriteRotate, spriteScale);
 
-		int current = static_cast<int>(sprite->GetBlendMode());
-		if (ImGui::Combo("BlendMode", &current, blendNames, IM_ARRAYSIZE(blendNames))) {
-			sprite->SetBlendMode(static_cast<BlendMode>(current));
+		BlendMode blendMode = sprite->GetBlendMode();
+		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
+			sprite->SetBlendMode(blendMode);
 		}
 
 		ImGui::PopID();
@@ -122,7 +107,7 @@ void ImGuiManager::SpriteSetting(const std::string& spriteName, Sprite* sprite)
 #endif
 }
 
-void ImGuiManager::ModelSetting(const std::string& modelName, Entity3D* model)
+void ImGuiManager::DrawModelInspector(const std::string& modelName, Entity3D* model)
 {
 #ifdef USE_IMGUI
 	Vector4 modelMaterial = model->GetMaterial();
@@ -148,9 +133,9 @@ void ImGuiManager::ModelSetting(const std::string& modelName, Entity3D* model)
 			ImGui::TreePop();
 		}
 
-		int current = static_cast<int>(model->GetBlendMode());
-		if (ImGui::Combo("BlendMode", &current, blendNames, IM_ARRAYSIZE(blendNames))) {
-			model->SetBlendMode(static_cast<BlendMode>(current));
+		BlendMode blendMode = model->GetBlendMode();
+		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
+			model->SetBlendMode(blendMode);
 		}
 
 		ImGui::Checkbox("Lighting", &isLighting);
@@ -190,7 +175,7 @@ void ImGuiManager::ShowMemoryUsage() {
 #endif
 }
 
-void ImGuiManager::BegineInspector()
+void ImGuiManager::BeginInspector()
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("Inspector");
@@ -204,7 +189,7 @@ void ImGuiManager::EndInspector()
 #endif
 }
 
-void ImGuiManager::CameraSetting(CameraManager* cameraManager)
+void ImGuiManager::DrawCameraWindow(CameraManager* cameraManager)
 {
 #ifdef USE_IMGUI
 	Vector3 position = cameraManager->GetActiveCamera()->GetTranslate();
@@ -260,7 +245,7 @@ void ImGuiManager::CameraSetting(CameraManager* cameraManager)
 #endif
 }
 
-void ImGuiManager::ParticleSetting(const std::string& name, ParticleEmitter* emitter)
+void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitter* emitter)
 {
 #ifdef USE_IMGUI
 	if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -277,9 +262,14 @@ void ImGuiManager::ParticleSetting(const std::string& name, ParticleEmitter* emi
 		}
 
 		// BlendMode
-		int currentBlend = group.blendMode_;
+		/*int currentBlend = group.blendMode_;
 		if (ImGui::Combo("BlendMode", &currentBlend, blendNames, IM_ARRAYSIZE(blendNames))) {
 			particleManager->SetBlendMode(name, (BlendMode)currentBlend);
+		}*/
+
+		BlendMode blendMode = group.blendMode_;
+		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
+			particleManager->SetBlendMode(name, blendMode);
 		}
 
 		ImGui::Separator();
@@ -326,7 +316,7 @@ void ImGuiManager::ParticleSetting(const std::string& name, ParticleEmitter* emi
 #endif
 }
 
-void ImGuiManager::LightSetting()
+void ImGuiManager::DrawLightWindow()
 {
 #ifdef USE_IMGUI
 
@@ -374,7 +364,7 @@ void ImGuiManager::LightSetting()
 #endif
 }
 
-void ImGuiManager::SoundSetting()
+void ImGuiManager::DrawSoundWindow()
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("Sound Manager");
@@ -394,7 +384,7 @@ void ImGuiManager::SoundSetting()
 #endif
 }
 
-void ImGuiManager::StyleSetting()
+void ImGuiManager::ApplyStyle()
 {
 #ifdef USE_IMGUI
 	ImGuiStyle& style = ImGui::GetStyle();

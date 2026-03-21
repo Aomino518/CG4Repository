@@ -5,9 +5,9 @@
 #include "Vector4.h"
 #include "Sprite.h"
 #include "CameraManager.h"
-#include "BlendStateUtils.h"
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
+#include "ImGuiUtils.h"
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -23,21 +23,22 @@ public:
 	static ImGuiManager* GetInstance();
 
 	void Init();
-	void BegineFrame();
+	void BeginFrame();
 	void EndFrame();
 	void Draw();
 	void Shutdown();
 
-	void SpriteSetting(const std::string& spriteName, Sprite* sprite);
-	void ModelSetting(const std::string& modelName, Entity3D* model);
+	void DrawSpriteInspector(const std::string& spriteName, Sprite* sprite);
+	void DrawModelInspector(const std::string& modelName, Entity3D* model);
+	void DrawParticleInspector(const std::string& name, ParticleEmitter* emitter);
+	void DrawLightWindow();
+	void DrawSoundWindow();
+	void DrawCameraWindow(CameraManager* cameraManager);
+
 	void Stats();
 	void ShowMemoryUsage();
-	void BegineInspector();
+	void BeginInspector();
 	void EndInspector();
-	void CameraSetting(CameraManager* cameraManager);
-	void ParticleSetting(const std::string& name, ParticleEmitter* emitter);
-	void LightSetting();
-	void SoundSetting();
 
 private:
 	ImGuiManager() = default;
@@ -45,7 +46,8 @@ private:
 	ImGuiManager(const ImGuiManager&) = delete;
 	ImGuiManager& operator=(const ImGuiManager&) = delete;
 
-	void StyleSetting();
+	// メンバ関数
+	void ApplyStyle();
 
 	Application* app_ = nullptr;
 	Graphics* graphics_ = nullptr;

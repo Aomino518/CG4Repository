@@ -103,17 +103,17 @@ void PlayScene::Update()
     modelTerrain->SetCamera(camMgr->GetActiveCamera());
     modelTerrain->Update();
 
-    ImGuiManager::GetInstance()->BegineFrame();
-    ImGuiManager::GetInstance()->BegineInspector();
-    ImGuiManager::GetInstance()->CameraSetting(camMgr);
-    ImGuiManager::GetInstance()->SpriteSetting("uvChecker", sprite.get());
+    ImGuiManager::GetInstance()->BeginFrame();
+    ImGuiManager::GetInstance()->BeginInspector();
+    ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
+    ImGuiManager::GetInstance()->DrawSpriteInspector("uvChecker", sprite.get());
     //ImGuiManager::GetInstance()->ModelSetting("plane", entity.get());
     //ImGuiManager::GetInstance()->ModelSetting("terrain", modelTerrain.get());
-    ImGuiManager::GetInstance()->ParticleSetting("Smoke", emitter_.get());
+    ImGuiManager::GetInstance()->DrawParticleInspector("Smoke", emitter_.get());
     ImGuiManager::GetInstance()->EndInspector();
     ImGuiManager::GetInstance()->Stats();
-    ImGuiManager::GetInstance()->LightSetting();
-	ImGuiManager::GetInstance()->SoundSetting();
+    ImGuiManager::GetInstance()->DrawLightWindow();
+	ImGuiManager::GetInstance()->DrawSoundWindow();
     ImGuiManager::GetInstance()->EndFrame();
 }
 

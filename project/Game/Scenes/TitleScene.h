@@ -18,4 +18,5 @@ public:
 
 private:
 	std::unique_ptr<Sprite> sprite;
+	std::unique_ptr<Sprite> spr_monsterBall;
 };
