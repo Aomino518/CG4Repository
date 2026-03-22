@@ -126,7 +126,6 @@ void PlayScene::Draw()
    
     ParticleManager::GetInstance()->Draw();
 
-    SpriteCommon::GetInstance()->DrawCommon();
     //sprite->Draw();
 
     ImGuiManager::GetInstance()->Draw();

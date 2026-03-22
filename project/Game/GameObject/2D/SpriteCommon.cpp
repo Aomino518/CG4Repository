@@ -15,7 +15,7 @@ void SpriteCommon::Init(DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignat
 	cmdList_ = Graphics::GetCmdList();
 }
 
-void SpriteCommon::DrawCommon()
+void SpriteCommon::ApplyPipeline()
 {
 	cmdList_->SetGraphicsRootSignature(rootSignature_.Get());
 	cmdList_->SetPipelineState(pso2D_.Get());

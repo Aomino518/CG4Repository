@@ -53,7 +53,6 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-    SpriteCommon::GetInstance()->DrawCommon();
     sprite->Draw();
     spr_monsterBall->Draw();
     ImGuiManager::GetInstance()->Draw();

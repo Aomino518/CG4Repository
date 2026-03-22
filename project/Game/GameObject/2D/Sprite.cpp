@@ -138,6 +138,8 @@ void Sprite::Update()
 void Sprite::Draw()
 {
 	assert(textureSrvHandleGPU_.ptr != 0 && "Sprite texture not set!");
+	SpriteCommon::GetInstance()->SetBlendMode(mode_);
+	SpriteCommon::GetInstance()->ApplyPipeline();
 
 	cmdList_->IASetVertexBuffers(0, 1, &vertexBufferView); // VBVを設定
 

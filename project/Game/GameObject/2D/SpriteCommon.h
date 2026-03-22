@@ -13,7 +13,7 @@ public:
 	// シングルトンインスタンスの取得
 	static SpriteCommon* GetInstance();
 	void Init(DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignature);
-	void DrawCommon();
+	void ApplyPipeline();
 
 	void Shutdown();
 
