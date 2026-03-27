@@ -43,6 +43,7 @@ void TitleScene::Update()
     spr_monsterBall->Update();
 
     ImGuiManager::GetInstance()->BeginFrame();
+    ImGuiManager::GetInstance()->DrawMainMenuBar();
     ImGuiManager::GetInstance()->BeginInspector();
     ImGuiManager::GetInstance()->DrawSpriteInspector("uvChecker", sprite.get());
     ImGuiManager::GetInstance()->DrawSpriteInspector("monsterBall", spr_monsterBall.get());

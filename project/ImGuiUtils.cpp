@@ -56,10 +56,22 @@ bool ImGuiUtils::DrawBlendModeSelector(const char* label, BlendMode& blendMode)
 
 bool ImGuiUtils::DrawColor4(const char* label, Vector4& color)
 {
-    return ImGui::ColorEdit4(label, reinterpret_cast<float*>(&color));
+    bool changed = false;
+
+    if (ImGui::TreeNode(label))
+    {
+        changed |= ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&color));
+        ImGui::TreePop();
+    }
+
+    return changed;
 }
 
 bool ImGuiUtils::DrawVector3(const char* label, Vector3& value)
 {
-    return ImGui::DragFloat3(label, reinterpret_cast<float*>(&value), 0.01f);
+    bool changed = false;
+
+    changed |= ImGui::DragFloat3(label, reinterpret_cast<float*>(&value), 0.01f);
+
+    return changed;
 }

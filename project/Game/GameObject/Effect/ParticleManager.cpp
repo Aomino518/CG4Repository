@@ -271,6 +271,15 @@ void ParticleManager::RemoveParticleGroup(const std::string& name)
 	Logger::Write("Particle group removed: " + name);
 }
 
+ParticleGroup& ParticleManager::GetGroup(const std::string& name)
+{
+	auto it = particleGroups.find(name);
+	if (it == particleGroups.end()) {
+		assert(false && "Particle group not found");
+	}
+	return particleGroups[name];
+}
+
 BlendMode ParticleManager::GetBlendMode(const std::string& name)
 {
 	auto it = particleGroups.find(name);

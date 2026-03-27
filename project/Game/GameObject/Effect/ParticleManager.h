@@ -75,7 +75,7 @@ public:
     void RemoveParticleGroup(const std::string& name);
 
     // Getter関数
-    ParticleGroup& GetGroup(const std::string& name) { return particleGroups[name]; }
+    ParticleGroup& GetGroup(const std::string& name);
     bool GetUseBillboard(const std::string& name) { return particleGroups[name].useBillboard_; }
     bool GetUseField(const std::string& name) { return particleGroups[name].useField_; }
     BlendMode GetBlendMode(const std::string& name);
@@ -85,6 +85,7 @@ public:
    
     void SetUseBillboard(const std::string& name, bool useBillboard) { this->particleGroups[name].useBillboard_ = useBillboard; }
     void SetUseField(const std::string& name, bool useField) { this->particleGroups[name].useField_ = useField; }
+    void SetField(const std::string& name, AccelerationField field) { this->particleGroups[name].field_ = field; }
 
 private:
     ParticleManager() = default;

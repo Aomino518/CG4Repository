@@ -49,6 +49,9 @@ void Entity3D::Update()
 
 void Entity3D::Draw()
 {
+	Entity3DCommon::GetInstance()->SetBlendMode(mode_);
+	Entity3DCommon::GetInstance()->ApplyPipeline();
+
 	// wvp用のCBufferの場所を設定
 	cmdList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 	cmdList_->SetGraphicsRootConstantBufferView(3, LightManager::GetInstance()->GetDirLightResource()->GetGPUVirtualAddress());

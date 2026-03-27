@@ -1,13 +1,9 @@
 #pragma once
 #include <stdlib.h>
+#include <string>
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
-#include "Sprite.h"
-#include "CameraManager.h"
-#include "ParticleManager.h"
-#include "ParticleEmitter.h"
-#include "ImGuiUtils.h"
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -17,6 +13,10 @@
 class Application;
 class Graphics;
 class Entity3D;
+class Sprite;
+class CameraManager;
+class ParticleManager;
+class ParticleEmitter;
 class ImGuiManager
 {
 public:
@@ -34,6 +34,7 @@ public:
 	void DrawLightWindow();
 	void DrawSoundWindow();
 	void DrawCameraWindow(CameraManager* cameraManager);
+	void DrawMainMenuBar();
 
 	void Stats();
 	void ShowMemoryUsage();
@@ -51,5 +52,15 @@ private:
 
 	Application* app_ = nullptr;
 	Graphics* graphics_ = nullptr;
+
+	// 表示するWindowのフラグ
+	struct WindowFlags {
+		bool showStats = true;
+		bool showCamera = true;
+		bool showLight = true;
+		bool showSound = true;
+	};
+
+	WindowFlags windowState_;
 };
 

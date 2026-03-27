@@ -15,7 +15,7 @@ void Entity3DCommon::Init(DxcCompiler dxcCompiler, ID3D12RootSignature* rootSign
 	cmdList_ = Graphics::GetInstance()->GetCmdList();
 }
 
-void Entity3DCommon::DrawCommon()
+void Entity3DCommon::ApplyPipeline()
 {
 	cmdList_->SetGraphicsRootSignature(rootSignature_.Get());
 	cmdList_->SetPipelineState(pso3D_.Get());

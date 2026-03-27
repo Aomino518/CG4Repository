@@ -43,8 +43,16 @@ public:
 	void StopLoop();
 	void Update();
 
+	// Getter関数
 	bool GetIsLoop() { return isLoop_; }
+	uint32_t GetCount() const { return count_; }
+	float GetFrenquency() const { return frequency_; }
+	Transform GetTransform() const { return transform_; }
 
+	// Setter関数
+	void SetCount(uint32_t count) { this->count_ = count; }
+	void SetFrenquency(float frequency) { this->frequency_ = frequency; }
+	void SetTransform(Transform transform) { this->transform_ = transform; }
 
 	Transform transform_;
 	uint32_t count_; // 1回の発生個数

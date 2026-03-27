@@ -104,11 +104,12 @@ void PlayScene::Update()
     modelTerrain->Update();
 
     ImGuiManager::GetInstance()->BeginFrame();
+    ImGuiManager::GetInstance()->DrawMainMenuBar();
     ImGuiManager::GetInstance()->BeginInspector();
     ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
-    ImGuiManager::GetInstance()->DrawSpriteInspector("uvChecker", sprite.get());
-    //ImGuiManager::GetInstance()->ModelSetting("plane", entity.get());
-    //ImGuiManager::GetInstance()->ModelSetting("terrain", modelTerrain.get());
+    //ImGuiManager::GetInstance()->DrawSpriteInspector("uvChecker", sprite.get());
+    ImGuiManager::GetInstance()->DrawModelInspector("plane", entity.get());
+    ImGuiManager::GetInstance()->DrawModelInspector("terrain", modelTerrain.get());
     ImGuiManager::GetInstance()->DrawParticleInspector("Smoke", emitter_.get());
     ImGuiManager::GetInstance()->EndInspector();
     ImGuiManager::GetInstance()->Stats();
@@ -120,7 +121,6 @@ void PlayScene::Update()
 void PlayScene::Draw()
 {
     /*-- 描画処理 --*/
-    Entity3DCommon::GetInstance()->DrawCommon();
     entity->Draw();
     modelTerrain->Draw();
    

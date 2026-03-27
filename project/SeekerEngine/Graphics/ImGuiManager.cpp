@@ -1,8 +1,10 @@
 #include "ImGuiManager.h"
-#include "Entity3D.h"
+#include "ImGuiUtils.h"
 #include "Logger.h"
 #include <Psapi.h>
-#include "LightManager.h"
+#include "Entity3D.h"
+#include "Sprite.h"
+#include "ParticleEmitter.h"
 #include "Application.h"
 #include "Graphics.h"
 
@@ -83,13 +85,15 @@ void ImGuiManager::DrawSpriteInspector(const std::string& spriteName, Sprite* sp
 	if (ImGui::CollapsingHeader(spriteName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::PushID(spriteName.c_str());
-		if (ImGui::TreeNode("Material"))
-		{
-			ImGuiUtils::DrawColor4("Color", spriteMaterial);
-			ImGui::TreePop();
+		if (ImGuiUtils::DrawColor4("Material", spriteMaterial)) {
+			sprite->SetColor(spriteMaterial);
 		}
 
-		ImGuiUtils::DrawTransform2D(spritePosition, spriteRotate, spriteScale);
+		if (ImGuiUtils::DrawTransform2D(spritePosition, spriteRotate, spriteScale)) {
+			sprite->SetPosition(spritePosition);
+			sprite->SetRotation(spriteRotate);
+			sprite->SetSize(spriteScale);
+		}
 
 		BlendMode blendMode = sprite->GetBlendMode();
 		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
@@ -98,12 +102,6 @@ void ImGuiManager::DrawSpriteInspector(const std::string& spriteName, Sprite* sp
 
 		ImGui::PopID();
 	}
-
-	sprite->SetColor(spriteMaterial);
-	sprite->SetPosition(spritePosition);
-	sprite->SetRotation(spriteRotate);
-	sprite->SetSize(spriteScale);
-	sprite->Update();
 #endif
 }
 
@@ -119,18 +117,14 @@ void ImGuiManager::DrawModelInspector(const std::string& modelName, Entity3D* mo
 	if (ImGui::CollapsingHeader(modelName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::PushID(modelName.c_str());
-		if (ImGui::TreeNode("Material"))
-		{
-			ImGui::ColorEdit4("Color", (float*)&modelMaterial);
-			ImGui::TreePop();
+		if (ImGuiUtils::DrawColor4("Material", modelMaterial)) {
+			model->SetMaterial(modelMaterial);
 		}
 
-		if (ImGui::TreeNode("Transform"))
-		{
-			ImGui::DragFloat3("Position", (float*)&modelPosition, 0.01f, -1280.0f, 1280.0f, "%.2f");
-			ImGui::DragFloat3("Rotation", (float*)&modelRotate, 0.01f, -360.0f, 360.0f, "%.2f");
-			ImGui::DragFloat3("Scale", (float*)&modelScale, 0.01f, 0.0f, 1280.0f, "%.2f");
-			ImGui::TreePop();
+		if (ImGuiUtils::DrawTransform3D(modelPosition, modelRotate, modelScale)) {
+			model->SetTranslate(modelPosition);
+			model->SetRotate(modelRotate);
+			model->SetScale(modelScale);
 		}
 
 		BlendMode blendMode = model->GetBlendMode();
@@ -143,12 +137,7 @@ void ImGuiManager::DrawModelInspector(const std::string& modelName, Entity3D* mo
 		ImGui::PopID();
 	}
 
-	model->SetMaterial(modelMaterial);
-	model->SetTranslate(modelPosition);
-	model->SetRotate(modelRotate);
-	model->SetScale(modelScale);
 	model->SetIsLighting(isLighting);
-	model->Update();
 
 #endif
 }
@@ -156,10 +145,12 @@ void ImGuiManager::DrawModelInspector(const std::string& modelName, Entity3D* mo
 void ImGuiManager::Stats()
 {
 #ifdef USE_IMGUI
-	ImGui::Begin("Stats", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-	ShowMemoryUsage();
-	ImGui::End();
+	if (windowState_.showStats) {
+		ImGui::Begin("Stats", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+		ShowMemoryUsage();
+		ImGui::End();
+	}
 #endif
 }
 
@@ -192,56 +183,72 @@ void ImGuiManager::EndInspector()
 void ImGuiManager::DrawCameraWindow(CameraManager* cameraManager)
 {
 #ifdef USE_IMGUI
-	Vector3 position = cameraManager->GetActiveCamera()->GetTranslate();
-	Vector3 rotation = cameraManager->GetActiveCamera()->GetRotate();
+	if (windowState_.showCamera) {
+		ImGui::Begin("Camera Manager");
 
-	ImGui::Begin("Camera Manager");
-
-	if (ImGui::CollapsingHeader("Debug Camera", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		bool selected = cameraManager->GetIsDebug();
-		if (ImGui::Selectable("DebugCamera", selected)) {
-			cameraManager->SetActiveCamera(true);
-		}
-	}
-
-	if (ImGui::CollapsingHeader("Normal Cameras", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		auto& cameras = cameraManager->GetCameras();
-
-		for (int i = 0; i < cameras.size(); i++)
+		if (ImGui::CollapsingHeader("Debug Camera", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			bool selected = (!cameraManager->GetIsDebug() && cameraManager->GetActtiveCamIndex() == i);
-			Vector3 pos = cameras[i].camera->GetTranslate();
-			Vector3 rot = cameras[i].camera->GetRotate();
-
-			if (ImGui::Selectable(cameras[i].name.c_str(), selected))
-			{
-				cameraManager->SetActiveCamera(false, i);
+			bool selected = cameraManager->GetIsDebug();
+			if (ImGui::Selectable("DebugCamera", selected)) {
+				cameraManager->SetActiveCamera(true);
 			}
-
-			// 展開してパラメータ編集
-			if (selected)
-			{
-				ImGui::PushID(cameras[i].name.c_str());
-				ImGui::Indent();
-
-				if (ImGui::DragFloat3("Position", (float*)&pos, 0.01f))
-					cameras[i].camera->SetTranslate(pos);
-
-				if (ImGui::DragFloat3("Rotation", (float*)&rot, 0.01f))
-					cameras[i].camera->SetRotate(rot);
-
-				ImGui::Unindent();
-				ImGui::PopID();
-			}
-			cameras[i].camera->SetTranslate(pos);
-			cameras[i].camera->SetRotate(rot);
 		}
+
+		if (ImGui::CollapsingHeader("Normal Cameras", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			auto& cameras = cameraManager->GetCameras();
+
+			for (int i = 0; i < cameras.size(); i++)
+			{
+				bool selected = (!cameraManager->GetIsDebug() && cameraManager->GetActtiveCamIndex() == i);
+				Vector3 pos = cameras[i].camera->GetTranslate();
+				Vector3 rot = cameras[i].camera->GetRotate();
+
+				if (ImGui::Selectable(cameras[i].name.c_str(), selected))
+				{
+					cameraManager->SetActiveCamera(false, i);
+				}
+
+				// 展開してパラメータ編集
+				if (selected)
+				{
+					ImGui::PushID(cameras[i].name.c_str());
+					ImGui::Indent();
+
+					bool changed = false;
+					changed |= ImGui::DragFloat3("Position", (float*)&pos, 0.01f);
+					changed |= ImGui::DragFloat3("Rotation", (float*)&rot, 0.01f);
+
+					if (changed) {
+						cameras[i].camera->SetTranslate(pos);
+						cameras[i].camera->SetRotate(rot);
+					}
+
+					ImGui::Unindent();
+					ImGui::PopID();
+				}
+			}
+		}
+
+		ImGui::End();
 	}
 
-	ImGui::End();
+#endif
+}
 
+void ImGuiManager::DrawMainMenuBar()
+{
+#ifdef USE_IMGUI
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("Window")) {
+			ImGui::MenuItem("Stats", nullptr, &windowState_.showStats);
+			ImGui::MenuItem("Camera", nullptr, &windowState_.showCamera);
+			ImGui::MenuItem("Light", nullptr, &windowState_.showLight);
+			ImGui::MenuItem("Sound", nullptr, &windowState_.showSound);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
 #endif
 }
 
@@ -252,22 +259,24 @@ void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitte
 
 		ImGui::PushID(name.c_str());
 
+		bool changed = false;
+		bool fieldChanged = false;
 		ParticleManager* particleManager = ParticleManager::GetInstance();
 		ParticleGroup& group = particleManager->GetGroup(name);
+		BlendMode blendMode = group.blendMode_;
+		AccelerationField field = particleManager->GetField(name);
+		bool useBillboard = particleManager->GetUseBillboard(name);
+		int emitCount = static_cast<int>(emitter->GetCount());
+		float frequency = emitter->GetFrenquency();
+		Transform transform = emitter->GetTransform();
+		bool useField = particleManager->GetUseField(name);
+		bool loop = emitter->GetIsLoop();
 
 		// Billboard ON/OFF
-		bool useBillboard = particleManager->GetUseBillboard(name);
 		if (ImGui::Checkbox("Use Billboard", &useBillboard)) {
 			particleManager->SetUseBillboard(name, useBillboard);
 		}
 
-		// BlendMode
-		/*int currentBlend = group.blendMode_;
-		if (ImGui::Combo("BlendMode", &currentBlend, blendNames, IM_ARRAYSIZE(blendNames))) {
-			particleManager->SetBlendMode(name, (BlendMode)currentBlend);
-		}*/
-
-		BlendMode blendMode = group.blendMode_;
 		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
 			particleManager->SetBlendMode(name, blendMode);
 		}
@@ -275,31 +284,40 @@ void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitte
 		ImGui::Separator();
 		ImGui::Text("Emitter Settings");
 
-		ImGui::DragFloat3("Emitter Translate", (float*)&emitter->transform_.translate, 0.1f, -100.0f, 100.0f);
-		ImGui::DragFloat3("Emitter Rotate", (float*)&emitter->transform_.rotate, 0.1f, -360.0f, 360.0f);
-		ImGui::DragFloat3("Emitter Scale", (float*)&emitter->transform_.scale, 0.01f, 0.0f, 10.0f);
+		changed |= ImGui::DragFloat3("Emitter Translate", (float*)&transform.translate, 0.1f, -100.0f, 100.0f);
+		changed |= ImGui::DragFloat3("Emitter Rotate", (float*)&transform.rotate, 0.1f, -360.0f, 360.0f);
+		changed |= ImGui::DragFloat3("Emitter Scale", (float*)&transform.scale, 0.01f, 0.0f, 10.0f);
 
-		ImGui::DragInt("Emit Count", (int*)&emitter->count_, 1.0f, 1, 100);
-		ImGui::DragFloat("Frequency", &emitter->frequency_, 0.01f, 0.01f, 5.0f);
+		if (changed) {
+			emitter->SetTransform(transform);
+		}
+
+		if (ImGui::DragInt("Emit Count", &emitCount, 1.0f, 1, 100)) {
+			emitter->SetCount(static_cast<uint32_t>(emitCount));
+		}
+
+		if (ImGui::DragFloat("Frequency", &frequency, 0.01f, 0.01f, 5.0f)) {
+			emitter->SetFrenquency(frequency);
+		}
 
 		if (ImGui::CollapsingHeader("Field Settings")) {
-
-			bool useField = particleManager->GetUseField(name);
 			if (ImGui::Checkbox("Use Field", &useField)) {
 				particleManager->SetUseField(name, useField);
 			}
 
-			ImGui::DragFloat3("Field Accel", (float*)&particleManager->GetField(name).acceleration, 0.1f);
+			fieldChanged |= ImGui::DragFloat3("Field Accel", (float*)&field.acceleration, 0.1f);
+			fieldChanged |= ImGui::DragFloat3("AABB Min", (float*)&field.area.min, 0.1f);
+			fieldChanged |= ImGui::DragFloat3("AABB Max", (float*)&field.area.max, 0.1f);
 
-			ImGui::DragFloat3("AABB Min", (float*)&particleManager->GetField(name).area.min, 0.1f);
-			ImGui::DragFloat3("AABB Max", (float*)&particleManager->GetField(name).area.max, 0.1f);
+			if (fieldChanged) {
+				particleManager->SetField(name, field);
+			}
 		}
 
 		if (ImGui::Button("Emit Once")) {
 			emitter->EmitOnce();
 		}
 
-		bool loop = emitter->GetIsLoop();
 		if (ImGui::Checkbox("Loop Emit", &loop)) {
 			if (loop) {
 				emitter->StartLoop();
@@ -319,68 +337,92 @@ void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitte
 void ImGuiManager::DrawLightWindow()
 {
 #ifdef USE_IMGUI
+	if (windowState_.showLight) {
+		DirectionalLight dirLight = LightManager::GetInstance()->GetDirectionalLight();
+		PointLight pointLight = LightManager::GetInstance()->GetPointLight();
+		SpotLight spotLight = LightManager::GetInstance()->GetSpotLight();
 
-	DirectionalLight dirLight = LightManager::GetInstance()->GetDirectionalLight();
-	PointLight pointLight = LightManager::GetInstance()->GetPointLight();
-	SpotLight spotLight = LightManager::GetInstance()->GetSpotLight();
+		ImGui::Begin("Light Manager");
+		if (ImGui::CollapsingHeader("Directional Light", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::PushID("DirectionalLight");
 
-	ImGui::Begin("Light Manager");
-	if (ImGui::CollapsingHeader("Directional Light", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::PushID("DirectionalLight");
-		ImGui::DragFloat3("Direction", (float*)&dirLight.direction, 0.01f, -1.0f, 1.0f, "%.2f");
-		ImGui::ColorEdit4("Color", (float*)&dirLight.color);
-		ImGui::DragFloat("Intensity", (float*)&dirLight.intensity, 0.01f, 0.0f, 1.0f, "%.2f");
-		ImGui::PopID();
+			bool changed = false;
+			changed |= ImGui::DragFloat3("Direction", (float*)&dirLight.direction, 0.01f, -1.0f, 1.0f, "%.2f");
+			changed |= ImGui::ColorEdit4("Color", (float*)&dirLight.color);
+			changed |= ImGui::DragFloat("Intensity", (float*)&dirLight.intensity, 0.01f, 0.0f, 1.0f, "%.2f");
+
+			if (changed) {
+				LightManager::GetInstance()->SetDirectionalLight(&dirLight);
+			}
+
+			ImGui::PopID();
+		}
+
+		if (ImGui::CollapsingHeader("Point Light", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::PushID("PointLight");
+
+			bool changed = false;
+			changed |= ImGui::DragFloat3("Position", (float*)&pointLight.position, 0.01f, -100.0f, 100.0f, "%.2f");
+			changed |= ImGui::ColorEdit4("Color", (float*)&pointLight.color);
+			changed |= ImGui::DragFloat("Intensity", (float*)&pointLight.intensity, 0.01f, 0.0f, 1.0f, "%.2f");
+			changed |= ImGui::DragFloat("Radius", (float*)&pointLight.radius, 0.01f, 0.0f, 100.0f, "%.2f");
+			changed |= ImGui::DragFloat("Decay", (float*)&pointLight.decay, 0.01f, 0.0f, 1.0f, "%.2f");
+
+			if (changed) {
+				LightManager::GetInstance()->SetPointLight(&pointLight);
+			}
+
+			ImGui::PopID();
+		}
+
+		if (ImGui::CollapsingHeader("Spot Light", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::PushID("SpotLight");
+
+			bool changed = false;
+			changed |= ImGui::DragFloat3("Position", (float*)&spotLight.position, 0.01f, -100.0f, 100.0f, "%.2f");
+			changed |= ImGui::DragFloat3("Direction", (float*)&spotLight.direction, 0.01f, -1.0f, 1.0f, "%.2f");
+			changed |= ImGui::ColorEdit4("Color", (float*)&spotLight.color);
+			changed |= ImGui::DragFloat("Intensity", (float*)&spotLight.intensity, 0.01f, 0.0f, 100.0f, "%.2f");
+			changed |= ImGui::DragFloat("CosFalloffStart", (float*)&spotLight.cosFalloffStart, 0.01f, -1.0f, 1.0f, "%.2f");
+
+			if (changed) {
+				LightManager::GetInstance()->SetSpotLight(&spotLight);
+			}
+
+			ImGui::PopID();
+		}
+		ImGui::End();
 	}
-
-	if (ImGui::CollapsingHeader("Point Light", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::PushID("PointLight");
-		ImGui::DragFloat3("Position", (float*)&pointLight.position, 0.01f, -100.0f, 100.0f, "%.2f");
-		ImGui::ColorEdit4("Color", (float*)&pointLight.color);
-		ImGui::DragFloat("Intensity", (float*)&pointLight.intensity, 0.01f, 0.0f, 1.0f, "%.2f");
-		ImGui::DragFloat("Radius", (float*)&pointLight.radius, 0.01f, 0.0f, 100.0f, "%.2f");
-		ImGui::DragFloat("Decay", (float*)&pointLight.decay, 0.01f, 0.0f, 1.0f, "%.2f");
-		ImGui::PopID();
-	}
-
-	if (ImGui::CollapsingHeader("Spot Light", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::PushID("SpotLight");
-		ImGui::DragFloat3("Position", (float*)&spotLight.position, 0.01f, -100.0f, 100.0f, "%.2f");
-		ImGui::DragFloat3("Direction", (float*)&spotLight.direction, 0.01f, -1.0f, 1.0f, "%.2f");
-		ImGui::ColorEdit4("Color", (float*)&spotLight.color);
-		ImGui::DragFloat("Intensity", (float*)&spotLight.intensity, 0.01f, 0.0f, 100.0f, "%.2f");
-		ImGui::DragFloat("CosFalloffStart", (float*)&spotLight.cosFalloffStart, 0.01f, -1.0f, 1.0f, "%.2f");
-		ImGui::PopID();
-	}
-
-	LightManager::GetInstance()->SetDirectionalLight(&dirLight);
-	LightManager::GetInstance()->SetPointLight(&pointLight);
-	LightManager::GetInstance()->SetSpotLight(&spotLight);
-	ImGui::End();
-
 #endif
 }
 
 void ImGuiManager::DrawSoundWindow()
 {
 #ifdef USE_IMGUI
-	ImGui::Begin("Sound Manager");
-	SoundManager* soundManager = SoundManager::GetInstance();
-	auto volumeBGM = soundManager->GetCurrentBGMVolume();
-	auto volumeSE = soundManager->GetCurrentSEVolume();
-	auto volumeMaster = soundManager->GetCurrentMasterVolume();
-	
-	ImGui::DragFloat("BGM Volume", &volumeBGM, 0.01f, 0.0f, 1.0f, "%.2f");
-	ImGui::DragFloat("SE Volume", &volumeSE, 0.01f, 0.0f, 1.0f, "%.2f");
-	ImGui::DragFloat("Master Volume", &volumeMaster, 0.01f, 0.0f, 1.0f, "%.2f");
-	soundManager->SetVolumeBGM(volumeBGM);
-	soundManager->SetVolumeSE(volumeSE);
-	soundManager->SetVolumeMaster(volumeMaster);
+	if (windowState_.showSound) {
+		ImGui::Begin("Sound Manager");
+		SoundManager* soundManager = SoundManager::GetInstance();
+		auto volumeBGM = soundManager->GetCurrentBGMVolume();
+		auto volumeSE = soundManager->GetCurrentSEVolume();
+		auto volumeMaster = soundManager->GetCurrentMasterVolume();
 
-	ImGui::End();	
+		if (ImGui::DragFloat("BGM Volume", &volumeBGM, 0.01f, 0.0f, 1.0f, "%.2f")) {
+			soundManager->SetVolumeBGM(volumeBGM);
+		}
+
+		if (ImGui::DragFloat("SE Volume", &volumeSE, 0.01f, 0.0f, 1.0f, "%.2f")) {
+			soundManager->SetVolumeSE(volumeSE);
+		}
+
+		if (ImGui::DragFloat("Master Volume", &volumeMaster, 0.01f, 0.0f, 1.0f, "%.2f")) {
+			soundManager->SetVolumeMaster(volumeMaster);
+		}
+
+		ImGui::End();
+	}
 #endif
 }
 
