@@ -1,4 +1,6 @@
+#define NOMINMAX
 #include "ImGuiUtils.h"
+#include <algorithm>
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -84,4 +86,109 @@ bool ImGuiUtils::DrawVector3(const char* label, Vector3& value)
 
     return changed;
 #endif
+}
+
+bool ImGuiUtils::DrawEditParticleConfig(const char* label, ParticleConfig& config)
+{
+    bool changed = false;
+
+    if (ImGui::TreeNode(label)) {
+
+        ImGui::SeparatorText("Velocity");
+        changed |= ImGui::DragFloat3("Min Velocity", &config.minVelocity.x, 0.01f);
+        changed |= ImGui::DragFloat3("Max Velocity", &config.maxVelocity.x, 0.01f);
+
+        ImGui::SeparatorText("Offset");
+        changed |= ImGui::DragFloat3("Min Offset", &config.minOffset.x, 0.01f);
+        changed |= ImGui::DragFloat3("Max Offset", &config.maxOffset.x, 0.01f);
+
+        ImGui::SeparatorText("Color");
+        changed |= ImGui::ColorEdit4("Start Color Min", &config.startColorMin.x);
+        changed |= ImGui::ColorEdit4("Start Color Max", &config.startColorMax.x);
+        changed |= ImGui::ColorEdit4("End Color Min", &config.endColorMin.x);
+        changed |= ImGui::ColorEdit4("End Color Max", &config.endColorMax.x);
+
+        ImGui::SeparatorText("Start Scale");
+        changed |= ImGui::DragFloat3("Start Scale Min", &config.startScaleMin.x, 0.01f, 0.0f, 100.0f);
+        changed |= ImGui::DragFloat3("Start Scale Max", &config.startScaleMax.x, 0.01f, 0.0f, 100.0f);
+
+        ImGui::SeparatorText("End Scale");
+        changed |= ImGui::DragFloat3("End Scale Min", &config.endScaleMin.x, 0.01f, 0.0f, 100.0f);
+        changed |= ImGui::DragFloat3("End Scale Max", &config.endScaleMax.x, 0.01f, 0.0f, 100.0f);
+
+        ImGui::SeparatorText("LifeTime");
+        changed |= ImGui::DragFloat("Min LifeTime", &config.minLifeTime, 0.01f, 0.01f, 100.0f);
+        changed |= ImGui::DragFloat("Max LifeTime", &config.maxLifeTime, 0.01f, 0.01f, 100.0f);
+
+        ImGui::SeparatorText("Rotate");
+        changed |= ImGui::DragFloat3("Min Rotate", &config.minRotate.x, 0.01f);
+        changed |= ImGui::DragFloat3("Max Rotate", &config.maxRotate.x, 0.01f);
+
+        ImGui::SeparatorText("Rotate Velocity");
+        changed |= ImGui::DragFloat3("Min Rotate Velocity", &config.minRotateVelocity.x, 0.01f);
+        changed |= ImGui::DragFloat3("Max Rotate Velocity", &config.maxRotateVelocity.x, 0.01f);
+
+        config.minOffset.x = std::min(config.minOffset.x, config.maxOffset.x);
+        config.minOffset.y = std::min(config.minOffset.y, config.maxOffset.y);
+        config.minOffset.z = std::min(config.minOffset.z, config.maxOffset.z);
+
+        config.maxOffset.x = std::max(config.minOffset.x, config.maxOffset.x);
+        config.maxOffset.y = std::max(config.minOffset.y, config.maxOffset.y);
+        config.maxOffset.z = std::max(config.minOffset.z, config.maxOffset.z);
+
+        config.minLifeTime = std::max(0.01f, config.minLifeTime);
+        config.maxLifeTime = std::max(config.minLifeTime, config.maxLifeTime);
+
+        config.startScaleMin.x = std::max(0.0f, config.startScaleMin.x);
+        config.startScaleMin.y = std::max(0.0f, config.startScaleMin.y);
+        config.startScaleMin.z = std::max(0.0f, config.startScaleMin.z);
+
+        config.startScaleMax.x = std::max(config.startScaleMin.x, config.startScaleMax.x);
+        config.startScaleMax.y = std::max(config.startScaleMin.y, config.startScaleMax.y);
+        config.startScaleMax.z = std::max(config.startScaleMin.z, config.startScaleMax.z);
+
+        config.endScaleMin.x = std::max(0.0f, config.endScaleMin.x);
+        config.endScaleMin.y = std::max(0.0f, config.endScaleMin.y);
+        config.endScaleMin.z = std::max(0.0f, config.endScaleMin.z);
+
+        config.endScaleMax.x = std::max(config.endScaleMin.x, config.endScaleMax.x);
+        config.endScaleMax.y = std::max(config.endScaleMin.y, config.endScaleMax.y);
+        config.endScaleMax.z = std::max(config.endScaleMin.z, config.endScaleMax.z);
+
+        config.maxVelocity.x = std::max(config.minVelocity.x, config.maxVelocity.x);
+        config.maxVelocity.y = std::max(config.minVelocity.y, config.maxVelocity.y);
+        config.maxVelocity.z = std::max(config.minVelocity.z, config.maxVelocity.z);
+
+        config.maxRotate.x = std::max(config.minRotate.x, config.maxRotate.x);
+        config.maxRotate.y = std::max(config.minRotate.y, config.maxRotate.y);
+        config.maxRotate.z = std::max(config.minRotate.z, config.maxRotate.z);
+
+        config.maxRotateVelocity.x = std::max(config.minRotateVelocity.x, config.maxRotateVelocity.x);
+        config.maxRotateVelocity.y = std::max(config.minRotateVelocity.y, config.maxRotateVelocity.y);
+        config.maxRotateVelocity.z = std::max(config.minRotateVelocity.z, config.maxRotateVelocity.z);
+
+        config.startColorMin.x = std::min(config.startColorMin.x, config.startColorMax.x);
+        config.startColorMin.y = std::min(config.startColorMin.y, config.startColorMax.y);
+        config.startColorMin.z = std::min(config.startColorMin.z, config.startColorMax.z);
+        config.startColorMin.w = std::min(config.startColorMin.w, config.startColorMax.w);
+
+        config.startColorMax.x = std::max(config.startColorMin.x, config.startColorMax.x);
+        config.startColorMax.y = std::max(config.startColorMin.y, config.startColorMax.y);
+        config.startColorMax.z = std::max(config.startColorMin.z, config.startColorMax.z);
+        config.startColorMax.w = std::max(config.startColorMin.w, config.startColorMax.w);
+
+        config.endColorMin.x = std::min(config.endColorMin.x, config.endColorMax.x);
+        config.endColorMin.y = std::min(config.endColorMin.y, config.endColorMax.y);
+        config.endColorMin.z = std::min(config.endColorMin.z, config.endColorMax.z);
+        config.endColorMin.w = std::min(config.endColorMin.w, config.endColorMax.w);
+
+        config.endColorMax.x = std::max(config.endColorMin.x, config.endColorMax.x);
+        config.endColorMax.y = std::max(config.endColorMin.y, config.endColorMax.y);
+        config.endColorMax.z = std::max(config.endColorMin.z, config.endColorMax.z);
+        config.endColorMax.w = std::max(config.endColorMin.w, config.endColorMax.w);
+
+        ImGui::TreePop();
+    }
+
+    return changed;
 }

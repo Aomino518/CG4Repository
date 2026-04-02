@@ -107,6 +107,7 @@ struct SpotLight {
 
 struct Particle {
 	Transform transform;
+	Vector3 rotateVelocity;
 	Vector3 velocity;
 	Vector4 color;
 	Vector4 startColor;
@@ -115,6 +116,38 @@ struct Particle {
 	Vector3 endScale;
 	float lifeTime;
 	float currentTime;
+};
+
+enum class SpawnShape {
+	Box,
+	Sphere
+};
+
+struct ParticleConfig {
+	Vector3 minVelocity = { -0.1f, -0.1f, -0.1f }; // 速度の最小値
+	Vector3 maxVelocity = { 0.1f,  0.1f,  0.1f }; // 速度の最大値
+	Vector3 minOffset = { -0.5f, -0.5f, -0.5f }; // オフセットの最小値
+	Vector3 maxOffset = { 0.5f,  0.5f,  0.5f }; // オフセットの最大値
+	Vector4 startColor = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色
+	Vector4 endColor = { 1.0f, 1.0f, 1.0f, 0.0f }; // 終了色
+	Vector4 startColorMin = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色の最小値
+	Vector4 startColorMax = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色の最大値
+	Vector4 endColorMin = { 1.0f, 1.0f, 1.0f, 0.0f };   // 終了色の最小値
+	Vector4 endColorMax = { 1.0f, 1.0f, 1.0f, 0.0f };   // 終了色の最大値
+	Vector3 startScaleMin = { 0.5f, 0.5f, 0.5f }; // 初期スケールの最小値
+	Vector3 startScaleMax = { 1.0f, 1.0f, 1.0f }; // 初期スケールの最大値
+	Vector3 endScaleMin = { 0.5f, 0.5f, 0.5f };   // 終了スケールの最小値
+	Vector3 endScaleMax = { 1.5f, 1.5f, 1.5f };   // 終了スケールの最大値
+	float minLifeTime = 1.0f; // 生存時間の最小値
+	float maxLifeTime = 3.0f; // 生存時間の最大値
+	Vector3 minRotate = { 0.0f, 0.0f, 0.0f }; // 回転角の最小値
+	Vector3 maxRotate = { 0.0f, 0.0f, 0.0f }; // 回転角の最大値
+	Vector3 minRotateVelocity = { 0.0f, 0.0f, 0.0f }; // 回転速度の最小値
+	Vector3 maxRotateVelocity = { 0.0f, 0.0f, 0.0f }; // 回転速度の最大値
+	SpawnShape shape = SpawnShape::Box; // 範囲タイプ
+	Vector3 boxMin = { -0.5f, -0.5f, -0.5f }; // 箱の最小値
+	Vector3 boxMax = { 0.5f,  0.5f,  0.5f }; // 箱の最大値
+	float sphereRadius = 1.0f; // 球の半径
 };
 
 struct ParticleForGPU

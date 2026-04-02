@@ -264,35 +264,55 @@ void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitte
 		int emitCount = static_cast<int>(emitter->GetCount());
 		float frequency = emitter->GetFrenquency();
 		Transform transform = emitter->GetTransform();
+		ParticleConfig config = emitter->GetConfig();
 		bool useField = particleManager->GetUseField(name);
 		bool loop = emitter->GetIsLoop();
+
+		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
+			particleManager->SetBlendMode(name, blendMode);
+		}
 
 		// Billboard ON/OFF
 		if (ImGui::Checkbox("Use Billboard", &useBillboard)) {
 			particleManager->SetUseBillboard(name, useBillboard);
 		}
 
-		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
-			particleManager->SetBlendMode(name, blendMode);
+		if (ImGui::Checkbox("Loop Emit", &loop)) {
+			if (loop) {
+				emitter->StartLoop();
+			} else {
+				emitter->StopLoop();
+			}
+		}
+
+		if (ImGui::Button("Emit Once")) {
+			emitter->EmitOnce();
 		}
 
 		ImGui::Separator();
-		ImGui::Text("Emitter Settings");
+		if (ImGui::TreeNode("Emitter Settings")) {
 
-		changed |= ImGui::DragFloat3("Emitter Translate", (float*)&transform.translate, 0.1f, -100.0f, 100.0f);
-		changed |= ImGui::DragFloat3("Emitter Rotate", (float*)&transform.rotate, 0.1f, -360.0f, 360.0f);
-		changed |= ImGui::DragFloat3("Emitter Scale", (float*)&transform.scale, 0.01f, 0.0f, 10.0f);
+			changed |= ImGui::DragFloat3("Emitter Translate", &transform.translate.x, 0.1f, -100.0f, 100.0f);
+			changed |= ImGui::DragFloat3("Emitter Rotate", &transform.rotate.x, 0.1f, -360.0f, 360.0f);
+			changed |= ImGui::DragFloat3("Emitter Scale", &transform.scale.x, 0.01f, 0.0f, 10.0f);
 
-		if (changed) {
-			emitter->SetTransform(transform);
+			if (changed) {
+				emitter->SetTransform(transform);
+			}
+
+			if (ImGui::DragInt("Emit Count", &emitCount, 1.0f, 1, 100)) {
+				emitter->SetCount(static_cast<uint32_t>(emitCount));
+			}
+
+			if (ImGui::DragFloat("Frequency", &frequency, 0.01f, 0.01f, 5.0f)) {
+				emitter->SetFrenquency(frequency);
+			}
+
+			ImGui::TreePop();
 		}
 
-		if (ImGui::DragInt("Emit Count", &emitCount, 1.0f, 1, 100)) {
-			emitter->SetCount(static_cast<uint32_t>(emitCount));
-		}
-
-		if (ImGui::DragFloat("Frequency", &frequency, 0.01f, 0.01f, 5.0f)) {
-			emitter->SetFrenquency(frequency);
+		if (ImGuiUtils::DrawEditParticleConfig("Config", config)) {
+			emitter->SetConfig(config);
 		}
 
 		if (ImGui::TreeNode("Field Settings")) {
@@ -310,20 +330,8 @@ void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitte
 			ImGui::TreePop();
 		}
 
-		if (ImGui::Button("Emit Once")) {
-			emitter->EmitOnce();
-		}
-
-		if (ImGui::Checkbox("Loop Emit", &loop)) {
-			if (loop) {
-				emitter->StartLoop();
-			} else {
-				emitter->StopLoop();
-			}
-		}
-
-		// 生存パーティクル数の表示
-		//ImGui::Text("Alive Particles: %u", particleManager->GetAliveCount());
+		//生存パーティクル数の表示
+		ImGui::Text("Alive Particles: %u", particleManager->GetkNumInstance(name));
 
 		ImGui::PopID();
 	}

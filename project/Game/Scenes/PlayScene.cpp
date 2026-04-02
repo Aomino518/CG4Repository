@@ -44,18 +44,10 @@ void PlayScene::Init()
     //===========================
     // Particle
     //===========================
+    ParticleConfig particleConfig;
     ParticleManager::GetInstance()->CreateParticleGroup("Smoke", tHChecker);
-    emitter_ = std::make_unique<ParticleEmitter>(
-        "Smoke", 
-        10,
-        Color::YELLOW,
-        Color::RED,
-        Vector3{ 0.5f, 0.5f, 0.5f },
-        Vector3{ 0.0f, 0.0f, 0.0f },
-        0.1f,
-        -0.1f,
-        0.1f);
-
+    emitter_ = std::make_unique<ParticleEmitter>("Smoke", particleConfig);
+    
     LightManager::GetInstance()->CreatePointLight("PointLight1");
     LightManager::GetInstance()->CreatePointLight("PointLight2");
     LightManager::GetInstance()->CreateSpotLight("SpotLight1");

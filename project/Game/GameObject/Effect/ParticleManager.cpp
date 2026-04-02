@@ -42,28 +42,26 @@ void ParticleManager::Update(CameraManager* cameraManager)
 	for (auto& [name, group] : particleGroups) {
 		group.instanceCount = 0;
 		for (auto particleIterator = group.particles.begin(); particleIterator != group.particles.end(); ) {
-
 			if (particleIterator->lifeTime <= particleIterator->currentTime) {
 				particleIterator = group.particles.erase(particleIterator);
 				continue;
 			}
 
+			// 移動と時間の更新
 			if (group.useField_ && IsCollision(group.field_.area, particleIterator->transform.translate)) {
-				particleIterator->velocity.x += group.field_.acceleration.x * kDeltaTime;
-				particleIterator->velocity.y += group.field_.acceleration.y * kDeltaTime;
-				particleIterator->velocity.z += group.field_.acceleration.z * kDeltaTime;
+				particleIterator->velocity = particleIterator->velocity + group.field_.acceleration * kDeltaTime;
 			}
 
-			particleIterator->transform.translate.x += particleIterator->velocity.x * kDeltaTime;
-			particleIterator->transform.translate.y += particleIterator->velocity.y * kDeltaTime;
-			particleIterator->transform.translate.z += particleIterator->velocity.z * kDeltaTime;
+			particleIterator->transform.translate = particleIterator->transform.translate + particleIterator->velocity * kDeltaTime;
+			particleIterator->transform.rotate = particleIterator->transform.rotate + particleIterator->rotateVelocity * kDeltaTime;
 			particleIterator->currentTime += kDeltaTime;
 
+			// 色の補間
 			float t = particleIterator->currentTime / particleIterator->lifeTime;
 			t = std::clamp(t, 0.0f, 1.0f);
 			Vector4 color = particleIterator->startColor * (1.0f - t) + particleIterator->endColor * t;
 
-			// スケール補間
+			// スケールの補間
 			Vector3 scale = particleIterator->startScale * (1.0f - t) + particleIterator->endScale * t;
 			particleIterator->transform.scale = scale;
 
@@ -74,7 +72,6 @@ void ParticleManager::Update(CameraManager* cameraManager)
 				// 書き込み  
 				group.instanceData[group.instanceCount].World = worldMatrix;
 				group.instanceData[group.instanceCount].WVP = wvpMatrix;
-				group.instanceData[group.instanceCount].color = particleIterator->color;
 				group.instanceData[group.instanceCount].color = color;
 				++group.instanceCount;
 			}
@@ -127,19 +124,11 @@ void ParticleManager::Shutdown()
 }
 
 void ParticleManager::Emit(const std::string name, 
-	const Vector3& position, 
-	const Vector4& startColor,
-	const Vector4& endColor,
-	const Vector3& startScale,
-	const Vector3& endScale, 
-	const float plusRange,
-	const float minusRange,
+	const ParticleConfig& config,
+	const Vector3& position,
 	uint32_t count)
 {
-	std::uniform_real_distribution<float> distribution(minusRange, plusRange);
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
-	Vector3 randomTranslate = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
 
 	auto it = particleGroups.find(name);
 	assert(it != particleGroups.end());
@@ -148,18 +137,34 @@ void ParticleManager::Emit(const std::string name,
 
 	for (uint32_t i = 0; i < count; ++i) {
 		Particle particle{};
+		Vector3 spawnOffset{};
 
-		particle.transform.translate = { position + randomTranslate };
-		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.scale = startScale;
-		particle.velocity = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
+		if (config.shape == SpawnShape::Box) {
+			spawnOffset = RandomRange(randomEngine_, config.boxMin, config.boxMax);
+		}
+		else if (config.shape == SpawnShape::Sphere) {
+			float theta = RandomRange(randomEngine_, 0.0f, 2.0f * std::numbers::pi_v<float>);
+			float phi = RandomRange(randomEngine_, 0.0f, std::numbers::pi_v<float>);
+			float r = RandomRange(randomEngine_, 0.0f, config.sphereRadius);
+
+			spawnOffset.x = r * sinf(phi) * cosf(theta);
+			spawnOffset.y = r * sinf(phi) * sinf(theta);
+			spawnOffset.z = r * cosf(phi);
+		}
+
+		particle.transform.translate = { position + spawnOffset };
+		particle.transform.rotate = RandomRange(randomEngine_, config.minRotate, config.maxRotate);
+		particle.transform.scale = RandomRange(randomEngine_, config.startScaleMin, config.startScaleMax);
+		particle.rotateVelocity = RandomRange(randomEngine_, config.minRotateVelocity, config.maxRotateVelocity);
+		particle.velocity = RandomRange(randomEngine_, config.minVelocity, config.maxVelocity);
 		particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_), 1.0f };
-		particle.startColor = startColor;
-		particle.endColor = endColor;
-		particle.startScale = startScale;
-		particle.endScale = endScale;
-		particle.lifeTime = distTime(randomEngine_);
-		particle.currentTime = 0;
+		particle.startColor = RandomRange(randomEngine_, config.startColorMin, config.startColorMax);
+		particle.endColor = RandomRange(randomEngine_, config.endColorMin, config.endColorMax);
+		particle.color = particle.startColor;
+		particle.startScale = RandomRange(randomEngine_, config.startScaleMin, config.startScaleMax);
+		particle.endScale = RandomRange(randomEngine_, config.endScaleMin, config.endScaleMax);
+		particle.lifeTime = RandomRange(randomEngine_, config.minLifeTime, config.maxLifeTime);
+		particle.currentTime = 0.0f;
 
 		group.particles.push_back(particle);
 	}
@@ -274,10 +279,8 @@ void ParticleManager::RemoveParticleGroup(const std::string& name)
 ParticleGroup& ParticleManager::GetGroup(const std::string& name)
 {
 	auto it = particleGroups.find(name);
-	if (it == particleGroups.end()) {
-		assert(false && "Particle group not found");
-	}
-	return particleGroups[name];
+	assert(it != particleGroups.end() && "Particle group not found");
+	return it->second;
 }
 
 BlendMode ParticleManager::GetBlendMode(const std::string& name)
@@ -306,21 +309,24 @@ ID3D12PipelineState* ParticleManager::GetPso(BlendMode mode)
 Matrix4x4 ParticleManager::CalculateWorldMatrix(const Particle& particle, const std::string& name, bool isDebug)
 {
 	Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.transform.scale);
+	Matrix4x4 rotateMatrix = MakeRotateXMatrix(particle.transform.rotate.x) *
+		MakeRotateYMatrix(particle.transform.rotate.y) *
+		MakeRotateZMatrix(particle.transform.rotate.z);
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.transform.translate);
 
 	if (isDebug) {
 		if (particleGroups[name].useBillboard_ && debugCamera_) {
 			const Matrix4x4& billBoardMatrix = debugCamera_->GetBillboardMatrix();
-			return scaleMatrix * billBoardMatrix * translateMatrix;
+			return scaleMatrix * rotateMatrix * billBoardMatrix * translateMatrix;
 		} else {
-			return scaleMatrix * translateMatrix;
+			return scaleMatrix * rotateMatrix * translateMatrix;
 		}
 	}else {
 		if (particleGroups[name].useBillboard_ && camera_) {
 			const Matrix4x4& billBoardMatrix = camera_->GetBillboardMatrix();
-			return scaleMatrix * billBoardMatrix * translateMatrix;
+			return scaleMatrix * rotateMatrix * billBoardMatrix * translateMatrix;
 		} else {
-			return scaleMatrix * translateMatrix;
+			return scaleMatrix * rotateMatrix * translateMatrix;
 		}
 	}
 }
@@ -343,6 +349,31 @@ Matrix4x4 ParticleManager::CalculateWVPMatrix(const Matrix4x4& worldMatrix, bool
 	}
 
 	return worldMatrix;
+}
+
+float ParticleManager::RandomRange(std::mt19937& engine, float min, float max)
+{
+	std::uniform_real_distribution<float> dist(min, max);
+	return dist(engine);
+}
+
+Vector3 ParticleManager::RandomRange(std::mt19937& engine, const Vector3& min, const Vector3& max)
+{
+	return {
+	   RandomRange(engine, min.x, max.x),
+	   RandomRange(engine, min.y, max.y),
+	   RandomRange(engine, min.z, max.z)
+	};
+}
+
+Vector4 ParticleManager::RandomRange(std::mt19937& engine, const Vector4& min, const Vector4& max)
+{
+	return {
+		RandomRange(engine, min.x, max.x),
+		RandomRange(engine, min.y, max.y),
+		RandomRange(engine, min.z, max.z),
+		RandomRange(engine, min.w, max.w)
+	};
 }
 
 // グラフィックパイプラインを生成する関数

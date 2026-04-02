@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "BlendStateUtils.h"
+#include "CreateResorceUtils.h"
 
 namespace ImGuiUtils
 {
@@ -11,5 +12,6 @@ namespace ImGuiUtils
 	bool DrawBlendModeSelector(const char* label, BlendMode& blendMode);
 	bool DrawColor4(const char* label, Vector4& color);
 	bool DrawVector3(const char* label, Vector3& value);
+	bool DrawEditParticleConfig(const char* label, ParticleConfig& config);
 };
 

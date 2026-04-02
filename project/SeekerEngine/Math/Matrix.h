@@ -125,6 +125,12 @@ Matrix4x4 Transpose(const Matrix4x4& matrix);
 
 bool IsCollision(const AABB& aabb, const Vector3& point);
 
+// 線形補間関数Vector3
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+
+// 線形補間関数Vector4
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
+
 // オペレーター
 Vector2& operator+=(Vector2& v1, const Vector2& v2);
 

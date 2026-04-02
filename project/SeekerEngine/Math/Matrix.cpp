@@ -393,6 +393,18 @@ bool IsCollision(const AABB& aabb, const Vector3& point)
 		(aabb.min.z <= point.z && point.z <= aabb.max.z);
 }
 
+// 線形補間関数
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t)
+{
+	return v1 + (v2 - v1) * t;
+}
+
+// 線形補間関数
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t)
+{
+	return v1 + (v2 - v1) * t;
+}
+
 Vector2& operator+=(Vector2& v1, const Vector2& v2) {
 	v1.x += v2.x;
 	v1.y += v2.y;

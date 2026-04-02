@@ -6,6 +6,7 @@
 #include "TextureManager.h"
 #include "InputLayout.h"
 #include "PsoBuilder.h"
+#include "Color.h"
 #include "CreateResorceUtils.h"
 #include "CameraManager.h"
 #include "BlendStateUtils.h"
@@ -54,15 +55,10 @@ public:
 
     void Shutdown();
 
-    void Emit(const std::string name, 
-        const Vector3& position, 
-        const Vector4& startColor,
-        const Vector4& endColor,
-        const Vector3& startScale,
-        const Vector3& endScale,
-        const float plusRange,
-        const float minusRange,
-        uint32_t count);
+    void Emit(const std::string name,
+        const ParticleConfig& config,
+        const Vector3& position = {0.0f, 0.0f},
+        uint32_t count = 10);
 
     void SetBlendMode(const std::string& name, BlendMode mode);
 
@@ -80,6 +76,7 @@ public:
     bool GetUseField(const std::string& name) { return particleGroups[name].useField_; }
     BlendMode GetBlendMode(const std::string& name);
     uint32_t GetkNumMaxInstance() { return kNumMaxInstance_; }
+    uint32_t GetkNumInstance(const std::string& name) { return particleGroups[name].instanceCount; }
     AccelerationField& GetField(const std::string& name) { return particleGroups[name].field_; }
     ID3D12PipelineState* GetPso(BlendMode mode);
    
@@ -88,6 +85,7 @@ public:
     void SetField(const std::string& name, AccelerationField field) { this->particleGroups[name].field_ = field; }
 
 private:
+    // メンバ関数
     ParticleManager() = default;
     ~ParticleManager() = default;
     ParticleManager(const ParticleManager&) = delete;
@@ -102,6 +100,12 @@ private:
     // WVP計算行列
     Matrix4x4 CalculateWVPMatrix(const Matrix4x4& worldMatrix, bool isDebug);
 
+    // ランダム関数
+    float RandomRange(std::mt19937& engine, float min, float max);
+    Vector3 RandomRange(std::mt19937& engine, const Vector3& min, const Vector3& max);
+    Vector4 RandomRange(std::mt19937& engine, const Vector4& min, const Vector4& max);
+
+    // メンバ変数
     Graphics* graphics_ = nullptr;
     Camera* camera_ = nullptr;
     DebugCamera* debugCamera_ = nullptr;
@@ -111,7 +115,7 @@ private:
     std::unordered_map<std::string, ParticleGroup> particleGroups;
     // ランダムエンジンの変数
     std::mt19937 randomEngine_;
-    static constexpr uint32_t kNumMaxInstance_ = 1000;
+    static constexpr uint32_t kNumMaxInstance_ = 2000;
     const float kDeltaTime = 1.0f / 60.0f;
    
     //===========================

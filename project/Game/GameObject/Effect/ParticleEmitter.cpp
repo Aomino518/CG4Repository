@@ -1,24 +1,14 @@
 #include "ParticleEmitter.h"
 
 ParticleEmitter::ParticleEmitter(const std::string& groupName, 
-	uint32_t count, 
-	const Vector4& startColor,
-	const Vector4& endColor,
-	const Vector3& startScale,
-	const Vector3& endScale,
-	const float plusRange,
-	const float minusRange,
-	float frequency) :
-groupName_(groupName),
-count_(count),
-startColor_(startColor),
-endColor_(endColor),
-startScale_(startScale),
-endScale_(endScale),
-plusRange_(plusRange),
-minusRange_(minusRange),
-frequency_(frequency),
-frequencyTime_(0.0f)
+	const ParticleConfig& config,
+	uint32_t count,
+	float frequency)
+	: groupName_(groupName),
+	config_(config),
+	count_(count),
+	frequency_(frequency),
+	frequencyTime_(0.0f)
 {
 	transform_.translate = { 0.0f, 0.0f, 0.0f };
 	transform_.rotate = { 0.0f, 0.0f, 0.0f };
@@ -27,14 +17,10 @@ frequencyTime_(0.0f)
 
 void ParticleEmitter::EmitOnce()
 {
-	ParticleManager::GetInstance()->Emit(groupName_, 
-		transform_.translate, 
-		startColor_,
-		endColor_,
-		startScale_,
-		endScale_,
-		plusRange_,
-		minusRange_,
+	ParticleManager::GetInstance()->Emit(
+		groupName_, 
+		config_,
+		transform_.translate,
 		count_);
 }
 
@@ -55,16 +41,25 @@ void ParticleEmitter::Update()
 		frequencyTime_ += kDeltaTime;
 
 		while (frequency_ <= frequencyTime_) {
-			ParticleManager::GetInstance()->Emit(groupName_, 
-				transform_.translate, 
-				startColor_,
-				endColor_,
-				startScale_,
-				endScale_, 
-				plusRange_,
-				minusRange_,
+			ParticleManager::GetInstance()->Emit(
+				groupName_, 
+				config_,
+				transform_.translate,
 				count_);
 			frequencyTime_ -= frequency_;
 		}
 	}
+}
+
+void ParticleEmitter::SetSpawnShapeBox(const Vector3& min, const Vector3& max)
+{
+	config_.shape = SpawnShape::Box;
+	config_.boxMin = min;
+	config_.boxMax = max;
+}
+
+void ParticleEmitter::SetSpawnShapeSphere(float radius)
+{
+	config_.shape = SpawnShape::Sphere;
+	config_.sphereRadius = radius;
 }

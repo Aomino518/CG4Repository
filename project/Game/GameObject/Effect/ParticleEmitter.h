@@ -2,17 +2,7 @@
 #include "Matrix.h"
 #include "CreateResorceUtils.h"
 #include "ParticleManager.h"
-
-struct ParticleConfig {
-	Vector3 minVelocity;
-	Vector3 maxVelocity;
-	Vector4 startColor;
-	Vector4 endColor;
-	float minLifeTime;
-	float maxLifeTime;
-	float startScale;
-	float endScale;
-};
+#include "Color.h"
 
 class ParticleEmitter
 {
@@ -30,14 +20,9 @@ public:
 	/// <param name="minusRange">負の生成範囲</param>
 	/// <param name="frequency">スポーン間隔</param>
 	ParticleEmitter(const std::string& groupName, 
-		uint32_t count, 
-		const Vector4& startColor,
-		const Vector4& endColor,
-		const Vector3& startScale,
-		const Vector3& endScale,
-		const float plusRange,
-		const float minusRange,
-		float frequency);
+		const ParticleConfig& config,
+		uint32_t count = 10,
+		float frequency = 0.1f);
 	void EmitOnce();
 	void StartLoop();
 	void StopLoop();
@@ -47,26 +32,25 @@ public:
 	bool GetIsLoop() { return isLoop_; }
 	uint32_t GetCount() const { return count_; }
 	float GetFrenquency() const { return frequency_; }
-	Transform GetTransform() const { return transform_; }
+	const Transform& GetTransform() const { return transform_; }
+	const ParticleConfig& GetConfig() const { return config_; }
 
 	// Setter関数
 	void SetCount(uint32_t count) { this->count_ = count; }
 	void SetFrenquency(float frequency) { this->frequency_ = frequency; }
 	void SetTransform(Transform transform) { this->transform_ = transform; }
-
-	Transform transform_;
-	uint32_t count_; // 1回の発生個数
-	float frequency_; // 発生頻度
-	Vector4 startColor_;
-	Vector4 endColor_;
-	Vector3 startScale_;
-	Vector3 endScale_;
-	float plusRange_;
-	float minusRange_;
+	void SetConfig(const ParticleConfig& config) { this->config_ = config; };
+	void SetSpawnShapeBox(const Vector3& min, const Vector3& max);
+	void SetSpawnShapeSphere(float radius);
 
 private:
 	std::string groupName_;
-	float frequencyTime_; // 発生タイマー
-	const float kDeltaTime = 1.0f / 60.0f;
+	Transform transform_{};
+	ParticleConfig config_{};
+	uint32_t count_ = 10; // 1回の発生個数
+	float frequency_ = 0.0f; // 発生頻度
+	float frequencyTime_ = 0.0f; // 発生タイマー
 	bool isLoop_ = false; // 無限発生か
+
+	const float kDeltaTime = 1.0f / 60.0f;
 };
