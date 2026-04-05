@@ -155,6 +155,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AccelerationField.cpp" />
+    <ClCompile Include="EmitterManager.cpp" />
+    <ClCompile Include="WorldFieldManager.cpp" />
     <ClCompile Include="ImGuiUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp" />
@@ -292,6 +295,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccelerationField.h" />
+    <ClInclude Include="EmitterManager.h" />
     <ClInclude Include="externals\assimp\include\assimp\aabb.h" />
     <ClInclude Include="externals\assimp\include\assimp\ai_assert.h" />
     <ClInclude Include="externals\assimp\include\assimp\anim.h" />
@@ -370,6 +375,7 @@
     <ClInclude Include="externals\assimp\include\assimp\XmlParser.h" />
     <ClInclude Include="externals\assimp\include\assimp\XMLTools.h" />
     <ClInclude Include="externals\assimp\include\assimp\ZipArchiveIOSystem.h" />
+    <ClInclude Include="WorldFieldManager.h" />
     <ClInclude Include="ImGuiUtils.h" />
     <ClInclude Include="SeekerEngine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="SeekerEngine\Scene\BaseScene.h" />

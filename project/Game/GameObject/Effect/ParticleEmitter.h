@@ -1,6 +1,4 @@
 #pragma once
-#include "Matrix.h"
-#include "CreateResorceUtils.h"
 #include "ParticleManager.h"
 #include "Color.h"
 
@@ -11,13 +9,8 @@ public:
 	/// Emitterコンストラクタ
 	/// </summary>
 	/// <param name="groupName">名称</param>
+	/// <param name="config">コンフィグ</param>
 	/// <param name="count">1回にスポーンする数</param>
-	/// <param name="startColor">始めの色</param>
-	/// <param name="endColor">終わり色</param>
-	/// <param name="startScale">始めのスケール</param>
-	/// <param name="endScale">終わりのスケール</param>
-	/// <param name="plusRange">正の生成範囲</param>
-	/// <param name="minusRange">負の生成範囲</param>
 	/// <param name="frequency">スポーン間隔</param>
 	ParticleEmitter(const std::string& groupName, 
 		const ParticleConfig& config,
@@ -34,6 +27,7 @@ public:
 	float GetFrenquency() const { return frequency_; }
 	const Transform& GetTransform() const { return transform_; }
 	const ParticleConfig& GetConfig() const { return config_; }
+	const AccelerationField& GetLocalField() const { return localField_; }
 
 	// Setter関数
 	void SetCount(uint32_t count) { this->count_ = count; }
@@ -42,6 +36,7 @@ public:
 	void SetConfig(const ParticleConfig& config) { this->config_ = config; };
 	void SetSpawnShapeBox(const Vector3& min, const Vector3& max);
 	void SetSpawnShapeSphere(float radius);
+	void SetLocalField(AccelerationField& localField) { this->localField_ = localField; }
 
 private:
 	std::string groupName_;
@@ -53,4 +48,6 @@ private:
 	bool isLoop_ = false; // 無限発生か
 
 	const float kDeltaTime = 1.0f / 60.0f;
+
+	AccelerationField localField_;
 };

@@ -1,5 +1,7 @@
 #include "ParticleManager.h"
 #include "Graphics.h"
+#include "EmitterManager.h"
+#include "WorldFieldManager.h"
 
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -42,15 +44,39 @@ void ParticleManager::Update(CameraManager* cameraManager)
 	for (auto& [name, group] : particleGroups) {
 		group.instanceCount = 0;
 		for (auto particleIterator = group.particles.begin(); particleIterator != group.particles.end(); ) {
+			// 移動と時間の更新
 			if (particleIterator->lifeTime <= particleIterator->currentTime) {
 				particleIterator = group.particles.erase(particleIterator);
 				continue;
 			}
 
-			// 移動と時間の更新
-			if (group.useField_ && IsCollision(group.field_.area, particleIterator->transform.translate)) {
-				particleIterator->velocity = particleIterator->velocity + group.field_.acceleration * kDeltaTime;
+			auto emitters = EmitterManager::GetInstance()->GetEmitters();
+			auto worldFields = WorldFieldManager::GetInstance()->GetFields();
+			// ワールドフィールドの更新
+			Vector3 totalAcceleration{ 0.0f, 0.0f, 0.0f };
+			for (const auto& field : worldFields) {
+				if (!field->GetIsActive()) {
+					continue;
+				}
+
+				if (IsCollision(field->GetWorldAABB(), particleIterator->transform.translate)) {
+					totalAcceleration = totalAcceleration + field->GetAcceleration();
+				}
 			}
+
+			// ローカルフィールドの更新
+			for (const auto& emitter : emitters) {
+				Transform transform = emitter->GetTransform();
+				auto& field = emitter->GetLocalField();
+				if (!field.GetIsActive()) {
+					continue;
+				}
+
+				if (IsCollision(field.GetWorldAABB(transform.translate), particleIterator->transform.translate)) {
+					totalAcceleration = totalAcceleration + field.GetAcceleration();
+				}
+			}
+			particleIterator->velocity = particleIterator->velocity + totalAcceleration * kDeltaTime;
 
 			particleIterator->transform.translate = particleIterator->transform.translate + particleIterator->velocity * kDeltaTime;
 			particleIterator->transform.rotate = particleIterator->transform.rotate + particleIterator->rotateVelocity * kDeltaTime;
@@ -233,13 +259,7 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const uint32_
 	group.instanceResource = CreateBufferResource(Graphics::GetDevice(), bufferSize);
 	group.instanceData = nullptr;
 	group.instanceResource->Map(0, nullptr, reinterpret_cast<void**>(&group.instanceData));
-	group.useField_ = false;
-	group.field_ = {
-	  { 15.0f, 0.0f, 0.0f },
-	  {{-1.0f, -1.0f, -1.0f},
-	  { 1.0f,  1.0f,  1.0f }}
-	};
-
+	
 	for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {
 		group.instanceData[i].WVP = MakeIdentity4x4();
 		group.instanceData[i].World = MakeIdentity4x4();

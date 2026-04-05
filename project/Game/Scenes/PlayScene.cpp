@@ -46,7 +46,9 @@ void PlayScene::Init()
     //===========================
     ParticleConfig particleConfig;
     ParticleManager::GetInstance()->CreateParticleGroup("Smoke", tHChecker);
-    emitter_ = std::make_unique<ParticleEmitter>("Smoke", particleConfig);
+    EmitterManager::GetInstance()->CreateEmitter("Smoke", particleConfig);
+    WorldFieldManager::GetInstance()->CreateWorldField("TestWind_001");
+    WorldFieldManager::GetInstance()->CreateWorldField("TestWind_002");
     
     LightManager::GetInstance()->CreatePointLight("PointLight1");
     LightManager::GetInstance()->CreatePointLight("PointLight2");
@@ -84,7 +86,7 @@ void PlayScene::Update()
 
     SoundManager::GetInstance()->Update();
 
-    emitter_->Update();
+    EmitterManager::GetInstance()->Update();
     auto camMgr = CameraManager::GetInstance();
 	ParticleManager::GetInstance()->Update(camMgr);
 
@@ -103,11 +105,12 @@ void PlayScene::Update()
     //ImGuiManager::GetInstance()->DrawSpriteInspector("uvChecker", sprite.get());
     ImGuiManager::GetInstance()->DrawModelInspector("plane", entity.get());
     ImGuiManager::GetInstance()->DrawModelInspector("terrain", modelTerrain.get());
-    ImGuiManager::GetInstance()->DrawParticleInspector("Smoke", emitter_.get());
+    ImGuiManager::GetInstance()->DrawParticleInspector("Smoke");
     ImGuiManager::GetInstance()->EndInspector();
     ImGuiManager::GetInstance()->Stats();
     ImGuiManager::GetInstance()->DrawLightWindow();
 	ImGuiManager::GetInstance()->DrawSoundWindow();
+    ImGuiManager::GetInstance()->DrawWorldFildWindow();
     ImGuiManager::GetInstance()->EndFrame();
 }
 

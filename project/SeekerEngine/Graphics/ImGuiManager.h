@@ -30,10 +30,11 @@ public:
 
 	void DrawSpriteInspector(const std::string& spriteName, Sprite* sprite);
 	void DrawModelInspector(const std::string& modelName, Entity3D* model);
-	void DrawParticleInspector(const std::string& name, ParticleEmitter* emitter);
+	void DrawParticleInspector(const std::string& name);
 	void DrawLightWindow();
 	void DrawSoundWindow();
 	void DrawCameraWindow(CameraManager* cameraManager);
+	void DrawWorldFildWindow();
 	void DrawMainMenuBar();
 
 	void Stats();
@@ -59,6 +60,7 @@ private:
 		bool showCamera = true;
 		bool showLight = true;
 		bool showSound = true;
+		bool showWorldField = true;
 	};
 
 	WindowFlags windowState_;

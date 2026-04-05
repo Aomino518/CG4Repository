@@ -26,6 +26,8 @@
 #include "SceneManager.h"
 #include "SoundManager.h"
 #include "CameraManager.h"
+#include "EmitterManager.h"
+#include "WorldFieldManager.h"
 
 class SeekerEngine
 {

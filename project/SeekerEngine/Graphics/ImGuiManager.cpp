@@ -112,7 +112,7 @@ void ImGuiManager::DrawModelInspector(const std::string& modelName, Entity3D* mo
 	Vector3 modelPosition = model->GetTranslate();
 	Vector3 modelRotate = model->GetRotate();
 	Vector3 modelScale = model->GetScale();
-	
+
 	if (ImGui::CollapsingHeader(modelName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::PushID(modelName.c_str());
@@ -231,6 +231,46 @@ void ImGuiManager::DrawCameraWindow(CameraManager* cameraManager)
 #endif
 }
 
+void ImGuiManager::DrawWorldFildWindow()
+{
+	if (!windowState_.showWorldField) {
+		return;
+	}
+
+	ImGui::Begin("WorldField Manager");
+	auto worldFieldMgr = WorldFieldManager::GetInstance();
+	auto worldFields = worldFieldMgr->GetWorldFields();
+
+	for (auto& [name, field] : worldFields) {
+
+		if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::PushID(name.c_str());
+			Vector3 pos = field.GetPosition();
+			Vector3 accelerarion = field.GetAcceleration();
+			AABB area = field.GetAABB();
+			bool isActive = field.GetIsActive();
+			bool changed = false;
+
+			changed |= ImGui::DragFloat3("Position", (float*)&pos, 0.01f);
+			changed |= ImGui::DragFloat3("Acceleration", (float*)&accelerarion, 0.01f);
+			// minをmaxが下回ると落ちるのでのちのち修正
+			changed |= ImGui::DragFloat3("AABB Min", (float*)&area.min, 0.1f);
+			changed |= ImGui::DragFloat3("AABB Max", (float*)&area.max, 0.1f);
+			changed |= ImGui::Checkbox("isActive", &isActive);
+
+			if (changed) {
+				field.SetPosition(pos);
+				field.SetAcceleration(accelerarion);
+				field.SetAABB(area);
+				field.SetIsActive(isActive);
+				worldFieldMgr->SetField(name, field);
+			}
+			ImGui::PopID();
+		}
+	}
+	ImGui::End();
+}
+
 void ImGuiManager::DrawMainMenuBar()
 {
 #ifdef USE_IMGUI
@@ -240,6 +280,7 @@ void ImGuiManager::DrawMainMenuBar()
 			ImGui::MenuItem("Camera", nullptr, &windowState_.showCamera);
 			ImGui::MenuItem("Light", nullptr, &windowState_.showLight);
 			ImGui::MenuItem("Sound", nullptr, &windowState_.showSound);
+			ImGui::MenuItem("WorldField", nullptr, &windowState_.showWorldField);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -247,7 +288,7 @@ void ImGuiManager::DrawMainMenuBar()
 #endif
 }
 
-void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitter* emitter)
+void ImGuiManager::DrawParticleInspector(const std::string& name)
 {
 #ifdef USE_IMGUI
 	if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -257,16 +298,22 @@ void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitte
 		bool changed = false;
 		bool fieldChanged = false;
 		ParticleManager* particleManager = ParticleManager::GetInstance();
+		EmitterManager* emitterMgr = EmitterManager::GetInstance();
 		ParticleGroup& group = particleManager->GetGroup(name);
+		ParticleEmitter* emitter = emitterMgr->GetEmitter(name);
 		BlendMode blendMode = group.blendMode_;
-		AccelerationField field = particleManager->GetField(name);
 		bool useBillboard = particleManager->GetUseBillboard(name);
 		int emitCount = static_cast<int>(emitter->GetCount());
 		float frequency = emitter->GetFrenquency();
 		Transform transform = emitter->GetTransform();
 		ParticleConfig config = emitter->GetConfig();
-		bool useField = particleManager->GetUseField(name);
 		bool loop = emitter->GetIsLoop();
+
+		// Field
+		AccelerationField field = emitter->GetLocalField();
+		bool isFieldActive = field.GetIsActive();
+		Vector3 acceleration = field.GetAcceleration();
+		AABB area = field.GetAABB();
 
 		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
 			particleManager->SetBlendMode(name, blendMode);
@@ -316,16 +363,19 @@ void ImGuiManager::DrawParticleInspector(const std::string& name, ParticleEmitte
 		}
 
 		if (ImGui::TreeNode("Field Settings")) {
-			if (ImGui::Checkbox("Use Field", &useField)) {
-				particleManager->SetUseField(name, useField);
+			if (ImGui::Checkbox("Use Field", &isFieldActive)) {
+				field.SetIsActive(isFieldActive);
+				emitter->SetLocalField(field);
 			}
 
-			fieldChanged |= ImGui::DragFloat3("Field Accel", (float*)&field.acceleration, 0.1f);
-			fieldChanged |= ImGui::DragFloat3("AABB Min", (float*)&field.area.min, 0.1f);
-			fieldChanged |= ImGui::DragFloat3("AABB Max", (float*)&field.area.max, 0.1f);
+			fieldChanged |= ImGui::DragFloat3("Field Accel", (float*)&acceleration, 0.1f);
+			fieldChanged |= ImGui::DragFloat3("AABB Min", (float*)&area.min, 0.1f);
+			fieldChanged |= ImGui::DragFloat3("AABB Max", (float*)&area.max, 0.1f);
 
 			if (fieldChanged) {
-				particleManager->SetField(name, field);
+				field.SetAcceleration(acceleration);
+				field.SetAABB(area);
+				emitter->SetLocalField(field);
 			}
 			ImGui::TreePop();
 		}
