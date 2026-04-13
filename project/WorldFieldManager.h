@@ -27,6 +27,8 @@ public:
 	// Setter関数
 	void SetField(std::string name, AccelerationField field) { this->worldFields_[name] = field; }
 
+	void DrawDebug();
+
 private:
 	// メンバ関数
 	WorldFieldManager() = default;

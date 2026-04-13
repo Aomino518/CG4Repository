@@ -21,6 +21,8 @@ public:
 	void StopLoop();
 	void Update();
 
+	void DrawDebug();
+
 	// Getter関数
 	bool GetIsLoop() { return isLoop_; }
 	uint32_t GetCount() const { return count_; }

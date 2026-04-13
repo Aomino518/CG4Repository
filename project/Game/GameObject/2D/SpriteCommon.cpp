@@ -62,7 +62,8 @@ void SpriteCommon::RebuildPso()
 		ps2DBlob_,
 		blendDesc_,
 		rasterizerDesc,
-		depthStencilDesc_
+		depthStencilDesc_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
 	);
 
 	pso2D_ = builder.BuildPso(psoDesc);
@@ -123,7 +124,8 @@ void SpriteCommon::CreateGraphicPipeline(DxcCompiler dxcCompiler)
 		ps2DBlob_,
 		blendDesc_,
 		rasterizerDesc,
-		depthStencilDesc_
+		depthStencilDesc_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
 	);
 
 	pso2D_ = builder.BuildPso(psoDesc2D);

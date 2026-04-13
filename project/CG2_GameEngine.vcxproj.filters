@@ -282,6 +282,15 @@
     <ClCompile Include="EmitterManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="SeekerEngine\DebugShape\DebugDraw.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\DebugShape\DebugDraw2D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\DebugShape\DebugDraw3D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\hlsl\Object2D.PS.hlsl">
@@ -308,6 +317,10 @@
     <FxCompile Include="resources\hlsl\Particle3D.VS.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="resources\hlsl\DebugShape2D.PS.hlsl" />
+    <FxCompile Include="resources\hlsl\DebugShape2D.VS.hlsl" />
+    <FxCompile Include="resources\hlsl\DebugShape3D.PS.hlsl" />
+    <FxCompile Include="resources\hlsl\DebugShape3D.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -718,6 +731,15 @@
     <ClInclude Include="EmitterManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="SeekerEngine\DebugShape\DebugDraw.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\DebugShape\DebugDraw2D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\DebugShape\DebugDraw3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -763,5 +785,7 @@
     <None Include="externals\assimp\include\assimp\vector3.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="resources\hlsl\DebugShape2D.hlsli" />
+    <None Include="resources\hlsl\DebugShape3D.hlsli" />
   </ItemGroup>
 </Project>

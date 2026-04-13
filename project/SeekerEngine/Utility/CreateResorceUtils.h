@@ -177,4 +177,14 @@ struct SpotLightGroup {
 	float pad[3];
 };
 
+struct DebugVertex {
+	Vector4 position;
+	Vector4 color;
+};
+
+enum class DebugDrawMode {
+	Wireframe,
+	Solid
+};
+
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);

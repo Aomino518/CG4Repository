@@ -234,7 +234,8 @@ void ParticleManager::RebuildPso()
 		psBlob_,
 		blendDesc_,
 		rasterizerDesc,
-		depthStencilDesc_
+		depthStencilDesc_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
 	);
 
 	psoParticle3D_ = builder.BuildPso(psoDesc);
@@ -436,7 +437,8 @@ void ParticleManager::CreateGraphicsPipeline(DxcCompiler& dxcCompiler)
 		psBlob_,
 		blendDesc_,
 		rasterizerDesc,
-		depthStencilDesc_
+		depthStencilDesc_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
 	);
 
 	psoParticle3D_ = builder.BuildPso(psoDesc3D);

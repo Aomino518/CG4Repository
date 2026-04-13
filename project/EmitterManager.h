@@ -29,6 +29,8 @@ public:
 	/// <param name="name"></param>
 	void RemoveEmitter(const std::string& name);
 
+	void DrawDebug();
+
 	// Getter関数
 	ParticleEmitter* GetEmitter(const std::string& name);
 	std::vector<ParticleEmitter*> GetEmitters() const;

@@ -124,6 +124,10 @@ void PlayScene::Draw()
 
     //sprite->Draw();
 
+    WorldFieldManager::GetInstance()->DrawDebug();
+    EmitterManager::GetInstance()->DrawDebug();
+    DebugDraw::Draw();
+
     ImGuiManager::GetInstance()->Draw();
 }
 

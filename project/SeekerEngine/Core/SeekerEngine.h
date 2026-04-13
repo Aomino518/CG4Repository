@@ -28,6 +28,9 @@
 #include "CameraManager.h"
 #include "EmitterManager.h"
 #include "WorldFieldManager.h"
+#include "DebugDraw.h"
+#include "DebugDraw2D.h"
+#include "DebugDraw3D.h"
 
 class SeekerEngine
 {
@@ -49,6 +52,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs3D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs2D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsParticle_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsDebugShape2D_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsDebugShape3D_;
 
 	DxcCompiler dxcCompiler_;
 	RootSignatureFactory rootSignatureFactory_;

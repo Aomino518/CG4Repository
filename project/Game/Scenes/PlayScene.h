@@ -22,5 +22,6 @@ private:
 	std::unique_ptr<Entity3D> modelTerrain;
 	std::unique_ptr<Camera> camera;
 	std::unique_ptr<ParticleEmitter> emitter_;
+	AABB aabb = { {-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f} };
 };
 

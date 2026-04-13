@@ -54,3 +54,9 @@ std::vector<ParticleEmitter*> EmitterManager::GetEmitters() const
 	}
 	return result;
 }
+
+void EmitterManager::DrawDebug() {
+	for (auto& emitter : emitters_) {
+		emitter.second->DrawDebug();
+	}
+}

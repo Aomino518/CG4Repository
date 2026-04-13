@@ -1,4 +1,5 @@
 #include "ParticleEmitter.h"
+#include "DebugDraw.h"
 
 ParticleEmitter::ParticleEmitter(const std::string& groupName, 
 	const ParticleConfig& config,
@@ -62,4 +63,10 @@ void ParticleEmitter::SetSpawnShapeSphere(float radius)
 {
 	config_.shape = SpawnShape::Sphere;
 	config_.sphereRadius = radius;
+}
+
+void ParticleEmitter::DrawDebug() {
+#ifdef _DEBUG
+	DebugDraw::DrawAABB(transform_.translate, localField_.GetAABB(), Vector4(0.2f, 0.6f, 1.0f, 1.0f), DebugDrawMode::Wireframe);
+#endif
 }

@@ -91,7 +91,8 @@ void Entity3DCommon::CreateGraphicPipeline(DxcCompiler dxcCompiler)
 		ps3DBlob_,
 		blendDesc_,
 		rasterizerDesc,
-		depthStencilDesc_
+		depthStencilDesc_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
 	);
 
 	pso3D_ = builder.BuildPso(psoDesc3D);
@@ -127,7 +128,8 @@ void Entity3DCommon::RebuildPso()
 		ps3DBlob_,
 		blendDesc_,
 		rasterizerDesc,
-		depthStencilDesc_
+		depthStencilDesc_,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
 	);
 
 	pso3D_ = builder.BuildPso(psoDesc);

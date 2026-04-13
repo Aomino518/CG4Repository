@@ -45,3 +45,10 @@ std::vector<AccelerationField*> WorldFieldManager::GetFields() const
 	}
 	return result;
 }
+
+void WorldFieldManager::DrawDebug()
+{
+	for (auto& field : worldFields_) {
+		field.second.DrawDebug(field.second.GetPosition());
+	}
+}

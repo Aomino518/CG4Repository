@@ -10,7 +10,7 @@ class AccelerationField
 {
 public:
 
-    //void DrawDebug(const Vector3& origin = { 0.0f, 0.0f, 0.0f });
+    void DrawDebug(const Vector3& origin = { 0.0f, 0.0f, 0.0f });
 
     // Getter
     FieldSpace GetSpace() const { return space_; }

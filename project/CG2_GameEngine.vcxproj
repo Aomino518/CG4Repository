@@ -83,7 +83,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -111,7 +111,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>MaxSpeed</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,6 +156,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AccelerationField.cpp" />
+    <ClCompile Include="SeekerEngine\DebugShape\DebugDraw3D.cpp" />
+    <ClCompile Include="SeekerEngine\DebugShape\DebugDraw.cpp" />
+    <ClCompile Include="SeekerEngine\DebugShape\DebugDraw2D.cpp" />
     <ClCompile Include="EmitterManager.cpp" />
     <ClCompile Include="WorldFieldManager.cpp" />
     <ClCompile Include="ImGuiUtils.cpp" />
@@ -225,6 +228,38 @@
     <ClCompile Include="Game\Scenes\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resources\hlsl\DebugShape3D.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\DebugShape3D.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\DebugShape2D.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\hlsl\DebugShape2D.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="resources\hlsl\Particle2D.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -296,6 +331,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccelerationField.h" />
+    <ClInclude Include="SeekerEngine\DebugShape\DebugDraw3D.h" />
+    <ClInclude Include="SeekerEngine\DebugShape\DebugDraw.h" />
+    <ClInclude Include="SeekerEngine\DebugShape\DebugDraw2D.h" />
     <ClInclude Include="EmitterManager.h" />
     <ClInclude Include="externals\assimp\include\assimp\aabb.h" />
     <ClInclude Include="externals\assimp\include\assimp\ai_assert.h" />
@@ -436,6 +474,10 @@
     <Text Include="externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\hlsl\DebugShape3D.hlsli" />
+    <None Include="resources\hlsl\DebugShape2D.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </None>
     <None Include="externals\assimp\include\assimp\.editorconfig" />
     <None Include="externals\assimp\include\assimp\color4.inl" />
     <None Include="externals\assimp\include\assimp\config.h.in" />
