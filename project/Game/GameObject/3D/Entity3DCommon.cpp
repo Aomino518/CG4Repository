@@ -1,5 +1,6 @@
 #include "Entity3DCommon.h"
 #include <Graphics.h>
+#include "Logger.h"
 
 Entity3DCommon* Entity3DCommon::GetInstance()
 {

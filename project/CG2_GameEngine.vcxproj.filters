@@ -740,6 +740,9 @@
     <ClInclude Include="SeekerEngine\DebugShape\DebugDraw3D.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="SeekerEngine\Math\AABB.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

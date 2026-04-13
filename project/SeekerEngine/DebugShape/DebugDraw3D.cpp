@@ -2,6 +2,7 @@
 #include "DebugDraw3D.h"
 #include "Graphics.h"
 #include "CameraManager.h"
+#include "Logger.h"
 
 DebugDraw3D* DebugDraw3D::GetInstance() {
 	static DebugDraw3D instance;

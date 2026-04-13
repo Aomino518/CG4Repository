@@ -1,5 +1,6 @@
 #include "SpriteCommon.h"
 #include "Graphics.h"
+#include "Logger.h"
 
 SpriteCommon* SpriteCommon::GetInstance()
 {

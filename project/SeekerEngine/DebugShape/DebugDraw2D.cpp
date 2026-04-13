@@ -1,5 +1,6 @@
 #include "DebugDraw2D.h"
 #include "Graphics.h"
+#include "Logger.h"
 #include <assert.h>
 #include <numbers>
 

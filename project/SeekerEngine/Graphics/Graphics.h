@@ -4,8 +4,6 @@
 #include <dxgi1_6.h>
 #include <cstdint>
 #include <chrono>
-#include <thread>
-#include "D3DResourceLeakChecker.h"
 
 class Graphics
 {

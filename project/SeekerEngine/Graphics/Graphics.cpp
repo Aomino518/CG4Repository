@@ -2,9 +2,11 @@
 #include "Application.h"
 #include "Logger.h"
 #include "StringUtil.h"
+#include "SrvManager.h"
 #include "TextureManager.h"
 #include <format>
 #include <cassert>
+#include <thread>
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 

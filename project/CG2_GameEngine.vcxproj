@@ -330,6 +330,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SeekerEngine\Math\AABB.h" />
     <ClInclude Include="AccelerationField.h" />
     <ClInclude Include="SeekerEngine\DebugShape\DebugDraw3D.h" />
     <ClInclude Include="SeekerEngine\DebugShape\DebugDraw.h" />
