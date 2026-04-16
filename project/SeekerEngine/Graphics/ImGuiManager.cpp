@@ -256,6 +256,7 @@ void ImGuiManager::DrawCameraWindow(CameraManager* cameraManager)
 
 void ImGuiManager::DrawWorldFildWindow()
 {
+#ifdef USE_IMGUI
 	if (!windowState_.showWorldField) {
 		return;
 	}
@@ -292,6 +293,7 @@ void ImGuiManager::DrawWorldFildWindow()
 		}
 	}
 	ImGui::End();
+#endif
 }
 
 void ImGuiManager::DrawMainMenuBar()

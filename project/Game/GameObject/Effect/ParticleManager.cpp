@@ -491,6 +491,7 @@ void ParticleManager::CreatePlaneModel()
 }
 
 void ParticleManager::DrawParticleGroupImGui(const std::string& name) {
+#ifdef USE_IMGUI
 	auto& group = ParticleManager::GetInstance()->GetGroup(name);
 
 	ImGui::Text("Group: %s", name.c_str());
@@ -502,6 +503,7 @@ void ParticleManager::DrawParticleGroupImGui(const std::string& name) {
 	}
 
 	ImGui::Checkbox("Billboard", &group.useBillboard_);
+#endif
 }
 
 uint32_t ParticleManager::GetTotalParticleCount() const

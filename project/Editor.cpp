@@ -46,6 +46,7 @@ void Editor::Clear()
 
 void Editor::DrawHierarchy()
 {
+#ifdef USE_IMGUI
     ImGui::Begin("Hierarchy");
 
     // =========================
@@ -92,10 +93,12 @@ void Editor::DrawHierarchy()
     }
 
     ImGui::End();
+#endif
 }
 
 void Editor::DrawInspector()
 {
+#ifdef USE_IMGUI
     ImGui::Begin("Inspector");
 
     switch (selection_.category) {
@@ -138,4 +141,5 @@ void Editor::DrawInspector()
     }
 
     ImGui::End();
+#endif
 }

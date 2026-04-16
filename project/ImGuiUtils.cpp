@@ -90,6 +90,7 @@ bool ImGuiUtils::DrawVector3(const char* label, Vector3& value)
 
 bool ImGuiUtils::DrawEditParticleConfig(const char* label, ParticleConfig& config)
 {
+#ifdef USE_IMGUI
     bool changed = false;
 
     if (ImGui::TreeNode(label)) {
@@ -216,4 +217,5 @@ bool ImGuiUtils::DrawEditParticleConfig(const char* label, ParticleConfig& confi
     }
 
     return changed;
+#endif
 }
