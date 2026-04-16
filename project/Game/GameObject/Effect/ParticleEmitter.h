@@ -40,6 +40,8 @@ public:
 	void SetSpawnShapeSphere(float radius);
 	void SetLocalField(AccelerationField& localField) { this->localField_ = localField; }
 
+	void DrawImGui();
+
 private:
 	std::string groupName_;
 	Transform transform_{};

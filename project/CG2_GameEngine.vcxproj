@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AccelerationField.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="SeekerEngine\Math\MathFunc.cpp" />
     <ClCompile Include="SeekerEngine\Math\MathOperator.cpp" />
     <ClCompile Include="SeekerEngine\DebugShape\DebugDraw3D.cpp" />
@@ -331,6 +332,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Editor.h" />
     <ClInclude Include="SceneIncludes.h" />
     <ClInclude Include="SeekerEngine\Math\MathFunc.h" />
     <ClInclude Include="SeekerEngine\Math\MathOperator.h" />

@@ -107,5 +107,13 @@ private:
 
 	// 記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
+
+private:
+	// DrawCallした数
+	uint32_t drawCallCount_ = 0;
+public:
+	void ResetDrawCallCount() { drawCallCount_ = 0; }
+	void AddDrawCallCount(uint32_t count = 1) { drawCallCount_ += count; }
+	uint32_t GetDrawCallCount() const { return drawCallCount_; }
 };
 

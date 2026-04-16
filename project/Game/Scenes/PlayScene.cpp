@@ -35,12 +35,14 @@ void PlayScene::Init()
     entity->Init();
     entity->SetModel("ball");
     entity->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
-    
+    Editor::GetInstance()->RegisterModel("ball", entity.get());
+
     modelTerrain = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("terrain.obj");
     modelTerrain->Init();
     modelTerrain->SetModel("terrain");
     modelTerrain->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
+    Editor::GetInstance()->RegisterModel("terrain", modelTerrain.get());
    
     //===========================
     // Particle
@@ -48,6 +50,7 @@ void PlayScene::Init()
     ParticleConfig particleConfig;
     ParticleManager::GetInstance()->CreateParticleGroup("Smoke", tHChecker);
     EmitterManager::GetInstance()->CreateEmitter("Smoke", particleConfig);
+    Editor::GetInstance()->RegisterParticle("Smoke");
     WorldFieldManager::GetInstance()->CreateWorldField("TestWind_001");
     WorldFieldManager::GetInstance()->CreateWorldField("TestWind_002");
     
@@ -101,13 +104,8 @@ void PlayScene::Update()
 
     ImGuiManager::GetInstance()->BeginFrame();
     ImGuiManager::GetInstance()->DrawMainMenuBar();
-    ImGuiManager::GetInstance()->BeginInspector();
     ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
-    //ImGuiManager::GetInstance()->DrawSpriteInspector("uvChecker", sprite.get());
-    ImGuiManager::GetInstance()->DrawModelInspector("plane", entity.get());
-    ImGuiManager::GetInstance()->DrawModelInspector("terrain", modelTerrain.get());
-    ImGuiManager::GetInstance()->DrawParticleInspector("Smoke");
-    ImGuiManager::GetInstance()->EndInspector();
+    ImGuiManager::GetInstance()->DrawEditor();
     ImGuiManager::GetInstance()->Stats();
     ImGuiManager::GetInstance()->DrawLightWindow();
 	ImGuiManager::GetInstance()->DrawSoundWindow();
@@ -135,4 +133,5 @@ void PlayScene::Draw()
 void PlayScene::Shutdown()
 {
     ParticleManager::GetInstance()->RemoveParticleGroup("Smoke");
+    Editor::GetInstance()->Clear();
 }

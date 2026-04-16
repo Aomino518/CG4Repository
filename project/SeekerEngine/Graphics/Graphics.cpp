@@ -121,6 +121,7 @@ void Graphics::Shutdown()
 
 void Graphics::BeginFrame()
 {
+	ResetDrawCallCount();
 	// これから書き込むバックバッファのインデックス取得
 	backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();
 	// TransitionBarrierの設定

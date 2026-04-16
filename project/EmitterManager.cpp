@@ -55,8 +55,26 @@ std::vector<ParticleEmitter*> EmitterManager::GetEmitters() const
 	return result;
 }
 
+const std::unordered_map<std::string, std::unique_ptr<ParticleEmitter>>& EmitterManager::GetEmittersAndNames() const
+{
+	return emitters_;
+}
+
+uint32_t EmitterManager::GetEmitterCount() const
+{
+	return static_cast<uint32_t>(emitters_.size());
+}
+
 void EmitterManager::DrawDebug() {
 	for (auto& emitter : emitters_) {
 		emitter.second->DrawDebug();
+	}
+}
+
+void EmitterManager::DrawImgui(const std::string& name)
+{
+	auto it = emitters_.find(name);
+	if (it != emitters_.end()) {
+		it->second->DrawImGui();
 	}
 }

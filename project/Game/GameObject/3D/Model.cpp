@@ -25,7 +25,7 @@ void Model::Draw()
 	cmdList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 	// 描画 (DrawCall)。
 	cmdList_->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
-	//cmdList_->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
+	Graphics::GetInstance()->AddDrawCallCount();
 }
 
 MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)

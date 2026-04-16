@@ -81,6 +81,7 @@ void DebugDraw2D::DrawWire()
 	cmdList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	cmdList_->DrawInstanced(vertexCount_, 1, 0, 0);
+	Graphics::GetInstance()->AddDrawCallCount();
 }
 
 void DebugDraw2D::DrawSolid()
@@ -89,6 +90,7 @@ void DebugDraw2D::DrawSolid()
 	cmdList_->IASetVertexBuffers(0, 1, &solidVertexBufferView_);
 	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	cmdList_->DrawInstanced(solidVertexCount_, 1, 0, 0);
+	Graphics::GetInstance()->AddDrawCallCount();
 }
 
 void DebugDraw2D::DrawLine(const Vector2& start, const Vector2& end, const Vector4& color) {

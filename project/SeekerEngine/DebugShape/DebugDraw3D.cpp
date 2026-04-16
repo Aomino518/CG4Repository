@@ -66,6 +66,7 @@ void DebugDraw3D::DrawWire() {
 	cmdList_->IASetVertexBuffers(0, 1, &wireVertexBufferView_);
 	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	cmdList_->DrawInstanced(wireVertexCount_, 1, 0, 0);
+	Graphics::GetInstance()->AddDrawCallCount();
 }
 
 void DebugDraw3D::DrawSolid() {
@@ -73,6 +74,7 @@ void DebugDraw3D::DrawSolid() {
 	cmdList_->IASetVertexBuffers(0, 1, &solidVertexBufferView_);
 	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	cmdList_->DrawInstanced(solidVertexCount_, 1, 0, 0);
+	Graphics::GetInstance()->AddDrawCallCount();
 }
 
 void DebugDraw3D::DrawPolygon(const Vector3& point1, const Vector3& point2, const Vector3& point3, const Vector4& color)

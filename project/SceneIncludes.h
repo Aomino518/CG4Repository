@@ -17,3 +17,4 @@
 #include "SceneManager.h"
 #include "DebugDraw.h"
 #include "Color.h"
+#include "Editor.h"

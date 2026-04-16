@@ -76,6 +76,7 @@ public:
 	void Scale(float factor);
 	void Scale(const Vector2& factor);
 
+	void DrawImGui();
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;

@@ -1,5 +1,8 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
+#ifdef USE_IMGUI
+#include "externals/imgui/imgui.h"
+#endif
 
 void Sprite::Init() {
 	cmdList_ = Graphics::GetCmdList();
@@ -152,6 +155,8 @@ void Sprite::Draw()
 	cmdList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 
 	cmdList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+
+	Graphics::GetInstance()->AddDrawCallCount();
 }
 
 void Sprite::SetBlendMode(BlendMode mode)
@@ -196,6 +201,18 @@ void Sprite::Scale(const Vector2& factor)
 {
 	size_.x *= factor.x;
 	size_.y *= factor.y;
+}
+
+void Sprite::DrawImGui()
+{
+#ifdef USE_IMGUI
+	Vector4 material = GetColor();
+	ImGui::DragFloat2("Position", reinterpret_cast<float*>(&transform_.translate), 0.01f);
+	ImGui::DragFloat("Rotation", &transform_.rotate.z, 0.1f);
+	ImGui::DragFloat2("Scale", reinterpret_cast<float*>(&transform_.scale), 0.01f, 0.0f);
+	ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&material));
+	SetMaterial(material);
+#endif
 }
 
 void Sprite::AdjustTextureSize()

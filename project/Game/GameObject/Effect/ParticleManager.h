@@ -58,6 +58,8 @@ public:
     // パーティクルグループの削除
     void RemoveParticleGroup(const std::string& name);
 
+    void DrawParticleGroupImGui(const std::string& name);
+
     // Getter関数
     ParticleGroup& GetGroup(const std::string& name);
     bool GetUseBillboard(const std::string& name) { return particleGroups[name].useBillboard_; }
@@ -65,9 +67,12 @@ public:
     uint32_t GetkNumMaxInstance() { return kNumMaxInstance_; }
     uint32_t GetkNumInstance(const std::string& name) { return particleGroups[name].instanceCount; }
     ID3D12PipelineState* GetPso(BlendMode mode);
+    uint32_t GetTotalParticleCount() const;
+    uint32_t GetParticleGroupCount() const;
     
     // Setter関数
     void SetUseBillboard(const std::string& name, bool useBillboard) { this->particleGroups[name].useBillboard_ = useBillboard; }
+
 private:
     // メンバ関数
     ParticleManager() = default;

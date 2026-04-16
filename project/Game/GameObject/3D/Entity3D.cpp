@@ -91,3 +91,14 @@ void Entity3D::ModelResourcesSetting()
 	Vector3 camPos = cameraManager_->GetActiveCamera()->GetTranslate();
 	cameraData_->worldPosition = camPos;
 }
+
+void Entity3D::DrawImGui() {
+#ifdef USE_IMGUI
+	Vector4 material = model_->GetMaterial();
+	ImGui::DragFloat3("Position", reinterpret_cast<float*>(&transform_.translate), 0.01f);
+	ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&transform_.rotate), 0.01f);
+	ImGui::DragFloat3("Scale", reinterpret_cast<float*>(&transform_.scale), 0.01f, 0.0f);
+	ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&material));
+	model_->SetMaterial(material);
+#endif
+}

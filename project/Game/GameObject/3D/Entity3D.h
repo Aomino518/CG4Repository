@@ -53,6 +53,8 @@ public:
 	void SetPointLightPos(const Vector3& pos) { this->pointLightData_->position = pos; }
 	void SetTransform(const Transform& transform) { this->transform_ = transform; }
 
+	void DrawImGui();
+
 private:
 	void ModelResourcesSetting();
 

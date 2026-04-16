@@ -34,20 +34,23 @@ public:
 	void DrawWorldFildWindow();
 	void DrawMainMenuBar();
 
+	void DrawEditor();
+
 	void Stats();
 	void ShowMemoryUsage();
 	void BeginInspector();
 	void EndInspector();
 
 private:
+	// メンバ関数
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
 	ImGuiManager(const ImGuiManager&) = delete;
 	ImGuiManager& operator=(const ImGuiManager&) = delete;
 
-	// メンバ関数
 	void ApplyStyle();
 
+	// メンバ変数
 	Application* app_ = nullptr;
 	Graphics* graphics_ = nullptr;
 

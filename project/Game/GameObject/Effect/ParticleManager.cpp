@@ -489,3 +489,31 @@ void ParticleManager::CreatePlaneModel()
 
 	Logger::Write("Particle Plane Model Generated");
 }
+
+void ParticleManager::DrawParticleGroupImGui(const std::string& name) {
+	auto& group = ParticleManager::GetInstance()->GetGroup(name);
+
+	ImGui::Text("Group: %s", name.c_str());
+
+	int mode = static_cast<int>(group.blendMode_);
+	const char* modes[] = { "None", "Normal", "Add", "Sub", "Mul", "Screen" };
+	if (ImGui::Combo("BlendMode", &mode, modes, IM_ARRAYSIZE(modes))) {
+		ParticleManager::GetInstance()->SetBlendMode(name, static_cast<BlendMode>(mode));
+	}
+
+	ImGui::Checkbox("Billboard", &group.useBillboard_);
+}
+
+uint32_t ParticleManager::GetTotalParticleCount() const
+{
+	uint32_t totalCount = 0;
+	for (const auto& [name, group] : particleGroups) {
+		totalCount += static_cast<uint32_t>(group.particles.size());
+	}
+	return totalCount;
+}
+
+uint32_t ParticleManager::GetParticleGroupCount() const
+{
+	return static_cast<uint32_t>(particleGroups.size());;
+}

@@ -12,6 +12,7 @@
 #include "LightManager.h"
 #include "WorldFieldManager.h"
 #include "EmitterManager.h"
+#include "Editor.h"
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
@@ -150,7 +151,21 @@ void ImGuiManager::Stats()
 #ifdef USE_IMGUI
 	if (windowState_.showStats) {
 		ImGui::Begin("Stats", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-		ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+		
+		ImGui::SeparatorText("Frame");
+		float fps = ImGui::GetIO().Framerate;
+		ImGui::Text("FPS: %.2f", fps);
+		ImGui::Text("Frame Time: %.2f ms", 1000.0f / fps);
+
+		ImGui::SeparatorText("Rendering");
+		ImGui::Text("DrawCalls: %u", Graphics::GetInstance()->GetDrawCallCount());
+
+		ImGui::SeparatorText("Particle");
+		ImGui::Text("Particles: %u", ParticleManager::GetInstance()->GetTotalParticleCount());
+		ImGui::Text("Particle Groups: %u", ParticleManager::GetInstance()->GetParticleGroupCount());
+		ImGui::Text("Emitters: %u", EmitterManager::GetInstance()->GetEmitterCount());
+
+		ImGui::SeparatorText("Memory");
 		ShowMemoryUsage();
 		ImGui::End();
 	}
@@ -294,6 +309,11 @@ void ImGuiManager::DrawMainMenuBar()
 		ImGui::EndMainMenuBar();
 	}
 #endif
+}
+
+void ImGuiManager::DrawEditor()
+{
+	Editor::GetInstance()->Draw();
 }
 
 void ImGuiManager::DrawParticleInspector(const std::string& name)

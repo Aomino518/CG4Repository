@@ -31,10 +31,13 @@ public:
 
 	void DrawDebug();
 
+	void DrawImgui(const std::string& name);
+
 	// Getter関数
 	ParticleEmitter* GetEmitter(const std::string& name);
 	std::vector<ParticleEmitter*> GetEmitters() const;
-
+	const std::unordered_map<std::string, std::unique_ptr<ParticleEmitter>>&GetEmittersAndNames() const;
+	uint32_t GetEmitterCount() const;
 private:
 	// メンバ関数
 	EmitterManager() = default;
