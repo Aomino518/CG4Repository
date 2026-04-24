@@ -65,27 +65,27 @@ void PlayScene::Init()
 void PlayScene::Update()
 {
     /*-- 更新処理 --*/
-    if (Input::GetInstance()->IsPressed(DIK_C)) {
+    if (Input::GetInstance()->IsTrigger(DIK_C)) {
         SoundManager::GetInstance()->PlayBGM("bgm1");
     }
 
-    if (Input::GetInstance()->IsPressed(DIK_N)) {
+    if (Input::GetInstance()->IsTrigger(DIK_N)) {
         SoundManager::GetInstance()->PlayBGM("bgm2");
     }
 
-    if (Input::GetInstance()->IsPressed(DIK_M)) {
+    if (Input::GetInstance()->IsTrigger(DIK_M)) {
         SoundManager::GetInstance()->PlaySE("se1");
     }
 
-    if (Input::GetInstance()->IsPressed(DIK_V)) {
+    if (Input::GetInstance()->IsTrigger(DIK_V)) {
         SoundManager::GetInstance()->PlaySE("se2");
     }
 
-    if (Input::GetInstance()->IsPressed(DIK_B)) {
+    if (Input::GetInstance()->IsTrigger(DIK_B)) {
         SoundManager::GetInstance()->StopBGM();
     }
 
-    if (Input::GetInstance()->IsPressed(DIK_SPACE)) {
+    if (Input::GetInstance()->IsTrigger(DIK_SPACE)) {
         SoundManager::GetInstance()->StopBGM();
         SoundManager::GetInstance()->StopSE();
         SceneManager::GetInstance()->ChangeScene("TITLE");

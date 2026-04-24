@@ -28,15 +28,15 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-    if (Input::GetInstance()->IsPressed(DIK_M)) {
+    if (Input::GetInstance()->IsTrigger(DIK_B)) {
         SoundManager::GetInstance()->PlayBGM("bgm1");
     }
 
-    if (Input::GetInstance()->IsPressed(DIK_N)) {
+    if (Input::GetInstance()->IsTrigger(DIK_N)) {
         SoundManager::GetInstance()->StopBGM();
     }
 
-    if (Input::GetInstance()->IsPressed(DIK_SPACE)) {
+    if (Input::GetInstance()->IsTrigger(DIK_SPACE)) {
        SoundManager::GetInstance()->StopBGM();
        SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
     }
