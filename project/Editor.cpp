@@ -3,23 +3,27 @@
 #include "Entity3D.h"
 #include "EmitterManager.h"
 #include "ParticleManager.h"
+#include "ModelManager.h"
 #include "Logger.h"
+#include "ImGuiManager.h"
+#include "WorldFieldManager.h"
+#include "CameraManager.h"
 #include <nlohmann/json.hpp>
 #ifdef USE_IMGUI
-#include "externals/imgui/imgui.h"
+#include "imgui.h"
 #endif
 
 Editor* Editor::GetInstance()
 {
-    static Editor instance;
-    return &instance;
+	static Editor instance;
+	return &instance;
 }
 
 void Editor::Draw()
 {
 #ifdef USE_IMGUI
-    DrawHierarchy();
-    DrawInspector();
+	DrawHierarchy();
+	DrawInspector();
 #endif
 }
 
@@ -40,193 +44,308 @@ void Editor::RegisterParticle(const std::string& name)
 
 void Editor::SaveSceneJson(const std::string& path) const
 {
-    json root;
-    root["sprites"] = json::object();
-    root["models"] = json::object();
-    root["particles"] = json::object();
-    root["spotLight"] = json::object();
-    root["pointLight"] = json::object();
+	json root;
+	root["sprites"] = json::object();
+	root["models"] = json::object();
+	root["particles"] = json::object();
+	root["isLighting"] = ModelManager::GetInstance()->GetIsModelLighting();
+	root["worldField"] = json::object();
+	root["cameras"] = json::array();
 
-    for (const auto& [name, sprite] : sprites_) {
-        if (!sprite) {
-            continue;
-        }
-        root["sprites"][name] = sprite->SaveToJson();
-    }
+	for (const auto& [name, sprite] : sprites_) {
+		if (!sprite) {
+			continue;
+		}
+		root["sprites"][name] = sprite->SaveToJson();
+	}
 
-    for (const auto& [name, model] : models_) {
-        if (!model) {
-            continue;
-        }
+	for (const auto& [name, model] : models_) {
+		if (!model) {
+			continue;
+		}
 
-        root["models"][name] = model->SaveToJson();
-    }
+		root["models"][name] = model->SaveToJson();
+	}
 
-    for (const auto& [name, particle] : particles_) {
-        if (!particle) {
-            continue;
-        }
-        root["particles"][name] = particle->SaveToJson();
-    }
+	for (const auto& [name, particle] : particles_) {
+		if (!particle) {
+			continue;
+		}
 
-    root["lights"] = LightManager::GetInstance()->SaveToJson();
+		json particleJson = particle->SaveToJson();
+		json managerJson = ParticleManager::GetInstance()->SaveToJson(name);
 
-    std::ofstream ofs(path);
-    if (!ofs.is_open()) {
-        Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
-        return;
-    }
+		particleJson["blendMode"] = managerJson["blendMode"];
+		particleJson["billboard"] = managerJson["billboard"];
 
-    ofs << std::setw(4) << root << std::endl;
+		root["particles"][name] = particleJson;
+	}
+
+	root["lights"] = LightManager::GetInstance()->SaveToJson();
+
+	root["windowState"] = ImGuiManager::GetInstance()->SaveEditorJson();
+
+	root["worldField"] = WorldFieldManager::GetInstance()->SaveToJson();
+
+	root["cameras"] = CameraManager::GetInstance()->SaveToJson();
+
+	std::ofstream ofs(path);
+	if (!ofs.is_open()) {
+		Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
+		return;
+	}
+
+	ofs << std::setw(4) << root << std::endl;
 }
 
 void Editor::LoadSceneJson(const std::string& path)
 {
-    std::ifstream ifs(path);
-    if (!ifs.is_open()) {
-        Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
-        return;
-    }
+	std::ifstream ifs(path);
+	if (!ifs.is_open()) {
+		Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
+		return;
+	}
 
-    json root;
-    ifs >> root;
-    if (root.contains("sprites")) {
-        for (auto& [name, data] : root["sprites"].items()) {
-            auto it = sprites_.find(name);
-            if (it != sprites_.end() && it->second) {
-                it->second->LoadFromJson(data);
-            }
-        }
-    }
+	json root;
+	ifs >> root;
+	if (root.contains("isLighting")) {
+		ModelManager::GetInstance()->SetIsLighting(root["isLighting"].get<bool>());
+	}
 
-    if (root.contains("models")) {
-        for (auto& [name, data] : root["models"].items()) {
-            auto it = models_.find(name);
-            if (it != models_.end() && it->second) {
-                it->second->LoadFromJson(data);
-            }
-        }
-    }
+	if (root.contains("sprites")) {
+		for (auto& [name, data] : root["sprites"].items()) {
+			auto it = sprites_.find(name);
+			if (it != sprites_.end() && it->second) {
+				it->second->LoadFromJson(data);
+			}
+		}
+	}
 
-    if (root.contains("particles")) {
-        for (auto& [name, data] : root["particles"].items()) {
-            auto it = particles_.find(name);
-            if (it != particles_.end() && it->second) {
-                it->second->LoadFromJson(data);
-            }
-        }
-    }
+	if (root.contains("models")) {
+		for (auto& [name, data] : root["models"].items()) {
+			auto it = models_.find(name);
+			if (it != models_.end() && it->second) {
+				it->second->LoadFromJson(data);
+			}
+		}
+	}
 
-    if (root.contains("lights")) {
-        LightManager::GetInstance()->LoadFromJson(root["lights"]);
-    }
+	if (root.contains("particles")) {
+		for (auto& [name, data] : root["particles"].items()) {
+			auto it = particles_.find(name);
+			if (it != particles_.end() && it->second) {
+				it->second->LoadFromJson(data);
+				ParticleManager::GetInstance()->LoadFromJson(data, name);
+			}
+		}
+	}
+
+	if (root.contains("lights")) {
+		LightManager::GetInstance()->LoadFromJson(root["lights"]);
+	}
+
+	if (root.contains("windowState")) {
+		ImGuiManager::GetInstance()->LoadEditorJson(root["windowState"]);
+	}
+
+	if (root.contains("worldField")) {
+		WorldFieldManager::GetInstance()->LoadFromJson(root["worldField"]);
+	}
+
+	if (root.contains("cameras")) {
+		CameraManager::GetInstance()->LoadFromJson(root["cameras"]);
+	}
 
 }
 
 void Editor::Clear()
 {
-    sprites_.clear();
-    models_.clear();
-    particles_.clear();
-    selection_ = {};
+	sprites_.clear();
+	models_.clear();
+	particles_.clear();
+	selection_ = {};
 }
 
 void Editor::DrawHierarchy()
 {
 #ifdef USE_IMGUI
-    ImGui::Begin("Hierarchy");
+	ImGui::Begin("Hierarchy");
+	// ライティングのオンオフ
+	bool isLighting = ModelManager::GetInstance()->GetIsModelLighting();
+	bool isChangedLighting = false;
 
-    // =========================
-    // Sprite
-    // =========================
-    if (ImGui::CollapsingHeader("Sprite", ImGuiTreeNodeFlags_DefaultOpen)) {
-        for (auto& [name, sprite] : sprites_) {
-            bool selected = (selection_.category == InspectorCategory::Sprite && selection_.name == name);
-            if (ImGui::Selectable(name.c_str(), selected)) {
-                selection_.category = InspectorCategory::Sprite;
-                selection_.name = name;
-            }
-        }
-    }
+	isChangedLighting |= ImGui::Checkbox("isLighting", &isLighting);
+	if (isChangedLighting) {
+		ModelManager::GetInstance()->SetIsLighting(isLighting);
+	}
 
-    // =========================
-    // Model
-    // =========================
-    if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen)) {
-        for (auto& [name, model] : models_) {
-            bool selected = (selection_.category == InspectorCategory::Model && selection_.name == name);
-            if (ImGui::Selectable(name.c_str(), selected)) {
-                selection_.category = InspectorCategory::Model;
-                selection_.name = name;
-            }
-        }
-    }
+	// =========================
+	// Sprite
+	// =========================
+	if (ImGui::CollapsingHeader("Sprite", ImGuiTreeNodeFlags_DefaultOpen)) {
+		for (auto& [name, sprite] : sprites_) {
+			bool selected = (selection_.category == InspectorCategory::Sprite && selection_.name == name);
+			if (ImGui::Selectable(name.c_str(), selected)) {
+				selection_.category = InspectorCategory::Sprite;
+				selection_.name = name;
+			}
+		}
+	}
 
-    // =========================
-    // Particle
-    // =========================
-    if (ImGui::CollapsingHeader("Particle", ImGuiTreeNodeFlags_DefaultOpen)) {
-        auto& emitters = EmitterManager::GetInstance()->GetEmittersAndNames();
+	// =========================
+	// Model
+	// =========================
+	if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen)) {
+		for (auto& [name, model] : models_) {
+			bool selected = (selection_.category == InspectorCategory::Model && selection_.name == name);
+			if (ImGui::Selectable(name.c_str(), selected)) {
+				selection_.category = InspectorCategory::Model;
+				selection_.name = name;
+			}
+		}
+	}
 
-        for (auto& [name, emitter] : emitters) {
+	// =========================
+	// Particle
+	// =========================
+	if (ImGui::CollapsingHeader("Particle", ImGuiTreeNodeFlags_DefaultOpen)) {
+		auto& emitters = EmitterManager::GetInstance()->GetEmittersAndNames();
 
-            bool selected = (selection_.category == InspectorCategory::Particle && selection_.name == name);
+		for (auto& [name, emitter] : emitters) {
 
-            if (ImGui::Selectable(name.c_str(), selected)) {
-                selection_.category = InspectorCategory::Particle;
-                selection_.name = name;
-            }
-        }
-    }
+			bool selected = (selection_.category == InspectorCategory::Particle && selection_.name == name);
 
-    ImGui::End();
+			if (ImGui::Selectable(name.c_str(), selected)) {
+				selection_.category = InspectorCategory::Particle;
+				selection_.name = name;
+			}
+		}
+	}
+
+	if (ImGui::CollapsingHeader("DirectionalLight", ImGuiTreeNodeFlags_DefaultOpen)) {
+		bool selected = (selection_.category == InspectorCategory::DirectionalLight && selection_.name == "DirectionalLight");
+		ImGui::PushID("DirectionalLightItem");
+		if (ImGui::Selectable("DirectionalLight", selected)) {
+			selection_.category = InspectorCategory::DirectionalLight;
+			selection_.name = "DirectionalLight";
+		}
+		ImGui::PopID();
+	}
+
+	// =========================
+	// PointLight
+	// =========================
+	if (ImGui::CollapsingHeader("PointLight", ImGuiTreeNodeFlags_DefaultOpen)) {
+		auto& lights = LightManager::GetInstance()->GetPointLights();
+		for (auto& [name, light] : lights) {
+			bool selected = (selection_.category == InspectorCategory::PointLight && selection_.name == name);
+			if (ImGui::Selectable(name.c_str(), selected)) {
+				selection_.category = InspectorCategory::PointLight;
+				selection_.name = name;
+			}
+		}
+	}
+
+	// =========================
+	// SpotLight
+	// =========================
+	if (ImGui::CollapsingHeader("SpotLight", ImGuiTreeNodeFlags_DefaultOpen)) {
+		auto& lights = LightManager::GetInstance()->GetSpotLights();
+		for (auto& [name, light] : lights) {
+			bool selected = (selection_.category == InspectorCategory::SpotLight && selection_.name == name);
+			if (ImGui::Selectable(name.c_str(), selected)) {
+				selection_.category = InspectorCategory::SpotLight;
+				selection_.name = name;
+			}
+		}
+	}
+
+	// =========================
+	// WorldField
+	// =========================
+	if (ImGui::CollapsingHeader("WorldField", ImGuiTreeNodeFlags_DefaultOpen)) {
+		auto& fields = WorldFieldManager::GetInstance()->GetWorldFields();
+		for (auto& [name, field] : fields) {
+			bool selected = (selection_.category == InspectorCategory::WorldField && selection_.name == name);
+			if (ImGui::Selectable(name.c_str(), selected)) {
+				selection_.category = InspectorCategory::WorldField;
+				selection_.name = name;
+			}
+		}
+	}
+
+	ImGui::End();
 #endif
 }
 
 void Editor::DrawInspector()
 {
 #ifdef USE_IMGUI
-    ImGui::Begin("Inspector");
+	ImGui::Begin("Inspector");
 
-    switch (selection_.category) {
+	switch (selection_.category) {
 
-    case InspectorCategory::Sprite:
-    {
-        auto it = sprites_.find(selection_.name);
-        if (it != sprites_.end()) {
-            ImGui::Text("Name: %s", it->first.c_str());
-            it->second->DrawImGui();
-        }
-        break;
-    }
+	case InspectorCategory::Sprite:
+	{
+		auto it = sprites_.find(selection_.name);
+		if (it != sprites_.end()) {
+			ImGui::Text("Name: %s", it->first.c_str());
+			it->second->DrawImGui();
+		}
+		break;
+	}
 
-    case InspectorCategory::Model:
-    {
-        auto it = models_.find(selection_.name);
-        if (it != models_.end()) {
-            ImGui::Text("Name: %s", it->first.c_str());
-            it->second->DrawImGui();
-        }
-        break;
-    }
+	case InspectorCategory::Model:
+	{
+		auto it = models_.find(selection_.name);
+		if (it != models_.end()) {
+			ImGui::Text("Name: %s", it->first.c_str());
+			it->second->DrawImGui();
+		}
+		break;
+	}
 
-    case InspectorCategory::Particle:
-    {
-        auto* emitter = EmitterManager::GetInstance()->GetEmitter(selection_.name);
+	case InspectorCategory::Particle:
+	{
+		auto* emitter = EmitterManager::GetInstance()->GetEmitter(selection_.name);
 
-        if (emitter) {
-            emitter->DrawImGui();
-        }
+		if (emitter) {
+			emitter->DrawImGui();
+		}
 
-        ParticleManager::GetInstance()->DrawParticleGroupImGui(selection_.name);
-        break;
-    }
+		ParticleManager::GetInstance()->DrawParticleGroupImGui(selection_.name);
+		break;
+	}
 
-    default:
-        ImGui::Text("Nothing selected.");
-        break;
-    }
+	case InspectorCategory::DirectionalLight:
+	{
+		LightManager::GetInstance()->DrawDirectionalLightImGui(selection_.name);
+		break;
+	}
 
-    ImGui::End();
+	case InspectorCategory::PointLight:
+	{
+		LightManager::GetInstance()->DrawPointLightImGui(selection_.name);
+		break;
+	}
+
+	case InspectorCategory::SpotLight:
+	{
+		LightManager::GetInstance()->DrawSpotLightImGui(selection_.name);
+		break;
+	}
+
+	case InspectorCategory::WorldField:
+	{
+		WorldFieldManager::GetInstance()->DrawImGui(selection_.name);
+		break;
+	}
+
+	default:
+		ImGui::Text("Nothing selected.");
+		break;
+	}
+
+	ImGui::End();
 #endif
 }

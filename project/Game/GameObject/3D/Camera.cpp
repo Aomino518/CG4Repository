@@ -1,5 +1,7 @@
 #include "Camera.h"
 #include "Application.h"
+#include "JsonTransform.h"
+#include "imgui.h"
 
 Camera::Camera()
 	: transform_({ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }),
@@ -31,4 +33,18 @@ Matrix4x4 Camera::GetBillboardMatrix()
 	invView.m[3][2] = 0.0f;
 
 	return invView;
+}
+
+nlohmann::json Camera::SaveToJson() const
+{
+	return nlohmann::json {
+		{"transform", TransformToJson(transform_) },
+	};
+}
+
+void Camera::LoadFromJson(const nlohmann::json& j)
+{
+	if (j.contains("transform")) {
+		TransformFromJson(j.at("transform"), transform_);
+	}
 }

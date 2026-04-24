@@ -83,7 +83,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)Game\GameObject\2D;$(ProjectDir)Game\GameObject\3D;$(ProjectDir)Game\GameObject\Effect;$(ProjectDir)Game\GameObject\Light;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)externals\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>

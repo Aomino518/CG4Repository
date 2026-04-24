@@ -1,5 +1,6 @@
 #include "WorldFieldManager.h"
 #include "Logger.h"
+#include "imgui.h"
 
 WorldFieldManager* WorldFieldManager::GetInstance() {
 	static WorldFieldManager instance;
@@ -50,5 +51,59 @@ void WorldFieldManager::DrawDebug()
 {
 	for (auto& field : worldFields_) {
 		field.second.DrawDebug(field.second.GetPosition());
+	}
+}
+
+void WorldFieldManager::DrawImGui(const std::string& name)
+{
+	auto it = worldFields_.find(name);
+	if (it != worldFields_.end()) {
+		ImGui::Text("Name: %s", it->first.c_str());
+		bool changed = false;
+		Vector3 pos = it->second.GetPosition();
+		Vector3 accelerarion = it->second.GetAcceleration();
+		AABB area = it->second.GetAABB();
+		bool isActive = it->second.GetIsActive();
+
+		changed |= ImGui::DragFloat3("Position", (float*)&pos, 0.01f);
+		changed |= ImGui::DragFloat3("Acceleration", (float*)&accelerarion, 0.01f);
+		// minをmaxが下回ると落ちるのでのちのち修正
+		changed |= ImGui::DragFloat3("AABB Min", (float*)&area.min, 0.1f);
+		changed |= ImGui::DragFloat3("AABB Max", (float*)&area.max, 0.1f);
+		changed |= ImGui::Checkbox("isActive", &isActive);
+
+		if (changed) {
+			it->second.SetPosition(pos);
+			it->second.SetAcceleration(accelerarion);
+			it->second.SetAABB(area);
+			it->second.SetIsActive(isActive);
+			SetField(name, it->second);
+		}
+	}
+}
+
+nlohmann::json WorldFieldManager::SaveToJson() const
+{
+	nlohmann::json j;
+
+	for (auto& [name, field] : worldFields_) {
+		j[name] = field.SaveToJson();
+		j[name]["space"] = static_cast<int>(field.GetSpace());
+	}
+
+	return j;
+}
+
+void WorldFieldManager::LoadFromJson(const nlohmann::json& json)
+{
+	for (auto& [name, fieldJson] : json.items()) {
+		AccelerationField field;
+		field.LoadFromJson(fieldJson);
+
+		if (fieldJson.contains("space")) {
+			field.SetSpace(static_cast<FieldSpace>(fieldJson["space"].get<int>()));
+		}
+
+		worldFields_[name] = field;
 	}
 }

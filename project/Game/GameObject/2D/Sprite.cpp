@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
 #ifdef USE_IMGUI
-#include "externals/imgui/imgui.h"
+#include "imgui.h"
 #endif
 
 void Sprite::Init() {

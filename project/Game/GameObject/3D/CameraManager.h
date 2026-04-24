@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <nlohmann/json.hpp>
 
 class CameraManager
 {
@@ -31,6 +32,10 @@ public:
 	int GetActtiveCamIndex() const { return activeCamIndex_; }
 	DebugCamera* GetDebugCamera() const { return debugCamera_.get(); }
 	Camera* GetCamera(const std::string& name);
+
+	// json保存と読み込み
+	nlohmann::json SaveToJson() const;
+	void LoadFromJson(const nlohmann::json& j);
 
 private:
 	CameraManager() = default;

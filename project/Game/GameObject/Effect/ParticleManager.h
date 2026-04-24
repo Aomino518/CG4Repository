@@ -72,6 +72,10 @@ public:
     
     // Setter関数
     void SetUseBillboard(const std::string& name, bool useBillboard) { this->particleGroups[name].useBillboard_ = useBillboard; }
+    
+    // Json保存と読み込み
+    json SaveToJson(const std::string& name) const;
+    void LoadFromJson(const json& j, const std::string& name);
 
 private:
     // メンバ関数

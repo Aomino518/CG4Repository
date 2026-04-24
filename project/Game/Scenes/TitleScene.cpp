@@ -49,6 +49,7 @@ void TitleScene::Update()
     ImGuiManager::GetInstance()->BeginFrame();
     ImGuiManager::GetInstance()->DrawMainMenuBar();
     ImGuiManager::GetInstance()->DrawEditor();
+    ImGuiManager::GetInstance()->DrawLoggerWindow();
     ImGuiManager::GetInstance()->Stats();
     ImGuiManager::GetInstance()->EndFrame();
 }

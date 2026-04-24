@@ -1,5 +1,6 @@
 #include "CameraManager.h"
 #include <numbers>
+#include "Logger.h"
 
 CameraManager* CameraManager::GetInstance() {
 	static CameraManager instance;
@@ -78,7 +79,7 @@ void CameraManager::SetActiveCameraByName(const std::string& name)
 Camera* CameraManager::GetActiveCamera() const
 {
 	if (activeIsDebug_) {
-		return (Camera*)debugCamera_.get();
+		return nullptr;
 	}
 
 	return  cameras_[activeCamIndex_].camera.get();
@@ -94,4 +95,43 @@ Camera* CameraManager::GetCamera(const std::string& name)
 
 	assert(false && "指定された名前のカメラが見つかりません");
 	return nullptr;
+}
+
+nlohmann::json CameraManager::SaveToJson() const
+{
+	nlohmann::json j = nlohmann::json::array();
+
+	for (const auto& info : cameras_) {
+		nlohmann::json camJson;
+		camJson["name"] = info.name;
+		if (info.camera) {
+			camJson["camera"] = info.camera->SaveToJson();
+		}
+		j.push_back(camJson);
+	}
+
+	return j;
+}
+
+void CameraManager::LoadFromJson(const nlohmann::json& j)
+{
+	if (!j.is_array()) {
+		Logger::Write(Logger::LogLevel::Warning, "Not Camera Array");
+		return;
+	}
+
+	cameras_.clear();
+
+	for (const auto& item : j) {
+		CameraInfo info;
+		if (item.contains("name")) {
+			info.name = item.value("name", "untitled");
+		}
+
+		info.camera = std::make_unique<Camera>();
+		if (item["camera"].contains("transform")) {
+			info.camera->LoadFromJson(item["camera"]);
+		}
+		cameras_.push_back(std::move(info));
+	}
 }

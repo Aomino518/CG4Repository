@@ -1,6 +1,7 @@
 #pragma once
 #include "CreateResorceUtils.h"
 #include <numbers>
+#include <nlohmann/json.hpp>
 
 class Camera
 {
@@ -28,6 +29,10 @@ public:
 	void SetNearClip(float nearClip) { this->nearClip_ = nearClip; }
 	void SetFarClip(float farClip) { this->farClip_ = farClip; }
 	void SetTransform(const Transform& transform) { this->transform_ = transform; }
+
+	// json保存と読み込み
+	nlohmann::json SaveToJson() const;
+	void LoadFromJson(const nlohmann::json& j);
 
 private:
 	Transform transform_;

@@ -65,7 +65,7 @@ void PlayScene::Init()
 void PlayScene::Update()
 {
     /*-- 更新処理 --*/
-    if (Input::GetInstance()->IsPressed(DIK_S)) {
+    if (Input::GetInstance()->IsPressed(DIK_C)) {
         SoundManager::GetInstance()->PlayBGM("bgm1");
     }
 
@@ -110,9 +110,8 @@ void PlayScene::Update()
     ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
     ImGuiManager::GetInstance()->DrawEditor();
     ImGuiManager::GetInstance()->Stats();
-    ImGuiManager::GetInstance()->DrawLightWindow();
 	ImGuiManager::GetInstance()->DrawSoundWindow();
-    ImGuiManager::GetInstance()->DrawWorldFildWindow();
+    ImGuiManager::GetInstance()->DrawLoggerWindow();
     ImGuiManager::GetInstance()->EndFrame();
 }
 

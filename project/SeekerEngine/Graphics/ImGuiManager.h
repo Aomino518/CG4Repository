@@ -1,10 +1,11 @@
 #pragma once
 #include <stdlib.h>
 #include <string>
+#include <nlohmann/json.hpp>
 #ifdef USE_IMGUI
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
+#include "imgui.h"
+#include "imgui_impl_dx12.h"
+#include "imgui_impl_win32.h"
 #endif
 
 class Application;
@@ -27,12 +28,10 @@ public:
 
 	void DrawSpriteInspector(const std::string& spriteName, Sprite* sprite);
 	void DrawModelInspector(const std::string& modelName, Entity3D* model);
-	void DrawParticleInspector(const std::string& name);
-	void DrawLightWindow();
 	void DrawSoundWindow();
 	void DrawCameraWindow(CameraManager* cameraManager);
-	void DrawWorldFildWindow();
 	void DrawMainMenuBar();
+	void DrawLoggerWindow();
 
 	void DrawEditor();
 
@@ -42,6 +41,9 @@ public:
 	void EndInspector();
 	void SaveScenesJson();
 	void LoadScenesJson();
+
+	nlohmann::json SaveEditorJson() const;
+	void LoadEditorJson(const nlohmann::json& j);
 
 private:
 	// メンバ関数
@@ -60,9 +62,8 @@ private:
 	struct WindowFlags {
 		bool showStats = true;
 		bool showCamera = true;
-		bool showLight = true;
 		bool showSound = true;
-		bool showWorldField = true;
+		bool showLogger = true;
 	};
 
 	WindowFlags windowState_;

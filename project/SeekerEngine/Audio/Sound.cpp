@@ -64,19 +64,19 @@ void Sound::Update() {
 /// <returns>サウンドハンドル</returns>
 SoundData Sound::SoundLoad(const char* filename)
 {
-	Logger::Write("Soundロード開始");
+	Logger::Write("Start SoundLoad");
 	std::string path(filename ? filename : "");
 	std::string ext = ToLowerExt(path);
 
 	SoundData soundData = {};
 
-	Logger::Write("Soundがwavかmp3か判定開始");
+	Logger::Write("Sound is wav or mp3");
 	if (ext == ".wav") {
-		Logger::Write("Soundはwav");
+		Logger::Write("Sound is wav");
 		soundData = SoundLoadWave(filename);
 	}
 	if (ext == ".mp3") {
-		Logger::Write("Soundはmp3");
+		Logger::Write("Sound is mp3");
 		std::wstring w = ToWide(filename);
 		soundData = SoundLoadMP3(w.c_str());
 	}
@@ -121,6 +121,7 @@ void Sound::PlayBGM(const SoundData& data, bool loop, float volume)
 void Sound::PlaySE(const SoundData& data, bool loop, float volume)
 {
 	if (seVoices_.size() > 32) {
+		Logger::Write(Logger::LogLevel::Warning, "over SeVoicesSize");
 		return;
 	}
 
@@ -170,6 +171,7 @@ void Sound::StopSE()
 void Sound::RestartBGM()
 {
 	if (!currentData_.pBuffer.empty()) {
+		Logger::Write(Logger::LogLevel::Warning, "currentData_.pBuffer not empty");
 		return;
 	}
 
@@ -301,7 +303,7 @@ SoundData Sound::SoundLoadWave(const char* filename) {
 // mp3読み込み
 SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 {
-	Logger::Write("SoundLoadMp3開始");
+	Logger::Write("Start SoundLoadMp3");
 	SoundData soundData = {};
 	if (!mfStarted_) {
 		Logger::Write(Logger::LogLevel::Error, "Media Foundation is not started!");
@@ -341,7 +343,7 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 	hr = MFCreateMediaType(&pMFMediaType);
 
 	if (FAILED(hr)) {
-		Logger::Write(Logger::LogLevel::Error, "MFCreateMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "MFCreateMediaType Error");
 		return soundData;
 	}
 
@@ -356,7 +358,7 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 	hr = pMFSourceReader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pMFMediaType.Get());
 	
 	if (FAILED(hr)) {
-		Logger::Write(Logger::LogLevel::Error, "SetCurrentMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "SetCurrentMediaType Error");
 		return soundData;
 	}
 	
@@ -364,7 +366,7 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 	hr = pMFSourceReader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &finalType);
 	
 	if (FAILED(hr)) {
-		Logger::Write(Logger::LogLevel::Error, "GetCurrentMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "GetCurrentMediaType Error");
 		return soundData;
 	}
 	
@@ -372,7 +374,7 @@ SoundData Sound::SoundLoadMP3(const wchar_t* wpath)
 	hr = MFCreateWaveFormatExFromMFMediaType(finalType.Get(), &waveFormat, nullptr);
 
 	if (FAILED(hr) || waveFormat == nullptr) {
-		Logger::Write(Logger::LogLevel::Error, "waveFormatがnullptrかMFCreateWaveFormatExFromMFMediaTypeエラー");
+		Logger::Write(Logger::LogLevel::Error, "waveFormat is nullptr or MFCreateWaveFormatExFromMFMediaType Error");
 		return soundData;
 	}
 

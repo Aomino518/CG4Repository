@@ -10,7 +10,10 @@ enum class InspectorCategory {
     Model,
     Particle,
     Camera,
-    Light
+    DirectionalLight,
+    PointLight,
+    SpotLight,
+    WorldField
 };
 
 struct InspectorSelection {

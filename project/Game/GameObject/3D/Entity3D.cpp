@@ -47,6 +47,16 @@ void Entity3D::Update()
 	transformationMatrixData_->World = modelData.rootNode.localMatrix * worldMatrix;
 	transformationMatrixData_->WVP = modelData.rootNode.localMatrix * worldViewProjectionMatrix;
 	transformationMatrixData_->WorldInverseTranspose = worldInverseTransform;
+
+	if (cameraData_) {
+		if (isDebug) {
+			if (debugCamera_) {
+				cameraData_->worldPosition = debugCamera_->GetTranslate();
+			}
+		} else if (camera_) {
+			cameraData_->worldPosition = camera_->GetTranslate();
+		}
+	}
 }
 
 void Entity3D::Draw()
@@ -116,7 +126,14 @@ void Entity3D::ModelResourcesSetting()
 	cameraResource = CreateBufferResource(Graphics::GetDevice(), sizeof(CameraForGPU));
 	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
 
-	Vector3 camPos = cameraManager_->GetActiveCamera()->GetTranslate();
+	Vector3 camPos = { 0.0f, 0.0f, 0.0f };
+	if (cameraManager_->GetIsDebug()) {
+		if (debugCamera_) {
+			camPos = debugCamera_->GetTranslate();
+		}
+	} else if (camera_) {
+		camPos = camera_->GetTranslate();
+	}
 	cameraData_->worldPosition = camPos;
 }
 

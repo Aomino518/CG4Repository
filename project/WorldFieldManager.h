@@ -1,5 +1,6 @@
 #pragma once
 #include "AccelerationField.h"
+#include <nlohmann/json.hpp>
 
 class WorldFieldManager
 {
@@ -28,6 +29,11 @@ public:
 	void SetField(std::string name, AccelerationField field) { this->worldFields_[name] = field; }
 
 	void DrawDebug();
+	void DrawImGui(const std::string& name);
+
+	// json保存と読み込み
+	nlohmann::json SaveToJson() const;
+	void LoadFromJson(const nlohmann::json& json);
 
 private:
 	// メンバ関数

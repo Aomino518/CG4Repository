@@ -33,6 +33,8 @@ public:
     json SaveToJson() const;
     void LoadFromJson(const json& j);
 
+	void ImGuiDraw();
+
 private:
     FieldSpace space_ = FieldSpace::Local;
     Vector3 position_ = { 0.0f, 0.0f, 0.0f };

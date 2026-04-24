@@ -4,13 +4,10 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
-#include "MathFunc.h"
 #include "Graphics.h"
 #include "TextureManager.h"
 #include "CreateResorceUtils.h"
-#include "Color.h"
 #include "BlendStateUtils.h"
-#include <nlohmann/json.hpp>
 #include "JsonTransform.h"
 
 class SpriteCommon;
@@ -69,7 +66,7 @@ public:
 		materialData->color.z = b;
 	}
 	void SetBlendMode(BlendMode mode);
-	void SetTransform(Transform& transform) { this->transform_ = transform; }
+	void SetTransform(const Transform& transform) { this->transform_ = transform; }
 
 	/// <summary>
 	/// スプライトを生成

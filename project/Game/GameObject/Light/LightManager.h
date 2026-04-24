@@ -1,8 +1,6 @@
 #pragma once
-#include "SeekerEngine.h"
 #include "CreateResorceUtils.h"
 #include <map>
-#include <nlohmann/json.hpp>
 #include "JsonTransform.h"
 
 class LightManager
@@ -36,6 +34,11 @@ public:
 	// Json保存と読み込み
 	json SaveToJson() const;
 	void LoadFromJson(const json& j);
+
+	// ImGuiでの編集
+	void DrawDirectionalLightImGui(const std::string& name);
+	void DrawPointLightImGui(const std::string& name);
+	void DrawSpotLightImGui(const std::string& name);
 
 private:
 	LightManager() = default;

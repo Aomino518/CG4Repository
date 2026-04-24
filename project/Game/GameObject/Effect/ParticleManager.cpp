@@ -200,6 +200,7 @@ void ParticleManager::SetBlendMode(const std::string& name, BlendMode mode)
 {
 	auto it = particleGroups.find(name);
 	if (it == particleGroups.end()) {
+		Logger::Write(Logger::LogLevel::Warning, name + " is not Particle");
 		return;
 	}
 
@@ -518,4 +519,27 @@ uint32_t ParticleManager::GetTotalParticleCount() const
 uint32_t ParticleManager::GetParticleGroupCount() const
 {
 	return static_cast<uint32_t>(particleGroups.size());;
+}
+
+json ParticleManager::SaveToJson(const std::string& name) const {
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end() && "Particle group not found");
+
+	return json{
+		{"blendMode", it->second.blendMode_},
+		{"billboard", it->second.useBillboard_}
+	};
+}
+
+void ParticleManager::LoadFromJson(const json& j, const std::string& name) {
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end() && "Particle group not found");
+
+	if (j.contains("blendMode")) {
+		it->second.blendMode_ = static_cast<BlendMode>(j.value("blendMode", it->second.blendMode_));
+	}
+
+	if (j.contains("billboard")) {
+		it->second.useBillboard_ = static_cast<bool>(j.value("billboard", it->second.useBillboard_));
+	}
 }

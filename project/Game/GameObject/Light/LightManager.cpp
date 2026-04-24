@@ -3,6 +3,8 @@
 #include <numbers>
 #include <nlohmann/json.hpp>
 #include "JsonTransform.h"
+#include "Graphics.h"
+#include "imgui.h"
 
 LightManager* LightManager::GetInstance()
 {
@@ -139,6 +141,7 @@ void LightManager::SetPointLight(std::string& name, PointLight* pointLight)
 {
     auto it = pointLights_.find(name);
     if (it == pointLights_.end()) {
+        Logger::Write(Logger::LogLevel::Warning, name + "is not PointLight");
         return;
     }
 
@@ -153,6 +156,7 @@ void LightManager::SetSpotLight(std::string& name, SpotLight* spotLight)
 {
     auto it = spotLights_.find(name);
     if (it == spotLights_.end()) {
+        Logger::Write(Logger::LogLevel::Warning, name + "is not SpotLight");
         return;
     }
 
@@ -176,23 +180,26 @@ json LightManager::SaveToJson() const {
 
     // Point
     for (auto& [name, light] : pointLights_) {
-        auto& p = j["pointLights"][name];
+        auto& pointLight = j["pointLights"][name];
 
-        p["position"] = ToJson(light.position);
-        p["color"] = ToJson(light.color);
-        p["radius"] = light.radius;
-        p["decay"] = light.decay;
-        p["intensity"] = light.intensity;
+        pointLight["position"] = ToJson(light.position);
+        pointLight["color"] = ToJson(light.color);
+        pointLight["radius"] = light.radius;
+        pointLight["decay"] = light.decay;
+        pointLight["intensity"] = light.intensity;
     }
 
     for (auto& [name, light] : spotLights_) {
-        auto& s = j["spotLights"][name];
+        auto& spotLight = j["spotLights"][name];
 
-        s["position"] = ToJson(light.position);
-        s["color"] = ToJson(light.color);
-        s["direction"] = ToJson(light.direction);
-        s["distance"] = light.distance;
-        s["intensity"] = light.intensity;
+        spotLight["position"] = ToJson(light.position);
+        spotLight["color"] = ToJson(light.color);
+        spotLight["direction"] = ToJson(light.direction);
+        spotLight["distance"] = light.distance;
+        spotLight["intensity"] = light.intensity;
+        spotLight["cosAngle"] = light.cosAngle;
+        spotLight["cosFalloffStart"] = light.cosFalloffStart;
+        spotLight["decay"] = light.decay;
     }
 
     return j;
@@ -215,9 +222,9 @@ void LightManager::LoadFromJson(const json& j) {
             }
             FromJson(data.at("position"), pointLight->position);
             FromJson(data.at("color"), pointLight->color);
-            pointLight->radius = data["radius"];
-            pointLight->decay = data["decay"];
-            pointLight->intensity = data["intensity"];
+            pointLight->radius = data.value("radius", pointLight->radius);
+            pointLight->decay = data.value("decay", pointLight->decay);
+            pointLight->intensity = data.value("intensity", pointLight->intensity);
         }
     }
 
@@ -230,8 +237,77 @@ void LightManager::LoadFromJson(const json& j) {
             FromJson(data.at("position"), spotLight->position);
             FromJson(data.at("color"), spotLight->color);
             FromJson(data.at("direction"), spotLight->direction);
-            spotLight->distance = data["distance"];
-            spotLight->intensity = data["intensity"];
+            spotLight->distance = data.value("distance", spotLight->distance);
+            spotLight->intensity = data.value("intensity", spotLight->intensity);
+            spotLight->cosAngle = data.value("cosAngle", spotLight->cosAngle);
+            spotLight->cosFalloffStart = data.value("cosFalloffStart", spotLight->cosFalloffStart);
+            spotLight->decay = data.value("decay", spotLight->decay);
+        }
+    }
+}
+
+void LightManager::DrawDirectionalLightImGui(const std::string& name)
+{
+    static float yaw = 0.0f;
+    static float pitch = -45.0f;
+
+    ImGui::Text("Name: %s", name.c_str());
+    bool changed = false;
+    changed |= ImGui::SliderFloat("Yaw", &yaw, -180.0f, 180.0f, "%.1f deg");
+    changed |= ImGui::SliderFloat("Pitch", &pitch, -89.0f, 89.0f, "%.1f deg");
+    changed |= ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&dirLight_->color));
+    changed |= ImGui::DragFloat("Intensity", &dirLight_->intensity, 0.01f, 0.0f, 10.0f, "%.2f");
+
+    if (changed) {
+        float yawRad = yaw * std::numbers::pi_v<float> / 180.0f;
+        float pitchRad = pitch * std::numbers::pi_v<float> / 180.0f;
+
+        dirLight_->direction.x = cosf(pitchRad) * cosf(yawRad);
+        dirLight_->direction.y = sinf(pitchRad);
+        dirLight_->direction.z = cosf(pitchRad) * sinf(yawRad);
+
+        SetDirectionalLight(dirLight_);
+    }
+}
+
+void LightManager::DrawPointLightImGui(const std::string& name)
+{
+    auto it = pointLights_.find(name);
+    if (it != pointLights_.end()) {
+        ImGui::Text("Name: %s", it->first.c_str());
+        bool changed = false;
+        changed |= ImGui::DragFloat3("Position", (float*)&it->second.position, 0.01f, -100.0f, 100.0f, "%.2f");
+        changed |= ImGui::ColorEdit4("Color", (float*)&it->second.color);
+        changed |= ImGui::DragFloat("Intensity", &it->second.intensity, 0.01f, 0.0f, 10.0f, "%.2f");
+        changed |= ImGui::DragFloat("Radius", &it->second.radius, 0.01f, 0.0f, 100.0f, "%.2f");
+        changed |= ImGui::DragFloat("Decay", &it->second.decay, 0.01f, 0.0f, 10.0f, "%.2f");
+
+        if (changed) {
+            std::string lightName = name;
+            SetPointLight(lightName, &it->second);
+        }
+    }
+}
+
+void LightManager::DrawSpotLightImGui(const std::string& name)
+{
+    auto it = spotLights_.find(name);
+    if (it != spotLights_.end()) {
+        ImGui::Text("Name: %s", it->first.c_str());
+        bool changed = false;
+        changed |= ImGui::DragFloat3("Position", (float*)&it->second.position, 0.01f, -100.0f, 100.0f, "%.2f");
+        changed |= ImGui::ColorEdit4("Color", (float*)&it->second.color);
+        changed |= ImGui::DragFloat("Intensity", &it->second.intensity, 0.01f, 0.0f, 100.0f, "%.2f");
+        changed |= ImGui::DragFloat("Distance", &it->second.distance, 0.01f, 0.0f, 100.0f, "%.2f");
+        changed |= ImGui::DragFloat("Decay", &it->second.decay, 0.01f, 0.0f, 10.0f, "%.2f");
+        changed |= ImGui::DragFloat("CosAngle", &it->second.cosAngle, 0.01f, -1.0f, 1.0f, "%.2f");
+        changed |= ImGui::DragFloat("CosFalloffStart", &it->second.cosFalloffStart, 0.01f, -1.0f, 1.0f, "%.2f");
+        changed |= ImGui::DragFloat3("Direction", (float*)&it->second.direction, 0.01f, -1.0f, 1.0f, "%.2f");
+
+        if (changed) {
+            it->second.direction = Normalize(it->second.direction);
+            std::string lightName = name;
+            SetSpotLight(lightName, &it->second);
         }
     }
 }

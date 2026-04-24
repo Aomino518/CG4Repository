@@ -7,6 +7,9 @@
 std::ofstream Logger::stream_;
 Logger::LogLevel Logger::currentLevel_ = Logger::LogLevel::Info;
 
+std::vector<std::string> Logger::logHistory_;
+std::mutex Logger::mutex_;
+
 void Logger::Init()
 {
 	// ログのディレクトリを用意
@@ -31,6 +34,9 @@ void Logger::Init()
 #else
 	currentLevel_ = LogLevel::Info;
 #endif
+
+	std::lock_guard<std::mutex> lock(mutex_);
+	logHistory_.clear();
 }
 
 void Logger::Shutdown()
@@ -42,7 +48,11 @@ void Logger::Shutdown()
 
 void Logger::Write(const std::string& msg)
 {
+#ifdef _DEBUG
+	Write(LogLevel::Debug, msg);
+#else 
 	Write(LogLevel::Info, msg);
+#endif
 }
 
 void Logger::Write(LogLevel level, const std::string& msg)
@@ -69,6 +79,14 @@ void Logger::Write(LogLevel level, const std::string& msg)
 
 	std::string line = std::string(prefix) + msg;
 
+	// メモリに履歴を保存
+	std::lock_guard<std::mutex> lock(mutex_);
+	logHistory_.push_back(line);
+
+	if (logHistory_.size() > kMaxHistory_) {
+		logHistory_.erase(logHistory_.begin());
+	}
+
 	if (stream_.is_open()) {
 		stream_ << line << std::endl;
 	}
@@ -79,6 +97,18 @@ void Logger::Write(LogLevel level, const std::string& msg)
 void Logger::SetLevel(LogLevel level)
 {
 	currentLevel_ = level;
+}
+
+std::vector<std::string> Logger::GetHistory()
+{
+	std::lock_guard<std::mutex> lock(mutex_);
+	return logHistory_;
+}
+
+void Logger::ClearHistory()
+{
+	std::lock_guard<std::mutex> lock(mutex_);
+	logHistory_.clear();
 }
 
 void Logger::RemoveOldLogs()

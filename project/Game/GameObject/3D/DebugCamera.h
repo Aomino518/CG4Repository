@@ -18,6 +18,7 @@ public:
   
 	const Matrix4x4& GetViewMatrix() const{ return viewMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
+	const Vector3& GetTranslate() const { return translation_; }
 	Matrix4x4 GetBillboardMatrix();
 
 	// X,Y,Z軸回りのローカル回転角
@@ -25,7 +26,7 @@ public:
 	// 累積回転行列
 	Matrix4x4 matRot_;
 	// ローカル座標
-	Vector3 translation_ = { 0, 0, -50 };
+	Vector3 translation_ = { 0.0f, 0.0f, -50.0f };
 	// ビュー行列
 	Matrix4x4 viewMatrix_;
 	// 射影行列
@@ -34,17 +35,10 @@ public:
 	Matrix4x4 viewProjectionMatrix_;
 
 	float moveSpeed_ = 0.5f;
-	float rotateSpeed_ = 0.01f;
+	float rotateSpeed_ = 0.005f;
 
 	POINT preMousePos_ = {};
 	bool isRightDrag_ = false;
-
-	// 追加
-	//Vector3 pivot = { 0, 0, 0 }; // 回転の中心点
-	//float distance_ = 50.0f; // pivot からの距離
-
-	//float yaw = 0.0f; // 水平回転 (Y軸)
-	//float pitch_ = 0.0f; // 縦回転 (X軸)
 
 };
 
