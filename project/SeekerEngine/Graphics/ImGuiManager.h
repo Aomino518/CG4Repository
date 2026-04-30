@@ -8,6 +8,11 @@
 #include "imgui_impl_win32.h"
 #endif
 
+enum class UITheme {
+	Default,
+	Cyberpunk
+};
+
 class Application;
 class Graphics;
 class Entity3D;
@@ -26,8 +31,6 @@ public:
 	void Draw();
 	void Shutdown();
 
-	void DrawSpriteInspector(const std::string& spriteName, Sprite* sprite);
-	void DrawModelInspector(const std::string& modelName, Entity3D* model);
 	void DrawSoundWindow();
 	void DrawCameraWindow(CameraManager* cameraManager);
 	void DrawMainMenuBar();
@@ -41,11 +44,13 @@ public:
 	void EndInspector();
 	void SaveScenesJson();
 	void LoadScenesJson();
+	void DrawConfirmPopup();
 
 	nlohmann::json SaveEditorJson() const;
 	void LoadEditorJson(const nlohmann::json& j);
 
 private:
+
 	// メンバ関数
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
@@ -67,5 +72,7 @@ private:
 	};
 
 	WindowFlags windowState_;
+	bool requestSavePopup_ = false;
+	bool requestLoadPopup_ = false;
 };
 

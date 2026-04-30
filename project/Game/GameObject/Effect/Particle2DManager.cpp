@@ -8,7 +8,9 @@
 #include "TextureManager.h"
 #include "Emitter2DManager.h"
 #include "WorldField2DManager.h"
+#ifdef USE_IMGUI
 #include "imgui.h"
+#endif
 #include <numbers>
 
 Particle2DManager* Particle2DManager::GetInstance()

@@ -37,7 +37,7 @@ void ImGuiManager::Init()
 
 	io.Fonts->AddFontFromFileTTF(
 		"resources/fonts/NotoSansJP-Regular.ttf",
-		17.0f,
+		18.0f,
 		nullptr,
 		io.Fonts->GetGlyphRangesJapanese()
 	);
@@ -94,69 +94,6 @@ void ImGuiManager::Shutdown()
 #endif
 }
 
-void ImGuiManager::DrawSpriteInspector(const std::string& spriteName, Sprite* sprite)
-{
-#ifdef USE_IMGUI
-	Vector4 spriteMaterial = sprite->GetColor();
-	Vector2 spritePosition = sprite->GetPosition();
-	float spriteRotate = sprite->GetRotation();
-	Vector2 spriteScale = sprite->GetSize();
-
-	if (ImGui::CollapsingHeader(spriteName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::PushID(spriteName.c_str());
-		if (ImGuiUtils::DrawColor4("Material", spriteMaterial)) {
-			sprite->SetColor(spriteMaterial);
-		}
-
-		if (ImGuiUtils::DrawTransform2D(spritePosition, spriteRotate, spriteScale)) {
-			sprite->SetPosition(spritePosition);
-			sprite->SetRotation(spriteRotate);
-			sprite->SetSize(spriteScale);
-		}
-
-		BlendMode blendMode = sprite->GetBlendMode();
-		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
-			sprite->SetBlendMode(blendMode);
-		}
-
-		ImGui::PopID();
-	}
-#endif
-}
-
-void ImGuiManager::DrawModelInspector(const std::string& modelName, Entity3D* model)
-{
-#ifdef USE_IMGUI
-	Vector4 modelMaterial = model->GetMaterial();
-	Vector3 modelPosition = model->GetTranslate();
-	Vector3 modelRotate = model->GetRotate();
-	Vector3 modelScale = model->GetScale();
-
-	if (ImGui::CollapsingHeader(modelName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::PushID(modelName.c_str());
-		if (ImGuiUtils::DrawColor4("Material", modelMaterial)) {
-			model->SetMaterial(modelMaterial);
-		}
-
-		if (ImGuiUtils::DrawTransform3D(modelPosition, modelRotate, modelScale)) {
-			model->SetTranslate(modelPosition);
-			model->SetRotate(modelRotate);
-			model->SetScale(modelScale);
-		}
-
-		BlendMode blendMode = model->GetBlendMode();
-		if (ImGuiUtils::DrawBlendModeSelector("BlendMode", blendMode)) {
-			model->SetBlendMode(blendMode);
-		}
-
-		ImGui::PopID();
-	}
-
-#endif
-}
-
 void ImGuiManager::Stats()
 {
 #ifdef USE_IMGUI
@@ -175,6 +112,11 @@ void ImGuiManager::Stats()
 		ImGui::Text("Particles: %u", ParticleManager::GetInstance()->GetTotalParticleCount());
 		ImGui::Text("Particle Groups: %u", ParticleManager::GetInstance()->GetParticleGroupCount());
 		ImGui::Text("Emitters: %u", EmitterManager::GetInstance()->GetEmitterCount());
+
+		ImGui::SeparatorText("Particle2D");
+		ImGui::Text("Particles: %u", Particle2DManager::GetInstance()->GetTotalParticleCount());
+		ImGui::Text("Particle Groups: %u", Particle2DManager::GetInstance()->GetParticleGroupCount());
+		ImGui::Text("Emitters: %u", Emitter2DManager::GetInstance()->GetEmitterCount());
 
 		ImGui::SeparatorText("Memory");
 		ShowMemoryUsage();
@@ -271,11 +213,11 @@ void ImGuiManager::DrawMainMenuBar()
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Save")) {
-				SaveScenesJson();
+				requestSavePopup_ = true;
 			}
 
 			if (ImGui::MenuItem("Load")) {
-				LoadScenesJson();
+				requestLoadPopup_ = true;
 			}
 
 			ImGui::EndMenu();
@@ -288,8 +230,21 @@ void ImGuiManager::DrawMainMenuBar()
 			ImGui::MenuItem("Console", nullptr, &windowState_.showConsole);
 			ImGui::EndMenu();
 		}
+
 		ImGui::EndMainMenuBar();
 	}
+
+	if (requestSavePopup_) {
+		ImGui::OpenPopup("Confirm Save");
+		requestSavePopup_ = false;
+	}
+
+	if (requestLoadPopup_) {
+		ImGui::OpenPopup("Confirm Load");
+		requestLoadPopup_ = false;
+	}
+
+	DrawConfirmPopup();
 #endif
 }
 
@@ -337,6 +292,7 @@ void ImGuiManager::DrawSoundWindow()
 #ifdef USE_IMGUI
 	if (windowState_.showSound) {
 		ImGui::Begin("Sound Manager");
+
 		SoundManager* soundManager = SoundManager::GetInstance();
 		auto volumeBGM = soundManager->GetCurrentBGMVolume();
 		auto volumeSE = soundManager->GetCurrentSEVolume();
@@ -369,15 +325,15 @@ void ImGuiManager::ApplyStyle()
 	c[ImGuiCol_Text] = ImVec4(0.90f, 0.96f, 1.00f, 1.00f);
 	c[ImGuiCol_TextDisabled] = ImVec4(0.45f, 0.55f, 0.65f, 1.00f);
 
-	c[ImGuiCol_WindowBg] = ImVec4(0.04f, 0.06f, 0.09f, 1.00f);
-	c[ImGuiCol_ChildBg] = ImVec4(0.07f, 0.10f, 0.14f, 1.00f);
-	c[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.11f, 0.15f, 0.98f);
+	c[ImGuiCol_WindowBg] = ImVec4(0.01f, 0.01f, 0.02f, 0.96f);
+	c[ImGuiCol_ChildBg] = ImVec4(0.02f, 0.02f, 0.03f, 1.00f);
+	c[ImGuiCol_PopupBg] = ImVec4(0.02f, 0.02f, 0.03f, 1.00f);
 
-	c[ImGuiCol_Border] = ImVec4(0.16f, 0.34f, 0.48f, 0.85f);
+	c[ImGuiCol_Border] = ImVec4(0.20f, 0.70f, 1.00f, 0.80f);
 	c[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 
 	// --- フレーム（入力欄、スライダーなど） ---
-	c[ImGuiCol_FrameBg] = ImVec4(0.10f, 0.16f, 0.22f, 1.00f);
+	c[ImGuiCol_FrameBg] = ImVec4(0.04f, 0.04f, 0.05f, 1.00f);
 	c[ImGuiCol_FrameBgHovered] = ImVec4(0.14f, 0.24f, 0.33f, 1.00f);
 	c[ImGuiCol_FrameBgActive] = ImVec4(0.18f, 0.31f, 0.42f, 1.00f);
 
@@ -389,13 +345,14 @@ void ImGuiManager::ApplyStyle()
 
 	// --- ボタン ---
 	c[ImGuiCol_Button] = ImVec4(0.00f, 0.42f, 0.60f, 1.00f);
-	c[ImGuiCol_ButtonHovered] = ImVec4(0.00f, 0.56f, 0.80f, 1.00f);
-	c[ImGuiCol_ButtonActive] = ImVec4(0.00f, 0.68f, 0.95f, 1.00f);
+	c[ImGuiCol_ButtonHovered] = ImVec4(1.00f, 0.00f, 0.25f, 1.00f);
+	c[ImGuiCol_ButtonActive] = ImVec4(1.00f, 0.80f, 0.00f, 1.00f);
 
 	// --- ヘッダー（ツリーノード、リスト選択など） ---
-	c[ImGuiCol_Header] = ImVec4(0.00f, 0.38f, 0.54f, 0.95f);
-	c[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 0.50f, 0.72f, 1.00f);
-	c[ImGuiCol_HeaderActive] = ImVec4(0.00f, 0.62f, 0.88f, 1.00f);
+	c[ImGuiCol_MenuBarBg] = ImVec4(0.01f, 0.03f, 0.05f, 0.90f);
+	c[ImGuiCol_Header] = ImVec4(0.00f, 0.40f, 0.60f, 0.40f); // 非選択時
+	c[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 0.60f, 0.90f, 0.80f); // ホバーで発光
+	c[ImGuiCol_HeaderActive] = ImVec4(0.20f, 0.80f, 1.00f, 1.00f); // 選択中で強発光
 
 	// --- スクロールバー ---
 	c[ImGuiCol_ScrollbarBg] = ImVec4(0.03f, 0.05f, 0.07f, 1.00f);
@@ -404,14 +361,14 @@ void ImGuiManager::ApplyStyle()
 	c[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.20f, 0.50f, 0.68f, 1.00f);
 
 	// --- スライダー ---
-	c[ImGuiCol_SliderGrab] = ImVec4(0.15f, 0.72f, 1.00f, 1.00f);
-	c[ImGuiCol_SliderGrabActive] = ImVec4(0.35f, 0.82f, 1.00f, 1.00f);
+	c[ImGuiCol_SliderGrab] = ImVec4(1.00f, 0.00f, 0.25f, 1.00f);
+	c[ImGuiCol_SliderGrabActive] = ImVec4(1.00f, 0.35f, 0.00f, 1.00f);
 
 	// --- チェックマーク ---
-	c[ImGuiCol_CheckMark] = ImVec4(0.20f, 0.80f, 1.00f, 1.00f);
+	c[ImGuiCol_CheckMark] = ImVec4(1.00f, 0.80f, 0.00f, 1.00f);
 
 	// --- セパレーター ---
-	c[ImGuiCol_Separator] = ImVec4(0.18f, 0.36f, 0.50f, 0.85f);
+	c[ImGuiCol_Separator] = ImVec4(0.20f, 0.70f, 1.00f, 0.60f);
 	c[ImGuiCol_SeparatorHovered] = ImVec4(0.28f, 0.52f, 0.72f, 1.00f);
 	c[ImGuiCol_SeparatorActive] = ImVec4(0.38f, 0.68f, 0.90f, 1.00f);
 
@@ -448,9 +405,10 @@ void ImGuiManager::ApplyStyle()
 	c[ImGuiCol_ModalWindowDimBg] = ImVec4(0.00f, 0.02f, 0.05f, 0.82f);
 
 	// --- テーマ全体の丸み・間隔調整 ---
-	style.WindowRounding = 2.0f;
+	style.WindowRounding = 0.0f;
+	style.FrameRounding = 0.0f;
+	style.TabRounding = 0.0f;
 	style.ChildRounding = 2.0f;
-	style.FrameRounding = 2.0f;
 	style.PopupRounding = 2.0f;
 	style.ScrollbarRounding = 3.0f;
 	style.GrabRounding = 2.0f;
@@ -469,11 +427,50 @@ void ImGuiManager::ApplyStyle()
 
 	// 境界線
 	style.WindowBorderSize = 1.0f;
+	style.FrameBorderSize = 1.0f;
 	style.ChildBorderSize = 1.0f;
-	style.FrameBorderSize = 0.0f;
 	style.PopupBorderSize = 1.0f;
 	style.TabBorderSize = 0.0f;
 
+#endif
+}
+
+void ImGuiManager::DrawConfirmPopup()
+{
+#ifdef USE_IMGUI
+	if (ImGui::BeginPopupModal("Confirm Save", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("現在のシーンを保存しますか？");
+
+		if (ImGui::Button("OK", ImVec2(120, 0))) {
+			SaveScenesJson();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginPopupModal("Confirm Load", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("現在の編集内容を破棄してロードしますか？");
+
+		if (ImGui::Button("OK", ImVec2(120, 0))) {
+			LoadScenesJson();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
 #endif
 }
 

@@ -1,6 +1,8 @@
 #include "WorldFieldManager.h"
 #include "Logger.h"
+#ifdef USE_IMGUI
 #include "imgui.h"
+#endif
 
 WorldFieldManager* WorldFieldManager::GetInstance() {
 	static WorldFieldManager instance;
@@ -56,6 +58,7 @@ void WorldFieldManager::DrawDebug()
 
 void WorldFieldManager::DrawImGui(const std::string& name)
 {
+#ifdef USE_IMGUI
 	auto it = worldFields_.find(name);
 	if (it != worldFields_.end()) {
 		ImGui::Text("Name: %s", it->first.c_str());
@@ -80,6 +83,7 @@ void WorldFieldManager::DrawImGui(const std::string& name)
 			SetField(name, it->second);
 		}
 	}
+#endif
 }
 
 nlohmann::json WorldFieldManager::SaveToJson() const

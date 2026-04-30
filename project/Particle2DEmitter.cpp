@@ -1,6 +1,8 @@
 #include "Particle2DEmitter.h"
 #include "ImGuiUtils.h"
+#ifdef USE_IMGUI
 #include "imgui.h"
+#endif
 
 Particle2DEmitter::Particle2DEmitter(const std::string& groupName, 
 	const ParticleConfig& config, 

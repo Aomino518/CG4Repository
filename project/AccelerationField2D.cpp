@@ -1,6 +1,8 @@
 #include "AccelerationField2D.h"
 #include "DebugDraw.h"
+#ifdef USE_IMGUI
 #include "imgui.h"
+#endif
 
 void AccelerationField2D::DrawDebug(const Vector2& origin)
 {
@@ -65,6 +67,7 @@ void AccelerationField2D::LoadFromJson(const json& j)
 
 void AccelerationField2D::ImGuiDraw()
 {
+#ifdef USE_IMGUI
 	// =========================
 	// LocalField Control
 	// =========================
@@ -72,4 +75,5 @@ void AccelerationField2D::ImGuiDraw()
 	ImGui::DragFloat2("Min Field", (float*)&area_.min, 0.1f);
 	ImGui::DragFloat2("Max Field", (float*)&area_.max, 0.1f);
 	ImGui::Checkbox("Active", &isActive_);
+#endif
 }

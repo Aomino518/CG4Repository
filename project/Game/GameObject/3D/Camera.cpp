@@ -1,7 +1,9 @@
 #include "Camera.h"
 #include "Application.h"
 #include "JsonTransform.h"
+#ifdef USE_IMGUI
 #include "imgui.h"
+#endif
 
 Camera::Camera()
 	: transform_({ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }),

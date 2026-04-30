@@ -4,7 +4,9 @@
 #include <nlohmann/json.hpp>
 #include "JsonTransform.h"
 #include "Graphics.h"
+#ifdef USE_IMGUI
 #include "imgui.h"
+#endif
 
 LightManager* LightManager::GetInstance()
 {
@@ -278,6 +280,7 @@ void LightManager::LoadFromJson(const json& j) {
 
 void LightManager::DrawDirectionalLightImGui(const std::string& name)
 {
+#ifdef USE_IMGUI
     static float yaw = 0.0f;
     static float pitch = -45.0f;
 
@@ -298,10 +301,12 @@ void LightManager::DrawDirectionalLightImGui(const std::string& name)
 
         SetDirectionalLight(dirLight_);
     }
+#endif
 }
 
 void LightManager::DrawPointLightImGui(const std::string& name)
 {
+#ifdef USE_IMGUI
     auto it = pointLights_.find(name);
     if (it != pointLights_.end()) {
         ImGui::Text("Name: %s", it->first.c_str());
@@ -317,10 +322,12 @@ void LightManager::DrawPointLightImGui(const std::string& name)
             SetPointLight(lightName, &it->second);
         }
     }
+#endif
 }
 
 void LightManager::DrawSpotLightImGui(const std::string& name)
 {
+#ifdef USE_IMGUI
     auto it = spotLights_.find(name);
     if (it != spotLights_.end()) {
         ImGui::Text("Name: %s", it->first.c_str());
@@ -340,4 +347,5 @@ void LightManager::DrawSpotLightImGui(const std::string& name)
             SetSpotLight(lightName, &it->second);
         }
     }
+#endif
 }

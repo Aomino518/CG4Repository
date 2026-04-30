@@ -2,7 +2,10 @@
 #include "DebugDraw.h"
 #include <nlohmann/json.hpp>
 #include "JsonTransform.h"
+#ifdef USE_IMGUI
 #include "imgui.h"
+#endif
+
 
 void AccelerationField::DrawDebug(const Vector3& origin)
 {
@@ -65,6 +68,7 @@ void AccelerationField::LoadFromJson(const json& j) {
 
 void AccelerationField::ImGuiDraw()
 {
+#ifdef USE_IMGUI
 	// =========================
 	// LocalField Control
 	// =========================
@@ -72,4 +76,5 @@ void AccelerationField::ImGuiDraw()
 	ImGui::DragFloat3("Min Field", (float*)&area_.min, 0.1f);
 	ImGui::DragFloat3("Max Field", (float*)&area_.max, 0.1f);
 	ImGui::Checkbox("Active", &isActive_);
+#endif
 }
