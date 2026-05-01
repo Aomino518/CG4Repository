@@ -4,6 +4,9 @@
 #include "imgui.h"
 #endif
 
+constexpr float kBaseWidth = 1280.0f;
+constexpr float kBaseHeight = 720.0f;
+
 void Sprite::Init() {
 	cmdList_ = Graphics::GetCmdList();
 	mode_ = SpriteCommon::GetInstance()->GetBlendMode();
@@ -80,6 +83,9 @@ void Sprite::Update()
 	uint32_t width = Graphics::GetWidth();
 	uint32_t height = Graphics::GetHeight();
 
+	float scaleX = float(width) / kBaseWidth;
+	float scaleY = float(height) / kBaseHeight;
+
 	// アンカーポイントによる頂点再計算
 	float left = 0.0f - anchorPoint_.x;
 	float right = 1.0f - anchorPoint_.x;
@@ -122,8 +128,16 @@ void Sprite::Update()
 	uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransform_.translate));
 	materialData->uvTransform = uvTransformMatrix;
 
+	Vector3 scaledTranslate = transform_.translate;
+	scaledTranslate.x = transform_.translate.x * scaleX;
+	scaledTranslate.y = transform_.translate.y * scaleY;
+
+	Vector3 scaledScale = transform_.scale;
+	scaledScale.x = transform_.scale.x * scaleX;
+	scaledScale.y = transform_.scale.y * scaleY;
+
 	// Sprite用のWorldViewProjectionMatrixを作る
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	Matrix4x4 worldMatrix = MakeAffineMatrix(scaledScale, transform_.rotate, scaledTranslate);
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(width), float(height), 0.1f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));

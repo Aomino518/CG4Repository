@@ -13,6 +13,9 @@
 #endif
 #include <numbers>
 
+constexpr float kBaseWidth = 1280.0f;
+constexpr float kBaseHeight = 720.0f;
+
 Particle2DManager* Particle2DManager::GetInstance()
 {
 	static Particle2DManager instance;
@@ -38,6 +41,12 @@ void Particle2DManager::Init(DxcCompiler& dxcCompiler, ID3D12RootSignature* root
 
 void Particle2DManager::Update()
 {
+	width_ = Graphics::GetWidth();
+	height_ = Graphics::GetHeight();
+
+	float scaleX = float(width_) / kBaseWidth;
+	float scaleY = float(height_) / kBaseHeight;
+
 	for (auto& [name, group] : particleGroups) {
 		group.instanceCount = 0;
 		for (auto particleIterator = group.particles.begin(); particleIterator != group.particles.end(); ) {
@@ -93,7 +102,15 @@ void Particle2DManager::Update()
 			Vector3 scale = particleIterator->startScale * (1.0f - t) + particleIterator->endScale * t;
 			particleIterator->transform.scale = scale;
 
-			Matrix4x4 worldMatrix = MakeAffineMatrix(particleIterator->transform.scale, particleIterator->transform.rotate, particleIterator->transform.translate);
+			Vector3 scaledTranslate = particleIterator->transform.translate;
+			scaledTranslate.x = particleIterator->transform.translate.x * scaleX;
+			scaledTranslate.y = particleIterator->transform.translate.y * scaleY;
+
+			Vector3 scaledScale = particleIterator->transform.scale;
+			scaledScale.x = particleIterator->transform.scale.x * scaleX;
+			scaledScale.y = particleIterator->transform.scale.y * scaleY;
+
+			Matrix4x4 worldMatrix = MakeAffineMatrix(scaledScale, particleIterator->transform.rotate, scaledTranslate);
 			Matrix4x4 viewMatrix = MakeIdentity4x4();
 			Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(width_), float(height_), 0.1f, 100.0f);
 			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));

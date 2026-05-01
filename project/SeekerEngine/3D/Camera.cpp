@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Application.h"
+#include "Graphics.h"
 #include "JsonTransform.h"
 #ifdef USE_IMGUI
 #include "imgui.h"
@@ -19,6 +20,7 @@ Camera::Camera()
 
 void Camera::Update()
 {
+	aspectRatio_ = float(Graphics::GetInstance()->GetWidth()) / float(Graphics::GetHeight());
 	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	viewMatrix_ = Inverse(worldMatrix_);
 	projectionMatrix_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);

@@ -19,6 +19,10 @@ public:
 	// 同期待ち
 	void WaitGPU();
 
+	void Resize(uint32_t width, uint32_t height);
+
+	bool IsInit() const;
+
 	// ゲッター
 	static ID3D12Device* GetDevice() { return device_.Get(); }
 	static ID3D12GraphicsCommandList* GetCmdList() { return cmdList_.Get(); }
