@@ -12,6 +12,8 @@
 #include "LightManager.h"
 #include "EmitterManager.h"
 #include "SceneManager.h"
+#include "Particle2DManager.h"
+#include "Emitter2DManager.h"
 #include "Editor.h"
 #include "Vector2.h"
 #include "Vector3.h"
