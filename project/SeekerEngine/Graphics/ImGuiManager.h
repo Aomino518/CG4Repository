@@ -15,11 +15,7 @@ enum class UITheme {
 
 class Application;
 class Graphics;
-class Entity3D;
-class Sprite;
 class CameraManager;
-class ParticleManager;
-class ParticleEmitter;
 class ImGuiManager
 {
 public:

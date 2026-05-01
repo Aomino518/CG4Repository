@@ -20,5 +20,6 @@ private:
 
 protected:
 	SeekerEngine engine_;
+	void SetSceneFactory(std::unique_ptr<AbstractSceneFactory> sceneFactory);
 };
 

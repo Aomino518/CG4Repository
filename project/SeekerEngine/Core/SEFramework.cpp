@@ -1,5 +1,4 @@
 #include "SEFramework.h"
-#include <SceneFactory.h>
 #include "SceneManager.h"
 #include "Application.h"
 
@@ -21,7 +20,6 @@ void SEFramework::Run()
 
 	Init();
 
-	sceneFactory_ = std::make_unique<SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(std::move(sceneFactory_));
 	SceneManager::GetInstance()->ChangeScene("TITLE");
 
@@ -44,4 +42,9 @@ void SEFramework::Run()
 
 	Shutdown();
 	engine_.Shutdown();
+}
+
+void SEFramework::SetSceneFactory(std::unique_ptr<AbstractSceneFactory> sceneFactory)
+{
+	sceneFactory_ = std::move(sceneFactory);
 }

@@ -83,7 +83,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -111,7 +111,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,7 +182,7 @@
     <ClCompile Include="Game\Scenes\GameOverScene.cpp" />
     <ClCompile Include="SeekerEngine\Light\LightManager.cpp" />
     <ClCompile Include="Game\Scenes\PlayScene.cpp" />
-    <ClCompile Include="SeekerEngine\Scene\SceneFactory.cpp" />
+    <ClCompile Include="Game\Base\SceneFactory.cpp" />
     <ClCompile Include="SeekerEngine\Scene\SceneManager.cpp" />
     <ClCompile Include="SeekerEngine\Effect\ParticleEmitter.cpp" />
     <ClCompile Include="SeekerEngine\Graphics\BlendStateUtils.cpp" />
@@ -199,7 +199,7 @@
     <ClCompile Include="SeekerEngine\Input\Input.cpp" />
     <ClCompile Include="SeekerEngine\Utility\Logger.cpp" />
     <ClCompile Include="SeekerEngine\Graphics\ImGuiManager.cpp" />
-    <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Base\Game.cpp" />
     <ClCompile Include="SeekerEngine\Graphics\PsoBuilder.cpp" />
     <ClCompile Include="SeekerEngine\Graphics\RootSignatureFactory.cpp" />
     <ClCompile Include="SeekerEngine\Audio\Sound.cpp" />
@@ -330,7 +330,7 @@
     <ClInclude Include="SeekerEngine\Utility\JsonUtils.h" />
     <ClInclude Include="SeekerEngine\Effect\Particle2DManager.h" />
     <ClInclude Include="SeekerEngine\Effect\Particle2DEmitter.h" />
-    <ClInclude Include="SeekerEngine\Utility\SceneIncludes.h" />
+    <ClInclude Include="Game\SceneIncludes.h" />
     <ClInclude Include="SeekerEngine\Math\MathFunc.h" />
     <ClInclude Include="SeekerEngine\Math\MathOperator.h" />
     <ClInclude Include="SeekerEngine\Math\MathTypes.h" />
@@ -427,7 +427,7 @@
     <ClInclude Include="Game\Scenes\GameOverScene.h" />
     <ClInclude Include="SeekerEngine\Light\LightManager.h" />
     <ClInclude Include="Game\Scenes\PlayScene.h" />
-    <ClInclude Include="SeekerEngine\Scene\SceneFactory.h" />
+    <ClInclude Include="Game\Base\SceneFactory.h" />
     <ClInclude Include="SeekerEngine\Scene\SceneManager.h" />
     <ClInclude Include="SeekerEngine\Effect\ParticleEmitter.h" />
     <ClInclude Include="SeekerEngine\Graphics\BlendStateUtils.h" />
@@ -459,7 +459,7 @@
     <ClInclude Include="SeekerEngine\Math\Vector2.h" />
     <ClInclude Include="SeekerEngine\Math\Vector3.h" />
     <ClInclude Include="SeekerEngine\Math\Vector4.h" />
-    <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Game\Base\Game.h" />
     <ClInclude Include="SeekerEngine\Effect\ParticleManager.h" />
     <ClInclude Include="SeekerEngine\Core\SEFramework.h" />
     <ClInclude Include="SeekerEngine\Graphics\SrvManager.h" />

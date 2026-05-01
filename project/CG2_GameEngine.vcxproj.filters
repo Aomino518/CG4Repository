@@ -127,6 +127,12 @@
     <Filter Include="externals\assimp">
       <UniqueIdentifier>{e883e6cb-19cf-41ad-94a6-bf923ae58681}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Base">
+      <UniqueIdentifier>{ed795803-2c8d-437c-b0b6-b560ded22eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Base">
+      <UniqueIdentifier>{1a92046b-02b0-401f-8adb-24beb4db53af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SeekerEngine\Audio\Sound.cpp">
@@ -178,9 +184,6 @@
       <Filter>ソース ファイル\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Scene\SceneManager.cpp">
-      <Filter>ソース ファイル\Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="SeekerEngine\Scene\SceneFactory.cpp">
       <Filter>ソース ファイル\Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp">
@@ -249,9 +252,6 @@
     <ClCompile Include="SeekerEngine\Light\LightManager.cpp">
       <Filter>ソース ファイル\Engine\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Game.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
     <ClCompile Include="Game\main.cpp">
       <Filter>ソース ファイル\Application</Filter>
     </ClCompile>
@@ -302,6 +302,12 @@
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\JsonUtils.cpp">
       <Filter>ソース ファイル\Engine\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Base\Game.cpp">
+      <Filter>ソース ファイル\Application\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Base\SceneFactory.cpp">
+      <Filter>ソース ファイル\Application\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -403,9 +409,6 @@
     <ClInclude Include="SeekerEngine\Scene\SceneManager.h">
       <Filter>ヘッダー ファイル\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\Scene\SceneFactory.h">
-      <Filter>ヘッダー ファイル\Engine\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="SeekerEngine\Scene\AbstractSceneFactory.h">
       <Filter>ヘッダー ファイル\Engine\Scene</Filter>
     </ClInclude>
@@ -475,9 +478,6 @@
     <ClInclude Include="SeekerEngine\Effect\ParticleEmitter.h">
       <Filter>ヘッダー ファイル\Engine\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Game.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
     <ClInclude Include="SeekerEngine\Math\AABB.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
@@ -521,9 +521,6 @@
       <Filter>ヘッダー ファイル\Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\ImGuiUtils.h">
-      <Filter>ヘッダー ファイル\Engine\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekerEngine\Utility\SceneIncludes.h">
       <Filter>ヘッダー ファイル\Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\2D\WorldField2DManager.h">
@@ -774,6 +771,15 @@
     </ClInclude>
     <ClInclude Include="externals\assimp\include\assimp\ZipArchiveIOSystem.h">
       <Filter>externals\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SceneIncludes.h">
+      <Filter>ヘッダー ファイル\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Base\SceneFactory.h">
+      <Filter>ヘッダー ファイル\Application\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Base\Game.h">
+      <Filter>ヘッダー ファイル\Application\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
