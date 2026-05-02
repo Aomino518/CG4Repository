@@ -5,9 +5,6 @@
 #include <assert.h>
 #include <numbers>
 
-constexpr float kBaseWidth = 1280.0f;
-constexpr float kBaseHeight = 720.0f;
-
 DebugDraw2D* DebugDraw2D::GetInstance() {
 	static DebugDraw2D instance;
 	return &instance;
