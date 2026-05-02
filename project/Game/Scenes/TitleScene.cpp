@@ -45,6 +45,10 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
+    if (Input::GetInstance()->IsTrigger(DIK_ESCAPE)) {
+        EndRequset();
+    }
+
     if (Input::GetInstance()->IsTrigger(DIK_B)) {
         SoundManager::GetInstance()->PlayBGM("bgm1");
     }

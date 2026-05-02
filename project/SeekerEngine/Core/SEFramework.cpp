@@ -29,6 +29,7 @@ void SEFramework::Run()
 		Update();
 		SceneManager::GetInstance()->Update();
 
+		endRequst_ = SceneManager::GetInstance()->GetIsEndRequest();
 		if (IsEndRequst()) {
 			break;
 		}

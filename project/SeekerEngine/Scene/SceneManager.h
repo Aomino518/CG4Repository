@@ -27,6 +27,8 @@ public:
 	const char* GetCurrentSceneName() const;
 	BaseScene* GetCurrentScene() const { return scene_.get(); }
 
+	bool GetIsEndRequest() { return scene_->GetIsEndRequest(); }
+
 private:
 	SceneManager() = default;
 	~SceneManager() = default;

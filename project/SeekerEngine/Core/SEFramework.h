@@ -17,7 +17,6 @@ public:
 private:
 	bool endRequst_ = false;
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
-
 protected:
 	SeekerEngine engine_;
 	void SetSceneFactory(std::unique_ptr<AbstractSceneFactory> sceneFactory);

@@ -22,7 +22,11 @@ public:
 
 	void SetSceneManager(SceneManager* mgr) { sceneManager_ = mgr; }
 
+	void EndRequset() { this->isEndRequest_ = true; }
+
+	bool GetIsEndRequest() { return isEndRequest_; }
 protected:
 	SceneManager* sceneManager_ = nullptr;
+	bool isEndRequest_ = false;
 };
 
