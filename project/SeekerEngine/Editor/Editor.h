@@ -43,6 +43,7 @@ public:
     // 保存と読み込み
     void SaveSceneJson(const std::string& path) const;
     void LoadSceneJson(const std::string& path);
+    void ClearSceneJson(const std::string& path);
 
     void Clear();
 

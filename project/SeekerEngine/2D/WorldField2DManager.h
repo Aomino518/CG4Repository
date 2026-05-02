@@ -20,6 +20,8 @@ public:
 	/// <param name="name"></param>
 	void RemoveField(const std::string& name);
 
+	void AllRemoveField();
+
 	// Getter関数
 	AccelerationField2D* GetWorldField(const std::string& name);
 	std::vector<AccelerationField2D*> GetAllWorldFields() const;

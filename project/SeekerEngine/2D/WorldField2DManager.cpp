@@ -33,6 +33,11 @@ void WorldField2DManager::RemoveField(const std::string& name)
 	Logger::Write("WorldField2D removed: " + name);
 }
 
+void WorldField2DManager::AllRemoveField()
+{
+	worldFields_.clear();
+}
+
 AccelerationField2D* WorldField2DManager::GetWorldField(const std::string& name)
 {
 	auto it = worldFields_.find(name);

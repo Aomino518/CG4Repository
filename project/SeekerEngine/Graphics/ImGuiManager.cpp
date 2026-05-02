@@ -221,6 +221,10 @@ void ImGuiManager::DrawMainMenuBar()
 				requestLoadPopup_ = true;
 			}
 
+			if (ImGui::MenuItem("Clear")) {
+				requestClearPopup_ = true;
+			}
+
 			ImGui::EndMenu();
 		}
 
@@ -243,6 +247,11 @@ void ImGuiManager::DrawMainMenuBar()
 	if (requestLoadPopup_) {
 		ImGui::OpenPopup("Confirm Load");
 		requestLoadPopup_ = false;
+	}
+
+	if (requestClearPopup_) {
+		ImGui::OpenPopup("Confirm Clear");
+		requestClearPopup_ = false;
 	}
 
 	DrawConfirmPopup();
@@ -513,6 +522,23 @@ void ImGuiManager::DrawConfirmPopup()
 
 		ImGui::EndPopup();
 	}
+
+	if (ImGui::BeginPopupModal("Confirm Clear", nullptr, flags)) {
+		ImGui::Text("現在のシーンの保存内容を破棄しますか？");
+
+		if (ImGui::Button("OK", ImVec2(120, 0))) {
+			ClearScenesJson();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
 #endif
 }
 
@@ -538,6 +564,19 @@ void ImGuiManager::LoadScenesJson() {
 		Editor::GetInstance()->LoadSceneJson("resources/json/gameOverScene.json");
 	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLAER")) {
 		Editor::GetInstance()->LoadSceneJson("resources/json/clearScene.json");
+	}
+}
+
+void ImGuiManager::ClearScenesJson()
+{
+	if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("TITLE")) {
+		Editor::GetInstance()->ClearSceneJson("resources/json/titleScene.json");
+	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("GAMEPLAY")) {
+		Editor::GetInstance()->ClearSceneJson("resources/json/playScene.json");
+	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("GAMEOVER")) {
+		Editor::GetInstance()->ClearSceneJson("resources/json/gameOverScene.json");
+	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLAER")) {
+		Editor::GetInstance()->ClearSceneJson("resources/json/clearScene.json");
 	}
 }
 

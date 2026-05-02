@@ -62,8 +62,8 @@ void TitleScene::Update()
        SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
     }
 
+    auto camMgr = CameraManager::GetInstance();
     SoundManager::GetInstance()->Update();
-
     Emitter2DManager::GetInstance()->Update();
     Particle2DManager::GetInstance()->Update();
     sprite->Update();
@@ -71,9 +71,11 @@ void TitleScene::Update()
 
     ImGuiManager::GetInstance()->BeginFrame();
     ImGuiManager::GetInstance()->DrawMainMenuBar();
+    ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
     ImGuiManager::GetInstance()->DrawEditor();
-    ImGuiManager::GetInstance()->DrawLoggerWindow();
     ImGuiManager::GetInstance()->Stats();
+    ImGuiManager::GetInstance()->DrawSoundWindow();
+    ImGuiManager::GetInstance()->DrawLoggerWindow();
     ImGuiManager::GetInstance()->EndFrame();
 }
 

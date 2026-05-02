@@ -132,8 +132,19 @@ void Editor::LoadSceneJson(const std::string& path)
 	}
 
 	json root;
-	ifs >> root;
-	if (root.contains("isLighting")) {
+	try {
+		ifs >> root;
+	} catch (const nlohmann::json::parse_error& e) {
+		Logger::Write(Logger::LogLevel::Warning, "Failed to parse json. Keep current scene values: " + std::string(e.what()));
+		return;
+	}
+
+	if (root.is_null() || root.empty()) {
+		Logger::Write(Logger::LogLevel::Warning, "Json is empty. Keep current scene values.");
+		return;
+	}
+	
+	if (root.contains("isLighting") && root["isLighting"].is_boolean()) {
 		ModelManager::GetInstance()->SetIsLighting(root["isLighting"].get<bool>());
 	}
 
@@ -197,11 +208,31 @@ void Editor::LoadSceneJson(const std::string& path)
 
 }
 
+void Editor::ClearSceneJson(const std::string& path)
+{
+	nlohmann::json json;
+	json["isLighting"] = nlohmann::json::array();
+	json["sprites"] = nlohmann::json::array();
+	json["models"] = nlohmann::json::array();
+	json["particles"] = nlohmann::json::array();
+	json["particles2D"] = nlohmann::json::array();
+	json["worldField"] = nlohmann::json::array();
+	json["worldField2D"] = nlohmann::json::array();
+	json["lights"] = nlohmann::json::array();
+	json["cameras"] = nlohmann::json::array();
+
+	std::ofstream file(path);
+	file << json.dump(4);
+}
+
 void Editor::Clear()
 {
 	sprites_.clear();
 	models_.clear();
 	particles_.clear();
+	particles2D_.clear();
+	WorldFieldManager::GetInstance()->AllRemoveField();
+	WorldField2DManager::GetInstance()->AllRemoveField();
 	selection_ = {};
 }
 

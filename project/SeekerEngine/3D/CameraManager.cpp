@@ -1,4 +1,5 @@
 #include "CameraManager.h"
+#include <algorithm>
 #include <numbers>
 #include "Logger.h"
 
@@ -24,8 +25,13 @@ void CameraManager::Init()
 void CameraManager::Update()
 {
 	if (activeIsDebug_) {
-		debugCamera_->Update();
+		if (debugCamera_) {
+			debugCamera_->Update();
+		}
 	} else {
+		if (cameras_.empty() || activeCamIndex_ < 0 || activeCamIndex_ >= static_cast<int>(cameras_.size())) {
+			return;
+		}
 		cameras_[activeCamIndex_].camera->Update();
 	}
 }
@@ -61,7 +67,11 @@ void CameraManager::CreateDebugCamera()
 void CameraManager::SetActiveCamera(bool isDebug, int index)
 {
 	activeIsDebug_ = isDebug;
-	activeCamIndex_ = index;
+	if (!cameras_.empty()) {
+		activeCamIndex_ = std::clamp(index, 0, static_cast<int>(cameras_.size()) - 1);
+	} else {
+		activeCamIndex_ = 0;
+	}
 }
 
 void CameraManager::SetActiveCameraByName(const std::string& name)
@@ -79,6 +89,10 @@ void CameraManager::SetActiveCameraByName(const std::string& name)
 Camera* CameraManager::GetActiveCamera() const
 {
 	if (activeIsDebug_) {
+		return nullptr;
+	}
+
+	if (cameras_.empty() || activeCamIndex_ < 0 || activeCamIndex_ >= static_cast<int>(cameras_.size())) {
 		return nullptr;
 	}
 
@@ -120,18 +134,32 @@ void CameraManager::LoadFromJson(const nlohmann::json& j)
 		return;
 	}
 
-	cameras_.clear();
+	if (j.empty()) {
+		Logger::Write(Logger::LogLevel::Warning, "Camera Array is empty. Keep current cameras.");
+		return;
+	}
 
+	std::vector<CameraInfo> loadedCameras;
 	for (const auto& item : j) {
-		CameraInfo info;
-		if (item.contains("name")) {
-			info.name = item.value("name", "untitled");
+		if (!item.is_object() || !item.contains("camera") || !item["camera"].is_object()) {
+			continue;
 		}
+
+		CameraInfo info;
+		info.name = item.value("name", "untitled");
 
 		info.camera = std::make_unique<Camera>();
 		if (item["camera"].contains("transform")) {
 			info.camera->LoadFromJson(item["camera"]);
 		}
-		cameras_.push_back(std::move(info));
+		loadedCameras.push_back(std::move(info));
 	}
+
+	if (loadedCameras.empty()) {
+		Logger::Write(Logger::LogLevel::Warning, "No valid cameras in JSON. Keep current cameras.");
+		return;
+	}
+
+	cameras_ = std::move(loadedCameras);
+	SetActiveCamera(false, activeCamIndex_);
 }

@@ -40,11 +40,12 @@ public:
 	void EndInspector();
 	void SaveScenesJson();
 	void LoadScenesJson();
+	void ClearScenesJson();
 	void DrawConfirmPopup();
 
 	nlohmann::json SaveEditorJson() const;
 	void LoadEditorJson(const nlohmann::json& j);
-
+	
 private:
 
 	// メンバ関数
@@ -71,5 +72,6 @@ private:
 	WindowFlags windowState_;
 	bool requestSavePopup_ = false;
 	bool requestLoadPopup_ = false;
+	bool requestClearPopup_ = false;
 };
 
