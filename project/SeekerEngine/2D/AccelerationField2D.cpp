@@ -19,7 +19,6 @@ void AccelerationField2D::DrawDebug(const Vector2& origin)
 AABB2D AccelerationField2D::GetWorldAABB(const Vector2& origin) const
 {
 	AABB2D result = area_;
-
 	if (space_ == FieldSpace::Local) {
 		result.min = result.min + origin + position_;
 		result.max = result.max + origin + position_;
