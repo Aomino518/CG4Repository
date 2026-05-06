@@ -23,6 +23,8 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateDebugShape3D();
 
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSkybox();
+
 private:
 
 	Graphics* graphics_;

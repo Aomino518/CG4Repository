@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "Logger.h"
 #include <stack>
+#include "externals/DirectXTex/DirectXTex.h"
 
 class SrvManager
 {
@@ -21,7 +22,7 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
 	// SRV生成テクスチャ用
-	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels);
+	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels, const DirectX::TexMetadata& metaData);
 	// SRV生成Structured Buffer用
 	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
 

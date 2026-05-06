@@ -41,7 +41,7 @@ uint32_t TextureManager::Load(const std::string& filePath)
 	intermediasteResource_.push_back(intermediaste_);
 
 	uint32_t srvIndex = SrvManager::GetInstance()->Allocate();
-	SrvManager::GetInstance()->CreateSRVforTexture2D(srvIndex, textureResource.Get(), metadata.format, static_cast<UINT>(metadata.mipLevels));
+	SrvManager::GetInstance()->CreateSRVforTexture2D(srvIndex, textureResource.Get(), metadata.format, static_cast<UINT>(metadata.mipLevels), metadata);
 
 	// 登録してID発行
 	uint32_t id = static_cast<uint32_t>(textures_.size());
@@ -102,7 +102,14 @@ DirectX::ScratchImage TextureManager::LoadFromFile(const std::string& filePath)
 	// テクスチャファイルを読み込んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	HRESULT hr;
+	
+	if (filePathW.ends_with(L".dds")) {
+		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	} else {
+		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
+
 	if (FAILED(hr)) {
 		Logger::Write(Logger::LogLevel::Error, "Failed to load texture");
 		assert(SUCCEEDED(hr));
@@ -110,7 +117,12 @@ DirectX::ScratchImage TextureManager::LoadFromFile(const std::string& filePath)
 
 	// ミップマップの作成
 	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	if (DirectX::IsCompressed(image.GetMetadata().format)) {
+		mipImages = std::move(image); // 圧縮フォーマットならそのまま使うのでmove
+	} else {
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	}
+
 	if (FAILED(hr)) {
 		Logger::Write(Logger::LogLevel::Error, "Failed to generate mipmaps for: " + filePath);
 		assert(SUCCEEDED(hr));

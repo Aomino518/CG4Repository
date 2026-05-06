@@ -20,6 +20,7 @@ public:
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 	const Vector3& GetTranslate() const { return translation_; }
 	Matrix4x4 GetBillboardMatrix();
+	Matrix4x4 GetProjectionMatrix() { return projectionMatrix_; }
 
 	// X,Y,Z軸回りのローカル回転角
 	//Vector3 rotation_ = { 0, 0, 0 };

@@ -30,6 +30,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsParticle2D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsDebugShape2D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsDebugShape3D_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsSkybox_;
 
 	DxcCompiler dxcCompiler_;
 	RootSignatureFactory rootSignatureFactory_;

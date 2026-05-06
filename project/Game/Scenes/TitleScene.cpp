@@ -1,10 +1,13 @@
 #include "TitleScene.h"
 #include "SceneIncludes.h"
+#include "Skybox.h"
 
 void TitleScene::Init()
 {
     Logger::Write("現在シーンTitleScene");
    
+    tHTex_ = TextureManager::GetInstance()->Load("./resources/rostock_laage_airport_4k.dds");
+    Skybox::GetInstance()->SetTexture(tHTex_);
     ImGuiManager::GetInstance()->LoadScenesJson();
 }
 
@@ -20,6 +23,8 @@ void TitleScene::Update()
         SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
     }
 
+    Skybox::GetInstance()->Update();
+
     ImGuiManager::GetInstance()->BeginFrame();
     ImGuiManager::GetInstance()->DrawMainMenuBar();
     ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
@@ -32,6 +37,7 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
+    Skybox::GetInstance()->Draw();
     ImGuiManager::GetInstance()->Draw();
 }
 

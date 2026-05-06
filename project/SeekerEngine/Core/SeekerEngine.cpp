@@ -28,6 +28,7 @@
 #include "DebugDraw2D.h"
 #include "DebugDraw3D.h"
 #include "Particle2DManager.h"
+#include "Skybox.h"
 
 void SeekerEngine::Init()
 {
@@ -58,6 +59,7 @@ void SeekerEngine::Init()
 	rsParticle2D_ = rootSignatureFactory_.CreateParticle2D();
 	rsDebugShape2D_ = rootSignatureFactory_.CreateDebugShape2D();
 	rsDebugShape3D_ = rootSignatureFactory_.CreateDebugShape3D();
+	rsSkybox_ = rootSignatureFactory_.CreateSkybox();
 
 	SoundManager::GetInstance()->Init();
 
@@ -70,6 +72,7 @@ void SeekerEngine::Init()
 
 	// モデル共通部の作成
 	Entity3DCommon::GetInstance()->Init(dxcCompiler_, rs3D_.Get());
+	Skybox::GetInstance()->Init(dxcCompiler_, rsSkybox_.Get());
 
 	ParticleManager::GetInstance()->Init(dxcCompiler_, rsParticle_.Get());
 	Particle2DManager::GetInstance()->Init(dxcCompiler_, rsParticle2D_.Get());
@@ -88,6 +91,7 @@ void SeekerEngine::Update()
 void SeekerEngine::Shutdown()
 {
 	SceneManager::GetInstance()->Shutdown();
+	Skybox::GetInstance()->Shutdown();
 	ImGuiManager::GetInstance()->Shutdown();
 	LightManager::GetInstance()->Shutdown();
 	Particle2DManager::GetInstance()->Shutdown();

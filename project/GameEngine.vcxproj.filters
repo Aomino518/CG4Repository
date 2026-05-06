@@ -309,6 +309,9 @@
     <ClCompile Include="Game\Base\SceneFactory.cpp">
       <Filter>ソース ファイル\Application\Base</Filter>
     </ClCompile>
+    <ClCompile Include="SeekerEngine\3D\Skybox.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\hlsl\Object2D.PS.hlsl">
@@ -347,6 +350,8 @@
     <FxCompile Include="resources\hlsl\DebugShape3D.PS.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="resources\hlsl\Skybox.VS.hlsl" />
+    <FxCompile Include="resources\hlsl\Skybox.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\Audio\SoundManager.h">
@@ -781,6 +786,9 @@
     <ClInclude Include="Game\Base\Game.h">
       <Filter>ヘッダー ファイル\Application\Base</Filter>
     </ClInclude>
+    <ClInclude Include="SeekerEngine\3D\Skybox.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\Object2D.hlsli">
@@ -827,5 +835,6 @@
     <None Include="externals\assimp\include\assimp\vector3.inl">
       <Filter>externals\assimp</Filter>
     </None>
+    <None Include="resources\hlsl\Skybox.hlsli" />
   </ItemGroup>
 </Project>
