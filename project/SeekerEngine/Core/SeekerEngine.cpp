@@ -72,6 +72,9 @@ void SeekerEngine::Init()
 
 	// モデル共通部の作成
 	Entity3DCommon::GetInstance()->Init(dxcCompiler_, rs3D_.Get());
+	Entity3DCommon::GetInstance()->SetCameraManager(CameraManager::GetInstance());
+	Entity3DCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+	Entity3DCommon::GetInstance()->SetDebugCamera(CameraManager::GetInstance()->GetDebugCamera());
 	Skybox::GetInstance()->Init(dxcCompiler_, rsSkybox_.Get());
 
 	ParticleManager::GetInstance()->Init(dxcCompiler_, rsParticle_.Get());

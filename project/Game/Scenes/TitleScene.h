@@ -20,6 +20,6 @@ public:
 	const char* GetSceneName() const override { return "TITLE"; }
 
 private:
-	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<Entity3D> entity_;
 	uint32_t tHTex_;
 };
