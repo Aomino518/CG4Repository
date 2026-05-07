@@ -81,7 +81,8 @@ json Entity3D::SaveToJson() const
 	return json{
 	   {"transform", TransformToJson(transform_)},
 	   {"blendMode", static_cast<int>(mode_)},
-	   {"material", ToJson(model_->GetMaterial())}
+	   {"material", ToJson(model_->GetMaterial())},
+	   {"environmentColor", model_->GetEnvironmentColor()}
 	};
 }
 
@@ -99,6 +100,12 @@ void Entity3D::LoadFromJson(const json& j)
 		Vector4 material{};
 		FromJson(j.at("material"), material);
 		SetMaterial(material);
+	}
+
+	if (j.contains("environmentColor")) {
+		float environmentColor = model_->GetEnvironmentColor();
+		float result = j.value("environmentColor", environmentColor);
+		model_->SetEnvironmentColor(result);
 	}
 }
 
@@ -140,10 +147,13 @@ void Entity3D::ModelResourcesSetting()
 void Entity3D::DrawImGui() {
 #ifdef USE_IMGUI
 	Vector4 material = model_->GetMaterial();
+	float environmentColor = model_->GetEnvironmentColor();
 	ImGui::DragFloat3("Position", reinterpret_cast<float*>(&transform_.translate), 0.01f);
 	ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&transform_.rotate), 0.01f);
 	ImGui::DragFloat3("Scale", reinterpret_cast<float*>(&transform_.scale), 0.01f, 0.0f);
 	ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&material));
+	ImGui::DragFloat("EnvironmentColor", reinterpret_cast<float*>(&environmentColor), 0.01f, 0.0f, 1.0f);
 	model_->SetMaterial(material);
+	model_->SetEnvironmentColor(environmentColor);
 #endif
 }

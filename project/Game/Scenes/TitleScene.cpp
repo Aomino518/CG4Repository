@@ -11,6 +11,7 @@ void TitleScene::Init()
 
     entity_ = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("ball.obj");
+    ModelManager::GetInstance()->FindModel("ball")->SetEnviromentTexture(tHTex_);
     entity_->Init();
     entity_->SetModel("ball");
     entity_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));

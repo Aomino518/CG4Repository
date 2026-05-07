@@ -32,9 +32,12 @@ public:
 	Vector4& GetMaterial() const { return materialData_->color; }
 	bool GetIsLighting() const { return materialData_->enableLighting; }
 	ModelData GetRootNode() const { return modelData_; }
+	float GetEnvironmentColor() { return materialData_->environmentColor; }
 
 	void SetMaterial(const Vector4& material) { this->materialData_->color = material; }
 	void SetIsLighting(const bool isLighting) { this->materialData_->enableLighting = isLighting; }
+	void SetEnviromentTexture(uint32_t textureId);
+	void SetEnvironmentColor(const float environmentColor) { this->materialData_->environmentColor = environmentColor; }
 
 private:
 	void CreateBufferResources();
@@ -54,6 +57,7 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
+	D3D12_GPU_DESCRIPTOR_HANDLE environmentSrvHandleGPU_;
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
 };

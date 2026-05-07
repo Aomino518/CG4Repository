@@ -9,6 +9,7 @@ struct Material
     int enableLightig;
     float4x4 uvTransform;
     float shininess;
+    float environmentColor;
 };
 
 struct DirectionalLight
@@ -62,6 +63,7 @@ struct Camera
 
 ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
+TextureCube<float4> gEnviromentTexture : register(t1);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDiretionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
@@ -123,6 +125,14 @@ float3 CalcSpotLight(VertexShaderOutput input, float4 textureColor, SpotLight li
     return diffuse + specular;
 }
 
+float4 CalcEnviromentColor(VertexShaderOutput input)
+{
+    float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+    float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
+    float4 enviromentColor = gEnviromentTexture.Sample(gSampler, reflectedVector);
+    return enviromentColor;
+}
+
 PixelShaderOutput main(VertexShaderOutput input)
 {
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
@@ -133,6 +143,9 @@ PixelShaderOutput main(VertexShaderOutput input)
     float3 halfVectorDirection = normalize(-gDiretionalLight.direction + toEyeDirection);
     float NdotHDir = dot(normalize(input.normal), halfVectorDirection);
     float specularPowDir = pow(saturate(NdotHDir), gMaterial.shininess);
+    
+    // 環境マップ
+    float4 enviromentColor = CalcEnviromentColor(input);
     
     PixelShaderOutput output;
     if (gMaterial.enableLightig != 0)
@@ -153,7 +166,8 @@ PixelShaderOutput main(VertexShaderOutput input)
         }
         
         output.color.rgb = directionalColor + pointColor + spotColor;
-
+        output.color.rgb += enviromentColor.rgb * gMaterial.environmentColor;
+        
         if (textureColor.a == 0.0f)
         {
             discard;

@@ -23,6 +23,7 @@ void Model::Draw()
 	cmdList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 	cmdList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
+	cmdList_->SetGraphicsRootDescriptorTable(7, environmentSrvHandleGPU_);
 	// 描画 (DrawCall)。
 	cmdList_->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
 	Graphics::GetInstance()->AddDrawCallCount();
@@ -111,6 +112,11 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 	modelData_.rootNode = ReadNode(scene->mRootNode);
 }
 
+void Model::SetEnviromentTexture(uint32_t textureId)
+{
+	environmentSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(textureId);
+}
+
 void Model::CreateBufferResources()
 {
 	// 頂点リソース
@@ -159,6 +165,7 @@ void Model::MaterialInit()
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->enableLighting = true;
 	materialData_->shininess = 32.0f;
+	materialData_->environmentColor = 1.0f;
 	Logger::Write("MaterialResourceの作成完了");
 }
 
