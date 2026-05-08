@@ -506,6 +506,8 @@ void ImGuiManager::DrawConfirmPopup()
 		ImGui::EndPopup();
 	}
 
+	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+
 	if (ImGui::BeginPopupModal("Confirm Load", nullptr, flags)) {
 		ImGui::Text("現在の編集内容を破棄してロードしますか？");
 
@@ -522,6 +524,8 @@ void ImGuiManager::DrawConfirmPopup()
 
 		ImGui::EndPopup();
 	}
+
+	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
 	if (ImGui::BeginPopupModal("Confirm Clear", nullptr, flags)) {
 		ImGui::Text("現在のシーンの保存内容を破棄しますか？");
