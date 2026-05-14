@@ -144,10 +144,19 @@ bool ImGuiUtils::DrawEditParticleConfig(ParticleConfig& config)
 	// Scale
 	// =========================
 	if (ImGui::CollapsingHeader("Scale", ImGuiTreeNodeFlags_DefaultOpen)) {
-		changed |= ImGui::DragFloat3("Start Scale Min", &config.startScaleMin.x, 0.1f);
-		changed |= ImGui::DragFloat3("Start Scale Max", &config.startScaleMax.x, 0.1f);
-		changed |= ImGui::DragFloat3("End Scale Min", &config.endScaleMin.x, 0.1f);
-		changed |= ImGui::DragFloat3("End Scale Max", &config.endScaleMax.x, 0.1f);
+		changed |= ImGui::Checkbox("Keep Constant Scale", &config.isKeepScale);
+
+		if (config.isKeepScale) {
+			changed |= ImGui::DragFloat3("Scale Min", &config.startScaleMin.x, 0.1f);
+			changed |= ImGui::DragFloat3("Scale Max", &config.startScaleMax.x, 0.1f);
+			config.endScaleMin = config.startScaleMin;
+			config.endScaleMax = config.startScaleMin;
+		} else {
+			changed |= ImGui::DragFloat3("Start Scale Min", &config.startScaleMin.x, 0.1f);
+			changed |= ImGui::DragFloat3("Start Scale Max", &config.startScaleMax.x, 0.1f);
+			changed |= ImGui::DragFloat3("End Scale Min", &config.endScaleMin.x, 0.1f);
+			changed |= ImGui::DragFloat3("End Scale Max", &config.endScaleMax.x, 0.1f);
+		}
 	}
 
 	// =========================

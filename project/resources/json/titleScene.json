@@ -86,12 +86,148 @@
                 "translate": {
                     "x": 0.0,
                     "y": 0.0,
+                    "z": 5.0
+                }
+            }
+        }
+    },
+    "particles": {
+        "HitEffect": {
+            "billboard": true,
+            "blendMode": 2,
+            "boxMax": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "boxMin": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "count": 3,
+            "endColorMax": {
+                "w": 0.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "endColorMin": {
+                "w": 0.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "endScaleMax": {
+                "x": 0.05000000074505806,
+                "y": 1.5,
+                "z": 1.5
+            },
+            "endScaleMin": {
+                "x": 0.05000000074505806,
+                "y": 0.4000000059604645,
+                "z": 1.0
+            },
+            "frequency": 0.10000000149011612,
+            "localField": {
+                "acceleration": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "areaMax": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "areaMin": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "isActive": false,
+                "translate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "loop": false,
+            "maxLifeTime": 1.0,
+            "maxRotate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 45.0
+            },
+            "maxRotateVelocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "maxVelocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "minLifeTime": 1.0,
+            "minRotate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "minRotateVelocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "minVelocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "shape": 0,
+            "sphereRadius": 1.0,
+            "startColorMax": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "startColorMin": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "startScaleMax": {
+                "x": 0.05000000074505806,
+                "y": 1.5,
+                "z": 1.0
+            },
+            "startScaleMin": {
+                "x": 0.05000000074505806,
+                "y": 0.4000000059604645,
+                "z": 1.0
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": 0.0,
+                    "y": 0.0,
                     "z": 0.0
                 }
             }
         }
     },
-    "particles": {},
     "particles2D": {},
     "sprites": {},
     "windowState": {

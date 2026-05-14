@@ -86,10 +86,15 @@ void ParticleManager::Update(CameraManager* cameraManager)
 			float t = particleIterator->currentTime / particleIterator->lifeTime;
 			t = std::clamp(t, 0.0f, 1.0f);
 			Vector4 color = particleIterator->startColor * (1.0f - t) + particleIterator->endColor * t;
+			particleIterator->color = color;
 
 			// スケールの補間
-			Vector3 scale = particleIterator->startScale * (1.0f - t) + particleIterator->endScale * t;
-			particleIterator->transform.scale = scale;
+			if (!particleIterator->isKeepScale) {
+				Vector3 scale = particleIterator->startScale * (1.0f - t) + particleIterator->endScale * t;
+				particleIterator->transform.scale = scale;
+			} else {
+				particleIterator->transform.scale = particleIterator->startScale;
+			}
 
 			Matrix4x4 worldMatrix = CalculateWorldMatrix(*particleIterator, name, isDebug);
 			Matrix4x4 wvpMatrix = CalculateWVPMatrix(worldMatrix, isDebug);
@@ -154,7 +159,7 @@ void ParticleManager::Emit(const std::string name,
 	const Vector3& position,
 	uint32_t count)
 {
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	//std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 
 	auto it = particleGroups.find(name);
 	assert(it != particleGroups.end());
@@ -178,16 +183,18 @@ void ParticleManager::Emit(const std::string name,
 			spawnOffset.z = r * cosf(phi);
 		}
 
+		Vector3 initialScale = RandomRange(randomEngine_, config.startScaleMin, config.startScaleMax);
 		particle.transform.translate = { position + spawnOffset };
 		particle.transform.rotate = RandomRange(randomEngine_, config.minRotate, config.maxRotate);
-		particle.transform.scale = RandomRange(randomEngine_, config.startScaleMin, config.startScaleMax);
+		particle.transform.scale = initialScale;
 		particle.rotateVelocity = RandomRange(randomEngine_, config.minRotateVelocity, config.maxRotateVelocity);
 		particle.velocity = RandomRange(randomEngine_, config.minVelocity, config.maxVelocity);
-		particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_), 1.0f };
+		//particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_), 1.0f };
 		particle.startColor = RandomRange(randomEngine_, config.startColorMin, config.startColorMax);
 		particle.endColor = RandomRange(randomEngine_, config.endColorMin, config.endColorMax);
 		particle.color = particle.startColor;
-		particle.startScale = RandomRange(randomEngine_, config.startScaleMin, config.startScaleMax);
+		particle.isKeepScale = config.isKeepScale;
+		particle.startScale = initialScale;
 		particle.endScale = RandomRange(randomEngine_, config.endScaleMin, config.endScaleMax);
 		particle.lifeTime = RandomRange(randomEngine_, config.minLifeTime, config.maxLifeTime);
 		particle.currentTime = 0.0f;

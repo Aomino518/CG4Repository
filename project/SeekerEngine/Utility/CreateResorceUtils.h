@@ -117,6 +117,7 @@ struct Particle {
 	Vector3 endScale;
 	float lifeTime;
 	float currentTime;
+	bool isKeepScale;
 };
 
 enum class SpawnShape {
@@ -149,6 +150,7 @@ struct ParticleConfig {
 	Vector3 boxMin = { -0.5f, -0.5f, -0.5f }; // 箱の最小値
 	Vector3 boxMax = { 0.5f,  0.5f,  0.5f }; // 箱の最大値
 	float sphereRadius = 1.0f; // 球の半径
+	bool isKeepScale = false;
 };
 
 struct ParticleForGPU

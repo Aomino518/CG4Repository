@@ -22,4 +22,5 @@ public:
 private:
 	std::unique_ptr<Entity3D> entity_;
 	uint32_t tHTex_;
+	uint32_t tHCircle_;
 };
