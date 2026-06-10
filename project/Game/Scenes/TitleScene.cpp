@@ -18,6 +18,14 @@ void TitleScene::Init()
     entity_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("ball", entity_.get());
 
+    modelTerrain_ = std::make_unique<Entity3D>();
+    ModelManager::GetInstance()->LoadModel("terrain.obj");
+    ModelManager::GetInstance()->FindModel("terrain")->SetEnviromentTexture(tHTex_);
+    modelTerrain_->Init();
+    modelTerrain_->SetModel("terrain");
+    modelTerrain_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
+    Editor::GetInstance()->RegisterModel("terrain", modelTerrain_.get());
+
     ParticleConfig hitEffectConfig;
     ParticleManager::GetInstance()->CreateParticleGroup("HitEffect", tHCircle_);
     EmitterManager::GetInstance()->CreateEmitter("HitEffect", hitEffectConfig);
@@ -41,9 +49,11 @@ void TitleScene::Update()
     Skybox::GetInstance()->Update();
     entity_->SetCamera(camMgr->GetActiveCamera());
     entity_->Update();
+    modelTerrain_->SetCamera(camMgr->GetActiveCamera());
+    modelTerrain_->Update();
 
-    ParticleManager::GetInstance()->Update(camMgr);
     EmitterManager::GetInstance()->Update();
+    ParticleManager::GetInstance()->Update(camMgr);
 
     ImGuiManager::GetInstance()->BeginFrame();
     ImGuiManager::GetInstance()->DrawMainMenuBar();
@@ -59,6 +69,7 @@ void TitleScene::Draw()
 {
     Skybox::GetInstance()->Draw();
     entity_->Draw();
+    modelTerrain_->Draw();
     ParticleManager::GetInstance()->Draw();
     ImGuiManager::GetInstance()->Draw();
 }

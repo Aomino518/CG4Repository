@@ -134,23 +134,32 @@ bool ImGuiUtils::DrawEditParticleConfig(ParticleConfig& config)
 	// Color
 	// =========================
 	if (ImGui::CollapsingHeader("Color", ImGuiTreeNodeFlags_DefaultOpen)) {
-		changed |= ImGui::ColorEdit4("Start Color Min", &config.startColorMin.x);
-		changed |= ImGui::ColorEdit4("Start Color Max", &config.startColorMax.x);
-		changed |= ImGui::ColorEdit4("End Color Min", &config.endColorMin.x);
-		changed |= ImGui::ColorEdit4("End Color Max", &config.endColorMax.x);
+		changed |= ImGui::Checkbox("Keep End Scale", &config.isKeepColor);
+
+		if (config.isKeepColor) {
+			changed |= ImGui::ColorEdit4("Start Color Min", &config.startColorMin.x);
+			changed |= ImGui::ColorEdit4("Start Color Max", &config.startColorMax.x);
+			config.endColorMin = config.startColorMin;
+			config.endColorMax = config.startColorMax;
+		} else {
+			changed |= ImGui::ColorEdit4("Start Color Min", &config.startColorMin.x);
+			changed |= ImGui::ColorEdit4("Start Color Max", &config.startColorMax.x);
+			changed |= ImGui::ColorEdit4("End Color Min", &config.endColorMin.x);
+			changed |= ImGui::ColorEdit4("End Color Max", &config.endColorMax.x);
+		}
 	}
 
 	// =========================
 	// Scale
 	// =========================
 	if (ImGui::CollapsingHeader("Scale", ImGuiTreeNodeFlags_DefaultOpen)) {
-		changed |= ImGui::Checkbox("Keep Constant Scale", &config.isKeepScale);
+		changed |= ImGui::Checkbox("Keep Scale", &config.isKeepScale);
 
 		if (config.isKeepScale) {
 			changed |= ImGui::DragFloat3("Scale Min", &config.startScaleMin.x, 0.1f);
 			changed |= ImGui::DragFloat3("Scale Max", &config.startScaleMax.x, 0.1f);
 			config.endScaleMin = config.startScaleMin;
-			config.endScaleMax = config.startScaleMin;
+			config.endScaleMax = config.startScaleMax;
 		} else {
 			changed |= ImGui::DragFloat3("Start Scale Min", &config.startScaleMin.x, 0.1f);
 			changed |= ImGui::DragFloat3("Start Scale Max", &config.startScaleMax.x, 0.1f);

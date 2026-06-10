@@ -21,6 +21,7 @@ public:
 
 private:
 	std::unique_ptr<Entity3D> entity_;
+	std::unique_ptr<Entity3D> modelTerrain_;
 	uint32_t tHTex_;
 	uint32_t tHCircle_;
 };

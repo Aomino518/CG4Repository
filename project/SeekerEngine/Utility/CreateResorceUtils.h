@@ -126,6 +126,7 @@ enum class SpawnShape {
 };
 
 struct ParticleConfig {
+	Vector3 velocity = { 0.0f, 0.0f, 0.0f }; // 速度
 	Vector3 minVelocity = { -0.1f, -0.1f, -0.1f }; // 速度の最小値
 	Vector3 maxVelocity = { 0.1f,  0.1f,  0.1f }; // 速度の最大値
 	Vector3 minOffset = { -0.5f, -0.5f, -0.5f }; // オフセットの最小値
@@ -136,14 +137,19 @@ struct ParticleConfig {
 	Vector4 startColorMax = { 1.0f, 1.0f, 1.0f, 1.0f }; // 開始色の最大値
 	Vector4 endColorMin = { 1.0f, 1.0f, 1.0f, 0.0f };   // 終了色の最小値
 	Vector4 endColorMax = { 1.0f, 1.0f, 1.0f, 0.0f };   // 終了色の最大値
+	Vector3 startScale = { 1.0f, 1.0f, 1.0f }; // 初期スケール
 	Vector3 startScaleMin = { 0.5f, 0.5f, 0.5f }; // 初期スケールの最小値
 	Vector3 startScaleMax = { 1.0f, 1.0f, 1.0f }; // 初期スケールの最大値
+	Vector3 endScale = { 0.0f, 0.0f, 0.0f }; // 終了スケール
 	Vector3 endScaleMin = { 0.5f, 0.5f, 0.5f };   // 終了スケールの最小値
 	Vector3 endScaleMax = { 1.5f, 1.5f, 1.5f };   // 終了スケールの最大値
+	float lifeTime = 2.0f; // 生存時間
 	float minLifeTime = 1.0f; // 生存時間の最小値
 	float maxLifeTime = 3.0f; // 生存時間の最大値
+	Vector3 rotate = { 0.0f, 0.0f, 0.0f };
 	Vector3 minRotate = { 0.0f, 0.0f, 0.0f }; // 回転角の最小値
 	Vector3 maxRotate = { 0.0f, 0.0f, 0.0f }; // 回転角の最大値
+	Vector3 rotateVelocity = { 0.0f, 0.0f, 0.0f };
 	Vector3 minRotateVelocity = { 0.0f, 0.0f, 0.0f }; // 回転速度の最小値
 	Vector3 maxRotateVelocity = { 0.0f, 0.0f, 0.0f }; // 回転速度の最大値
 	SpawnShape shape = SpawnShape::Box; // 範囲タイプ
@@ -151,6 +157,15 @@ struct ParticleConfig {
 	Vector3 boxMax = { 0.5f,  0.5f,  0.5f }; // 箱の最大値
 	float sphereRadius = 1.0f; // 球の半径
 	bool isKeepScale = false;
+	bool isKeepColor = false;
+	bool isKeepVelocity = false;
+	bool isKeepRotate = false;
+	bool isKeepRotateVelocity = false;
+	bool isKeepStartScale = false;
+	bool isKeepEndScale = false;
+	bool isKeepStartColor = false;
+	bool isKeepEndColor = false;
+	bool isKeepLifeTime = false;
 };
 
 struct ParticleForGPU

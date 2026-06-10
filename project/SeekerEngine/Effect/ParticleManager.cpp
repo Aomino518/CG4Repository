@@ -89,11 +89,11 @@ void ParticleManager::Update(CameraManager* cameraManager)
 			particleIterator->color = color;
 
 			// スケールの補間
-			if (!particleIterator->isKeepScale) {
+			if (particleIterator->isKeepScale) {
+				particleIterator->transform.scale = particleIterator->startScale;
+			} else {
 				Vector3 scale = particleIterator->startScale * (1.0f - t) + particleIterator->endScale * t;
 				particleIterator->transform.scale = scale;
-			} else {
-				particleIterator->transform.scale = particleIterator->startScale;
 			}
 
 			Matrix4x4 worldMatrix = CalculateWorldMatrix(*particleIterator, name, isDebug);
@@ -170,6 +170,7 @@ void ParticleManager::Emit(const std::string name,
 		Particle particle{};
 		Vector3 spawnOffset{};
 
+		// 生成範囲は箱か球か
 		if (config.shape == SpawnShape::Box) {
 			spawnOffset = RandomRange(randomEngine_, config.boxMin, config.boxMax);
 		}
@@ -183,21 +184,70 @@ void ParticleManager::Emit(const std::string name,
 			spawnOffset.z = r * cosf(phi);
 		}
 
-		Vector3 initialScale = RandomRange(randomEngine_, config.startScaleMin, config.startScaleMax);
 		particle.transform.translate = { position + spawnOffset };
-		particle.transform.rotate = RandomRange(randomEngine_, config.minRotate, config.maxRotate);
-		particle.transform.scale = initialScale;
-		particle.rotateVelocity = RandomRange(randomEngine_, config.minRotateVelocity, config.maxRotateVelocity);
-		particle.velocity = RandomRange(randomEngine_, config.minVelocity, config.maxVelocity);
-		//particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_), 1.0f };
-		particle.startColor = RandomRange(randomEngine_, config.startColorMin, config.startColorMax);
-		particle.endColor = RandomRange(randomEngine_, config.endColorMin, config.endColorMax);
+
+		// 回転角は固定かランダムか
+		if (config.isKeepRotate) {
+			particle.transform.rotate = config.rotate;
+		} else {
+			particle.transform.rotate = RandomRange(randomEngine_, config.minRotate, config.maxRotate);	
+		}
+
+		// 回転速度が固定かランダムか
+		if (config.isKeepRotateVelocity) {
+			particle.rotateVelocity = config.rotateVelocity;
+		} else {
+			particle.rotateVelocity = RandomRange(randomEngine_, config.minRotateVelocity, config.maxRotateVelocity);
+		}
+
+		// 速度が固定かランダムか
+		if (config.isKeepVelocity) {
+			particle.velocity = config.velocity;
+		} else {
+			particle.velocity = RandomRange(randomEngine_, config.minVelocity, config.maxVelocity);
+		}
+
+		// 初期色を固定かランダムか
+		if (config.isKeepStartColor) {
+			particle.startColor = config.startColor;
+		} else {
+			particle.startColor = RandomRange(randomEngine_, config.startColorMin, config.startColorMax);
+		}
+
+		// 終了色を固定かランダムか
+		if (config.isKeepEndColor) {
+			particle.endColor = config.endColor;
+		} else {
+			particle.endColor = RandomRange(randomEngine_, config.endColorMin, config.endColorMax);
+		}
+
 		particle.color = particle.startColor;
-		particle.isKeepScale = config.isKeepScale;
-		particle.startScale = initialScale;
-		particle.endScale = RandomRange(randomEngine_, config.endScaleMin, config.endScaleMax);
-		particle.lifeTime = RandomRange(randomEngine_, config.minLifeTime, config.maxLifeTime);
+		
+		// 初期スケールを固定かランダムか
+		if (config.isKeepStartScale) {
+			particle.startScale = config.startScale;
+		} else {
+			particle.startScale = RandomRange(randomEngine_, config.startScaleMin, config.startScaleMax);;
+		}
+
+		particle.transform.scale = particle.startScale;
+
+		// 終了スケールを固定かランダムか
+		if (config.isKeepEndScale) {
+			particle.endScale = config.endScale;
+		} else {
+			particle.endScale = RandomRange(randomEngine_, config.endScaleMin, config.endScaleMax);
+		}
+
+		// 生存時間を固定かランダムか
+		if (config.isKeepLifeTime) {
+			particle.lifeTime = config.lifeTime;
+		} else {
+			particle.lifeTime = RandomRange(randomEngine_, config.minLifeTime, config.maxLifeTime);
+		}
+
 		particle.currentTime = 0.0f;
+		particle.isKeepScale = config.isKeepScale;
 
 		group.particles.push_back(particle);
 	}

@@ -142,12 +142,14 @@ json ParticleEmitter::SaveToJson() const {
         {"maxRotateVelocity", ToJson(config_.maxRotateVelocity)},
 
         // Color
+        {"isKeepColor", config_.isKeepColor},
         {"startColorMin", ToJson(config_.startColorMin)},
         {"startColorMax", ToJson(config_.startColorMax)},
         {"endColorMin", ToJson(config_.endColorMin)},
         {"endColorMax", ToJson(config_.endColorMax)},
 
         // Scale
+        {"isKeepScale", config_.isKeepScale},
         {"startScaleMin", ToJson(config_.startScaleMin)},
         {"startScaleMax", ToJson(config_.startScaleMax)},
         {"endScaleMin", ToJson(config_.endScaleMin)},
@@ -228,6 +230,10 @@ void ParticleEmitter::LoadFromJson(const json& j) {
     }
 
     // Color
+    if (j.contains("isKeepColor")) {
+        config_.isKeepColor = j.value("isKeepColor", config_.isKeepColor);
+    }
+
     if (j.contains("startColorMin")) {
         FromJson(j.at("startColorMin"), config_.startColorMin);
     }
@@ -245,6 +251,12 @@ void ParticleEmitter::LoadFromJson(const json& j) {
     }
 
     // Scale
+    if (j.contains("isKeepScale")) {
+        config_.isKeepScale = j.value("isKeepScale", config_.isKeepScale);
+    } else if (j.contains("isKeepEndScale")) {
+        config_.isKeepScale = j.value("isKeepEndScale", config_.isKeepScale);
+    }
+
     if (j.contains("startScaleMin")) {
         FromJson(j.at("startScaleMin"), config_.startScaleMin);
     }
