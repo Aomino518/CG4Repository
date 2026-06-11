@@ -12,6 +12,11 @@
 #include "BlendStateUtils.h"
 #include "AccelerationField.h"
 
+enum class ParticleModelType {
+    Plane,
+    Ring
+};
+
 struct ParticleGroup {
     // テクスチャ関連
     uint32_t textureIndex = 0;
@@ -27,6 +32,7 @@ struct ParticleGroup {
     bool useBillboard_ = false;
     // ブレンドモード
     BlendMode blendMode_ = kBlendModeNone;
+    ParticleModelType modelType_ = ParticleModelType::Plane;
 };
 
 class Graphics;
@@ -50,6 +56,8 @@ public:
 
     void SetBlendMode(const std::string& name, BlendMode mode);
 
+    void SetModelType(const std::string& name, ParticleModelType modelType);
+
     void RebuildPso();
 
     // パーティクルグループの生成
@@ -69,6 +77,7 @@ public:
     ID3D12PipelineState* GetPso(BlendMode mode);
     uint32_t GetTotalParticleCount() const;
     uint32_t GetParticleGroupCount() const;
+    ParticleModelType GetModelType(const std::string& name);
     
     // Setter関数
     void SetUseBillboard(const std::string& name, bool useBillboard) { this->particleGroups[name].useBillboard_ = useBillboard; }
@@ -98,6 +107,8 @@ private:
     Vector3 RandomRange(std::mt19937& engine, const Vector3& min, const Vector3& max);
     Vector4 RandomRange(std::mt19937& engine, const Vector4& min, const Vector4& max);
 
+    void CreateRingModel();
+
     // メンバ変数
     Graphics* graphics_ = nullptr;
     Camera* camera_ = nullptr;
@@ -110,7 +121,7 @@ private:
     std::mt19937 randomEngine_;
     static constexpr uint32_t kNumMaxInstance_ = 2000;
     const float kDeltaTime = 1.0f / 60.0f;
-   
+
     //===========================
     // グラフィックパイプラインの変数
     //===========================
@@ -129,10 +140,18 @@ private:
     std::unordered_map<BlendMode, Microsoft::WRL::ComPtr<ID3D12PipelineState>> psoCache_;
 
     // リソース
-    Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer_;
-    Microsoft::WRL::ComPtr<ID3D12Resource> indexBuffer_;
-    D3D12_VERTEX_BUFFER_VIEW vbView_{};
-    D3D12_INDEX_BUFFER_VIEW  ibView_{};
+
+    // Plane用
+    Microsoft::WRL::ComPtr<ID3D12Resource> vertexBufferPlane_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> indexBufferPlane_;
+    D3D12_VERTEX_BUFFER_VIEW vbViewPlane_{};
+    D3D12_INDEX_BUFFER_VIEW  ibViewPlane_{};
+
+    // Ring用
+    Microsoft::WRL::ComPtr<ID3D12Resource> vertexBufferRing_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> indexBufferRing_;
+    D3D12_VERTEX_BUFFER_VIEW vbViewRing_{};
+    D3D12_INDEX_BUFFER_VIEW  ibViewRing_{};
 
     Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
     Material* materialData = nullptr;

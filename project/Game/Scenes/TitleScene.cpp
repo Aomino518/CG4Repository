@@ -8,6 +8,7 @@ void TitleScene::Init()
 
     tHTex_ = TextureManager::GetInstance()->Load("./resources/rostock_laage_airport_4k.dds");
     tHCircle_ = TextureManager::GetInstance()->Load("./resources/sprites/circle2.png");
+    tHGradationLine_ = TextureManager::GetInstance()->Load("./resources/sprites/gradationLine.png");
     Skybox::GetInstance()->SetTexture(tHTex_);
 
     entity_ = std::make_unique<Entity3D>();
@@ -30,6 +31,11 @@ void TitleScene::Init()
     ParticleManager::GetInstance()->CreateParticleGroup("HitEffect", tHCircle_);
     EmitterManager::GetInstance()->CreateEmitter("HitEffect", hitEffectConfig);
     Editor::GetInstance()->RegisterParticle("HitEffect");
+
+    /*ParticleConfig hitRingEffectConfig;
+    ParticleManager::GetInstance()->CreateParticleGroup("RingEffect", tHGradationLine_);
+    EmitterManager::GetInstance()->CreateEmitter("RingEffect", hitRingEffectConfig);
+    Editor::GetInstance()->RegisterParticle("RingEffect");*/
 
     ImGuiManager::GetInstance()->LoadScenesJson();
 }
@@ -78,5 +84,7 @@ void TitleScene::Shutdown()
 {
     ParticleManager::GetInstance()->RemoveParticleGroup("HitEffect");
     EmitterManager::GetInstance()->RemoveEmitter("HitEffect");
+    /*ParticleManager::GetInstance()->RemoveParticleGroup("RingEffect");
+    EmitterManager::GetInstance()->RemoveEmitter("RingEffect");*/
     Editor::GetInstance()->Clear();
 }

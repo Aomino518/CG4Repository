@@ -29,6 +29,7 @@ void ParticleManager::Init(DxcCompiler& dxcCompiler, ID3D12RootSignature* rootSi
 	CreateGraphicsPipeline(dxcCompiler);
 	// 板ポリの生成
 	CreatePlaneModel();
+	CreateRingModel();
 
 	cmdList_ = Graphics::GetCmdList();
 }
@@ -120,8 +121,18 @@ void ParticleManager::Draw()
 		cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		SrvManager::GetInstance()->PreDraw();
-		cmdList_->IASetVertexBuffers(0, 1, &vbView_);
-		cmdList_->IASetIndexBuffer(&ibView_);
+
+		UINT indexCount = 6;
+		if (group.modelType_ == ParticleModelType::Plane) {
+			cmdList_->IASetVertexBuffers(0, 1, &vbViewPlane_);
+			cmdList_->IASetIndexBuffer(&ibViewPlane_);
+			indexCount = 6;
+		} else if(group.modelType_ == ParticleModelType::Ring) {
+			cmdList_->IASetVertexBuffers(0, 1, &vbViewRing_);
+			cmdList_->IASetIndexBuffer(&ibViewRing_);
+			indexCount = 32 * 6;
+		}
+
 		cmdList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 		if (group.instanceCount == 0) {
@@ -149,12 +160,14 @@ void ParticleManager::Shutdown()
 	psBlob_.Reset();
 	psoCache_.clear();
 	materialResource.Reset();
-	vertexBuffer_.Reset();
-	indexBuffer_.Reset();
+	vertexBufferPlane_.Reset();
+	indexBufferPlane_.Reset();
+	vertexBufferRing_.Reset();
+	indexBufferRing_.Reset();
 	Logger::Write("ParticleManager Shutdown");
 }
 
-void ParticleManager::Emit(const std::string name, 
+void ParticleManager::Emit(const std::string name,
 	const ParticleConfig& config,
 	const Vector3& position,
 	uint32_t count)
@@ -173,8 +186,7 @@ void ParticleManager::Emit(const std::string name,
 		// 生成範囲は箱か球か
 		if (config.shape == SpawnShape::Box) {
 			spawnOffset = RandomRange(randomEngine_, config.boxMin, config.boxMax);
-		}
-		else if (config.shape == SpawnShape::Sphere) {
+		} else if (config.shape == SpawnShape::Sphere) {
 			float theta = RandomRange(randomEngine_, 0.0f, 2.0f * std::numbers::pi_v<float>);
 			float phi = RandomRange(randomEngine_, 0.0f, std::numbers::pi_v<float>);
 			float r = RandomRange(randomEngine_, 0.0f, config.sphereRadius);
@@ -190,7 +202,7 @@ void ParticleManager::Emit(const std::string name,
 		if (config.isKeepRotate) {
 			particle.transform.rotate = config.rotate;
 		} else {
-			particle.transform.rotate = RandomRange(randomEngine_, config.minRotate, config.maxRotate);	
+			particle.transform.rotate = RandomRange(randomEngine_, config.minRotate, config.maxRotate);
 		}
 
 		// 回転速度が固定かランダムか
@@ -222,7 +234,7 @@ void ParticleManager::Emit(const std::string name,
 		}
 
 		particle.color = particle.startColor;
-		
+
 		// 初期スケールを固定かランダムか
 		if (config.isKeepStartScale) {
 			particle.startScale = config.startScale;
@@ -262,6 +274,17 @@ void ParticleManager::SetBlendMode(const std::string& name, BlendMode mode)
 	}
 
 	it->second.blendMode_ = mode;
+}
+
+void ParticleManager::SetModelType(const std::string& name, ParticleModelType modelType)
+{
+	auto it = particleGroups.find(name);
+	if (it == particleGroups.end()) {
+		Logger::Write(Logger::LogLevel::Warning, name + " is not Particle");
+		return;
+	}
+
+	it->second.modelType_ = modelType;
 }
 
 void ParticleManager::RebuildPso()
@@ -318,7 +341,7 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const uint32_
 	group.instanceResource = CreateBufferResource(Graphics::GetDevice(), bufferSize);
 	group.instanceData = nullptr;
 	group.instanceResource->Map(0, nullptr, reinterpret_cast<void**>(&group.instanceData));
-	
+
 	for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {
 		group.instanceData[i].WVP = MakeIdentity4x4();
 		group.instanceData[i].World = MakeIdentity4x4();
@@ -400,7 +423,7 @@ Matrix4x4 ParticleManager::CalculateWorldMatrix(const Particle& particle, const 
 		} else {
 			return scaleMatrix * rotateMatrix * translateMatrix;
 		}
-	}else {
+	} else {
 		if (particleGroups[name].useBillboard_ && camera_) {
 			const Matrix4x4& billBoardMatrix = camera_->GetBillboardMatrix();
 			return scaleMatrix * rotateMatrix * billBoardMatrix * translateMatrix;
@@ -453,6 +476,69 @@ Vector4 ParticleManager::RandomRange(std::mt19937& engine, const Vector4& min, c
 		RandomRange(engine, min.z, max.z),
 		RandomRange(engine, min.w, max.w)
 	};
+}
+
+void ParticleManager::CreateRingModel()
+{
+	const uint32_t kRingDivide = 32;
+	const float kOuterRadius = 1.0f;
+	const float kInnerRadius = 0.2f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
+
+	std::vector<VertexData> vertices(kRingDivide * 4);
+	std::vector<uint32_t> indices(kRingDivide * 6);
+
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float u = float(index) / float(kRingDivide);
+		float uNext = float(index + 1) / float(kRingDivide);
+
+		uint32_t vIdx = index * 4;
+		// positionとuv。
+		vertices[vIdx] = { {-sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f}, {u, 0.0f} };
+		vertices[vIdx + 1] = { {-sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f}, {uNext, 0.0f} };
+		vertices[vIdx + 2] = { {-sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f}, {u, 1.0f} };
+		vertices[vIdx + 3] = { {-sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0, 1.0f}, {uNext, 1.0f} };
+
+		uint32_t iIdx = index * 6;
+		indices[iIdx] = vIdx;
+		indices[iIdx + 1] = vIdx + 1;
+		indices[iIdx + 2] = vIdx + 2;
+		indices[iIdx + 3] = vIdx + 1;
+		indices[iIdx + 4] = vIdx + 3;
+		indices[iIdx + 5] = vIdx + 2;
+	}
+
+	size_t vertexBufferSize = sizeof(VertexData) * vertices.size();
+
+	vertexBufferRing_ = CreateBufferResource(Graphics::GetDevice(), vertexBufferSize);
+
+	// 書き込み
+	VertexData* vbPtr = nullptr;
+	vertexBufferRing_->Map(0, nullptr, reinterpret_cast<void**>(&vbPtr));
+	memcpy(vbPtr, vertices.data(), vertexBufferSize);
+	vertexBufferRing_->Unmap(0, nullptr);
+
+	vbViewRing_.BufferLocation = vertexBufferRing_->GetGPUVirtualAddress();
+	vbViewRing_.SizeInBytes = (UINT)vertexBufferSize;
+	vbViewRing_.StrideInBytes = sizeof(VertexData);
+
+	// インデックスバッファ生成
+	size_t indexBufferSize = sizeof(uint32_t) * indices.size();
+
+	indexBufferRing_ = CreateBufferResource(Graphics::GetDevice(), indexBufferSize);
+
+	uint32_t* ibPtr = nullptr;
+	indexBufferRing_->Map(0, nullptr, reinterpret_cast<void**>(&ibPtr));
+	memcpy(ibPtr, indices.data(), indexBufferSize);
+	indexBufferRing_->Unmap(0, nullptr);
+
+	ibViewPlane_.BufferLocation = indexBufferRing_->GetGPUVirtualAddress();
+	ibViewPlane_.SizeInBytes = (UINT)indexBufferSize;
+	ibViewPlane_.Format = DXGI_FORMAT_R32_UINT;
 }
 
 // グラフィックパイプラインを生成する関数
@@ -519,31 +605,31 @@ void ParticleManager::CreatePlaneModel()
 
 	size_t vertexBufferSize = sizeof(vertices);
 
-	vertexBuffer_ = CreateBufferResource(Graphics::GetDevice(), vertexBufferSize);
+	vertexBufferPlane_ = CreateBufferResource(Graphics::GetDevice(), vertexBufferSize);
 
 	// 書き込み
 	VertexData* vbPtr = nullptr;
-	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vbPtr));
+	vertexBufferPlane_->Map(0, nullptr, reinterpret_cast<void**>(&vbPtr));
 	memcpy(vbPtr, vertices, vertexBufferSize);
-	vertexBuffer_->Unmap(0, nullptr);
+	vertexBufferPlane_->Unmap(0, nullptr);
 
-	vbView_.BufferLocation = vertexBuffer_->GetGPUVirtualAddress();
-	vbView_.SizeInBytes = (UINT)vertexBufferSize;
-	vbView_.StrideInBytes = sizeof(VertexData);
+	vbViewPlane_.BufferLocation = vertexBufferPlane_->GetGPUVirtualAddress();
+	vbViewPlane_.SizeInBytes = (UINT)vertexBufferSize;
+	vbViewPlane_.StrideInBytes = sizeof(VertexData);
 
 	// インデックスバッファ生成
 	size_t indexBufferSize = sizeof(indices);
 
-	indexBuffer_ = CreateBufferResource(Graphics::GetDevice(), indexBufferSize);
+	indexBufferPlane_ = CreateBufferResource(Graphics::GetDevice(), indexBufferSize);
 
 	uint32_t* ibPtr = nullptr;
-	indexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&ibPtr));
+	indexBufferPlane_->Map(0, nullptr, reinterpret_cast<void**>(&ibPtr));
 	memcpy(ibPtr, indices, indexBufferSize);
-	indexBuffer_->Unmap(0, nullptr);
+	indexBufferPlane_->Unmap(0, nullptr);
 
-	ibView_.BufferLocation = indexBuffer_->GetGPUVirtualAddress();
-	ibView_.SizeInBytes = (UINT)indexBufferSize;
-	ibView_.Format = DXGI_FORMAT_R32_UINT;
+	ibViewPlane_.BufferLocation = indexBufferPlane_->GetGPUVirtualAddress();
+	ibViewPlane_.SizeInBytes = (UINT)indexBufferSize;
+	ibViewPlane_.Format = DXGI_FORMAT_R32_UINT;
 
 	Logger::Write("Particle Plane Model Generated");
 }
@@ -578,13 +664,21 @@ uint32_t ParticleManager::GetParticleGroupCount() const
 	return static_cast<uint32_t>(particleGroups.size());;
 }
 
+ParticleModelType ParticleManager::GetModelType(const std::string& name)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end() && "Particle group not found");
+	return it->second.modelType_;
+}
+
 json ParticleManager::SaveToJson(const std::string& name) const {
 	auto it = particleGroups.find(name);
 	assert(it != particleGroups.end() && "Particle group not found");
 
 	return json{
 		{"blendMode", it->second.blendMode_},
-		{"billboard", it->second.useBillboard_}
+		{"billboard", it->second.useBillboard_},
+		{"modelType", it->second.modelType_}
 	};
 }
 
@@ -598,5 +692,9 @@ void ParticleManager::LoadFromJson(const json& j, const std::string& name) {
 
 	if (j.contains("billboard")) {
 		it->second.useBillboard_ = static_cast<bool>(j.value("billboard", it->second.useBillboard_));
+	}
+
+	if (j.contains("modelType")) {
+		it->second.modelType_ = static_cast<ParticleModelType>(j.value("modelType", it->second.modelType_));
 	}
 }
