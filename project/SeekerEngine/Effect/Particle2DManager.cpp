@@ -206,7 +206,7 @@ void Particle2DManager::Emit(const std::string name, const ParticleConfig& confi
 		particle.rotateVelocity.y = 0.0f;
 		particle.velocity = RandomRange(randomEngine_, config.minVelocity, config.maxVelocity);
 		particle.velocity.z = 0.0f;
-		particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_), 1.0f };
+		particle.color = { RandomRange(randomEngine_, 0.0f, 1.0f), RandomRange(randomEngine_, 0.0f, 1.0f), RandomRange(randomEngine_, 0.0f, 1.0f), 1.0f };
 		particle.startColor = RandomRange(randomEngine_, config.startColorMin, config.startColorMax);
 		particle.endColor = RandomRange(randomEngine_, config.endColorMin, config.endColorMax);
 		particle.color = particle.startColor;

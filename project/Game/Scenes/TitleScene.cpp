@@ -27,15 +27,14 @@ void TitleScene::Init()
     modelTerrain_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("terrain", modelTerrain_.get());
 
-    ParticleConfig hitEffectConfig;
     ParticleManager::GetInstance()->CreateParticleGroup("HitEffect", tHCircle_);
-    EmitterManager::GetInstance()->CreateEmitter("HitEffect", hitEffectConfig);
+    EmitterManager::GetInstance()->CreateEmitter("HitEffect", hitEffectConfig_);
     Editor::GetInstance()->RegisterParticle("HitEffect");
 
-    /*ParticleConfig hitRingEffectConfig;
     ParticleManager::GetInstance()->CreateParticleGroup("RingEffect", tHGradationLine_);
-    EmitterManager::GetInstance()->CreateEmitter("RingEffect", hitRingEffectConfig);
-    Editor::GetInstance()->RegisterParticle("RingEffect");*/
+    ParticleManager::GetInstance()->SetModelType("RingEffect", ParticleModelType::Ring);
+    EmitterManager::GetInstance()->CreateEmitter("RingEffect", hitRingEffectConfig_);
+    Editor::GetInstance()->RegisterParticle("RingEffect");
 
     ImGuiManager::GetInstance()->LoadScenesJson();
 }
@@ -50,6 +49,17 @@ void TitleScene::Update()
 
     if (Input::GetInstance()->IsTrigger(DIK_SPACE)) {
         SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+    }
+
+    if (Input::GetInstance()->IsTrigger(DIK_R)) {
+        auto hitEffectTransform = EmitterManager::GetInstance()->GetEmitter("HitEffect")->GetTransform();
+        auto hitEffectCount = EmitterManager::GetInstance()->GetEmitter("HitEffect")->GetCount();
+        hitEffectConfig_ = EmitterManager::GetInstance()->GetEmitter("HitEffect")->GetConfig();
+        auto ringEffectTransform = EmitterManager::GetInstance()->GetEmitter("RingEffect")->GetTransform();
+        auto ringEffectCount = EmitterManager::GetInstance()->GetEmitter("RingEffect")->GetCount();
+        hitRingEffectConfig_ = EmitterManager::GetInstance()->GetEmitter("RingEffect")->GetConfig();
+        ParticleManager::GetInstance()->Emit("HitEffect", hitEffectConfig_, hitEffectTransform.translate, hitEffectCount);
+        ParticleManager::GetInstance()->Emit("RingEffect", hitRingEffectConfig_, ringEffectTransform.translate, ringEffectCount);
     }
 
     Skybox::GetInstance()->Update();
@@ -84,7 +94,7 @@ void TitleScene::Shutdown()
 {
     ParticleManager::GetInstance()->RemoveParticleGroup("HitEffect");
     EmitterManager::GetInstance()->RemoveEmitter("HitEffect");
-    /*ParticleManager::GetInstance()->RemoveParticleGroup("RingEffect");
-    EmitterManager::GetInstance()->RemoveEmitter("RingEffect");*/
+    ParticleManager::GetInstance()->RemoveParticleGroup("RingEffect");
+    EmitterManager::GetInstance()->RemoveEmitter("RingEffect");
     Editor::GetInstance()->Clear();
 }

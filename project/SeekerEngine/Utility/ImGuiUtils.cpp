@@ -134,7 +134,7 @@ bool ImGuiUtils::DrawEditParticleConfig(ParticleConfig& config)
 	// Color
 	// =========================
 	if (ImGui::CollapsingHeader("Color", ImGuiTreeNodeFlags_DefaultOpen)) {
-		changed |= ImGui::Checkbox("Keep End Scale", &config.isKeepColor);
+		changed |= ImGui::Checkbox("Keep Color", &config.isKeepColor);
 
 		if (config.isKeepColor) {
 			changed |= ImGui::ColorEdit4("Start Color Min", &config.startColorMin.x);

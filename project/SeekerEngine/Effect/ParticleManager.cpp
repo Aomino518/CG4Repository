@@ -141,7 +141,7 @@ void ParticleManager::Draw()
 
 		cmdList_->SetGraphicsRootDescriptorTable(2, group.textureSrvHandle);
 		SrvManager::GetInstance()->SetGraphicsRootDescriptorTable(3, group.srvIndexCount);
-		cmdList_->DrawIndexedInstanced(6, group.instanceCount, 0, 0, 0);
+		cmdList_->DrawIndexedInstanced(indexCount, group.instanceCount, 0, 0, 0);
 	}
 }
 
@@ -172,8 +172,6 @@ void ParticleManager::Emit(const std::string name,
 	const Vector3& position,
 	uint32_t count)
 {
-	//std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-
 	auto it = particleGroups.find(name);
 	assert(it != particleGroups.end());
 
@@ -536,9 +534,9 @@ void ParticleManager::CreateRingModel()
 	memcpy(ibPtr, indices.data(), indexBufferSize);
 	indexBufferRing_->Unmap(0, nullptr);
 
-	ibViewPlane_.BufferLocation = indexBufferRing_->GetGPUVirtualAddress();
-	ibViewPlane_.SizeInBytes = (UINT)indexBufferSize;
-	ibViewPlane_.Format = DXGI_FORMAT_R32_UINT;
+	ibViewRing_.BufferLocation = indexBufferRing_->GetGPUVirtualAddress();
+	ibViewRing_.SizeInBytes = (UINT)indexBufferSize;
+	ibViewRing_.Format = DXGI_FORMAT_R32_UINT;
 }
 
 // グラフィックパイプラインを生成する関数

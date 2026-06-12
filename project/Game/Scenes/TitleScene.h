@@ -25,4 +25,8 @@ private:
 	uint32_t tHTex_;
 	uint32_t tHCircle_;
 	uint32_t tHGradationLine_;
+
+	// パーティクル設定
+	ParticleConfig hitEffectConfig_;
+	ParticleConfig hitRingEffectConfig_;
 };
