@@ -583,11 +583,7 @@ void ParticleManager::CreateCylinderModel()
 		vertices[vIdx + 1] = { {-sinNext * kTopRadius, halfHeight, cosNext * kTopRadius, 1.0f}, {uNext, 1.0f}, {-sinNext, 0.0f, cosNext } };
 		vertices[vIdx + 2] = { {-sin * kBottomRadius, -halfHeight, cos * kBottomRadius, 1.0f}, {u, 0.0f}, {-sin, 0.0f, cos } };
 		vertices[vIdx + 3] = { {-sinNext * kBottomRadius, -halfHeight, cosNext * kBottomRadius, 1.0f}, {uNext, 0.0f}, {-sinNext, 0.0f, cosNext } };
-		//{{-sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f}, {u, 1.0f}, {-sin, 0.0f, cos} }
-		//{{-sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f}, {u, 1.0f}, {-sin, 0.0f, cos} }
-		//{{-sinNext * kTopRadius, kHeight, cosNext * kTopRadius, 1.0f}, {uNext, 0.0f}, {-sinNext, 0.0f, cosNext} }
-		//{{-sinNext * kBottomRadius, 0.0f, cosNext * kBottomRadius, 1.0f}, {uNext, 1.0f}, {-sinNext, 0.0f, cosNext }}
-
+		
 		uint32_t iIdx = index * 6;
 		indices[iIdx] = vIdx;
 		indices[iIdx + 1] = vIdx + 1;
