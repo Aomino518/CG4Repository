@@ -14,7 +14,8 @@
 
 enum class ParticleModelType {
     Plane,
-    Ring
+    Ring,
+    Cylinder
 };
 
 struct ParticleGroup {
@@ -33,6 +34,11 @@ struct ParticleGroup {
     // ブレンドモード
     BlendMode blendMode_ = kBlendModeNone;
     ParticleModelType modelType_ = ParticleModelType::Plane;
+    Vector2 uvScrollSpeed = { 0.0f, 0.0f };
+    Vector2 uvOffset = { 0.0f, 0.0f };
+    Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
+    Material* materialData = nullptr;
+    float alphaReference = 0.0f;
 };
 
 class Graphics;
@@ -81,7 +87,7 @@ public:
     
     // Setter関数
     void SetUseBillboard(const std::string& name, bool useBillboard) { this->particleGroups[name].useBillboard_ = useBillboard; }
-    
+   
     // Json保存と読み込み
     json SaveToJson(const std::string& name) const;
     void LoadFromJson(const json& j, const std::string& name);
@@ -108,6 +114,7 @@ private:
     Vector4 RandomRange(std::mt19937& engine, const Vector4& min, const Vector4& max);
 
     void CreateRingModel();
+    void CreateCylinderModel();
 
     // メンバ変数
     Graphics* graphics_ = nullptr;
@@ -153,7 +160,11 @@ private:
     D3D12_VERTEX_BUFFER_VIEW vbViewRing_{};
     D3D12_INDEX_BUFFER_VIEW  ibViewRing_{};
 
-    Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
-    Material* materialData = nullptr;
+    // Cylinder用
+    Microsoft::WRL::ComPtr<ID3D12Resource> vertexBufferCylinder_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> indexBufferCylinder_;
+    D3D12_VERTEX_BUFFER_VIEW vbViewCylinder_{};
+    D3D12_INDEX_BUFFER_VIEW  ibViewCylinder_{};
+
 };
 

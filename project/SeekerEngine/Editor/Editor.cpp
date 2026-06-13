@@ -98,8 +98,9 @@ void Editor::SaveSceneJson(const std::string& path) const
 		json particleJson = particle->SaveToJson();
 		json managerJson = ParticleManager::GetInstance()->SaveToJson(name);
 
-		particleJson["blendMode"] = managerJson["blendMode"];
-		particleJson["billboard"] = managerJson["billboard"];
+		for (auto& [key, value] : managerJson.items()) {
+			particleJson[key] = value;
+		}
 
 		root["particles"][name] = particleJson;
 	}

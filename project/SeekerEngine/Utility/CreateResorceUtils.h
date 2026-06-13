@@ -27,11 +27,12 @@ struct VertexData {
 struct Material {
 	Vector4 color;
 	uint32_t enableLighting;
-	float padding0[3];
+	float padding0[3]; // 12byte
 	Matrix4x4 uvTransform;
 	float shininess;
 	float environmentColor;
-	float padding1[2];
+	float padding1[1];
+	float alphaReference = 0.0f;
 };
 
 struct TransformationMatrix {

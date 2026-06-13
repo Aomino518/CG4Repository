@@ -29,4 +29,5 @@ private:
 	// パーティクル設定
 	ParticleConfig hitEffectConfig_;
 	ParticleConfig hitRingEffectConfig_;
+	ParticleConfig cylinderEffectConfig_;
 };

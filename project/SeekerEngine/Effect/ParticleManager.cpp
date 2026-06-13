@@ -17,19 +17,12 @@ void ParticleManager::Init(DxcCompiler& dxcCompiler, ID3D12RootSignature* rootSi
 	std::random_device seed;
 	randomEngine_ = std::mt19937(seed());
 
-	// マテリアルリソースを作る
-	materialResource = CreateBufferResource(Graphics::GetDevice(), sizeof(Material));
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	// SpriteはLightingしないのでfalseを設定する
-	materialData->color = Vector4(1, 1, 1, 1);
-	materialData->enableLighting = false;
-	materialData->uvTransform = MakeIdentity4x4();
-
 	// グラフィックパイプラインを生成
 	CreateGraphicsPipeline(dxcCompiler);
 	// 板ポリの生成
 	CreatePlaneModel();
 	CreateRingModel();
+	CreateCylinderModel();
 
 	cmdList_ = Graphics::GetCmdList();
 }
@@ -44,6 +37,17 @@ void ParticleManager::Update(CameraManager* cameraManager)
 
 	for (auto& [name, group] : particleGroups) {
 		group.instanceCount = 0;
+
+		// UVスクロール
+		group.uvOffset.x += group.uvScrollSpeed.x * kDeltaTime;
+		group.uvOffset.y += group.uvScrollSpeed.y * kDeltaTime;
+		group.uvOffset.x = std::fmod(group.uvOffset.x, 1.0f);
+		group.uvOffset.y = std::fmod(group.uvOffset.y, 1.0f);
+
+		Matrix4x4 uvTranslation = MakeTranslateMatrix({ group.uvOffset.x, group.uvOffset.y, 0.0f });
+		group.materialData->uvTransform = uvTranslation;
+		group.materialData->alphaReference = group.alphaReference;
+
 		for (auto particleIterator = group.particles.begin(); particleIterator != group.particles.end(); ) {
 			// 移動と時間の更新
 			if (particleIterator->lifeTime <= particleIterator->currentTime) {
@@ -131,9 +135,13 @@ void ParticleManager::Draw()
 			cmdList_->IASetVertexBuffers(0, 1, &vbViewRing_);
 			cmdList_->IASetIndexBuffer(&ibViewRing_);
 			indexCount = 32 * 6;
+		} else if (group.modelType_ == ParticleModelType::Cylinder) {
+			cmdList_->IASetVertexBuffers(0, 1, &vbViewCylinder_);
+			cmdList_->IASetIndexBuffer(&ibViewCylinder_);
+			indexCount = 32 * 6;
 		}
 
-		cmdList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		cmdList_->SetGraphicsRootConstantBufferView(0, group.materialResource->GetGPUVirtualAddress());
 
 		if (group.instanceCount == 0) {
 			continue;
@@ -159,11 +167,12 @@ void ParticleManager::Shutdown()
 	vsBlob_.Reset();
 	psBlob_.Reset();
 	psoCache_.clear();
-	materialResource.Reset();
 	vertexBufferPlane_.Reset();
 	indexBufferPlane_.Reset();
 	vertexBufferRing_.Reset();
 	indexBufferRing_.Reset();
+	vertexBufferCylinder_.Reset();
+	indexBufferCylinder_.Reset();
 	Logger::Write("ParticleManager Shutdown");
 }
 
@@ -339,6 +348,15 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const uint32_
 	group.instanceResource = CreateBufferResource(Graphics::GetDevice(), bufferSize);
 	group.instanceData = nullptr;
 	group.instanceResource->Map(0, nullptr, reinterpret_cast<void**>(&group.instanceData));
+	// マテリアルリソースを作る
+	group.materialResource = CreateBufferResource(Graphics::GetDevice(), sizeof(Material));
+	group.materialResource->Map(0, nullptr, reinterpret_cast<void**>(&group.materialData));
+	// SpriteはLightingしないのでfalseを設定する
+	group.materialData->color = Vector4(1, 1, 1, 1);
+	group.materialData->enableLighting = false;
+	group.materialData->uvTransform = MakeIdentity4x4();
+	group.materialData->alphaReference = 0.0f;
+
 
 	for (uint32_t i = 0; i < kNumMaxInstance_; ++i) {
 		group.instanceData[i].WVP = MakeIdentity4x4();
@@ -539,6 +557,76 @@ void ParticleManager::CreateRingModel()
 	ibViewRing_.Format = DXGI_FORMAT_R32_UINT;
 }
 
+void ParticleManager::CreateCylinderModel()
+{
+	const uint32_t kCylinderDivide = 32;
+	const float kTopRadius = 1.0f;
+	const float kBottomRadius = 1.0f;
+	const float kHeight = 3.0f;
+	const float halfHeight = kHeight * 0.5f;
+	const float radiusPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide);
+
+	std::vector<VertexData> vertices(kCylinderDivide * 4);
+	std::vector<uint32_t> indices(kCylinderDivide * 6);
+
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+		float sin = std::sin(index * radiusPerDivide);
+		float cos = std::cos(index * radiusPerDivide);
+		float sinNext = std::sin((index + 1) * radiusPerDivide);
+		float cosNext = std::cos((index + 1) * radiusPerDivide);
+		float u = float(index) / float(kCylinderDivide);
+		float uNext = float(index + 1) / float(kCylinderDivide);
+
+		uint32_t vIdx = index * 4;
+		// position texcord normal
+		vertices[vIdx] = { {-sin * kTopRadius, halfHeight, cos * kTopRadius, 1.0f}, {u, 1.0f}, {-sin, 0.0f, cos } };
+		vertices[vIdx + 1] = { {-sinNext * kTopRadius, halfHeight, cosNext * kTopRadius, 1.0f}, {uNext, 1.0f}, {-sinNext, 0.0f, cosNext } };
+		vertices[vIdx + 2] = { {-sin * kBottomRadius, -halfHeight, cos * kBottomRadius, 1.0f}, {u, 0.0f}, {-sin, 0.0f, cos } };
+		vertices[vIdx + 3] = { {-sinNext * kBottomRadius, -halfHeight, cosNext * kBottomRadius, 1.0f}, {uNext, 0.0f}, {-sinNext, 0.0f, cosNext } };
+		//{{-sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f}, {u, 1.0f}, {-sin, 0.0f, cos} }
+		//{{-sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f}, {u, 1.0f}, {-sin, 0.0f, cos} }
+		//{{-sinNext * kTopRadius, kHeight, cosNext * kTopRadius, 1.0f}, {uNext, 0.0f}, {-sinNext, 0.0f, cosNext} }
+		//{{-sinNext * kBottomRadius, 0.0f, cosNext * kBottomRadius, 1.0f}, {uNext, 1.0f}, {-sinNext, 0.0f, cosNext }}
+
+		uint32_t iIdx = index * 6;
+		indices[iIdx] = vIdx;
+		indices[iIdx + 1] = vIdx + 1;
+		indices[iIdx + 2] = vIdx + 2;
+
+		indices[iIdx + 3] = vIdx + 1;
+		indices[iIdx + 4] = vIdx + 3;
+		indices[iIdx + 5] = vIdx + 2;
+	}
+
+	size_t vertexBufferSize = sizeof(VertexData) * vertices.size();
+
+	vertexBufferCylinder_ = CreateBufferResource(Graphics::GetDevice(), vertexBufferSize);
+
+	// 書き込み
+	VertexData* vbPtr = nullptr;
+	vertexBufferCylinder_->Map(0, nullptr, reinterpret_cast<void**>(&vbPtr));
+	memcpy(vbPtr, vertices.data(), vertexBufferSize);
+	vertexBufferCylinder_->Unmap(0, nullptr);
+
+	vbViewCylinder_.BufferLocation = vertexBufferCylinder_->GetGPUVirtualAddress();
+	vbViewCylinder_.SizeInBytes = (UINT)vertexBufferSize;
+	vbViewCylinder_.StrideInBytes = sizeof(VertexData);
+
+	// インデックスバッファ生成
+	size_t indexBufferSize = sizeof(uint32_t) * indices.size();
+
+	indexBufferCylinder_ = CreateBufferResource(Graphics::GetDevice(), indexBufferSize);
+
+	uint32_t* ibPtr = nullptr;
+	indexBufferCylinder_->Map(0, nullptr, reinterpret_cast<void**>(&ibPtr));
+	memcpy(ibPtr, indices.data(), indexBufferSize);
+	indexBufferCylinder_->Unmap(0, nullptr);
+
+	ibViewCylinder_.BufferLocation = indexBufferCylinder_->GetGPUVirtualAddress();
+	ibViewCylinder_.SizeInBytes = (UINT)indexBufferSize;
+	ibViewCylinder_.Format = DXGI_FORMAT_R32_UINT;
+}
+
 // グラフィックパイプラインを生成する関数
 void ParticleManager::CreateGraphicsPipeline(DxcCompiler& dxcCompiler)
 {
@@ -559,7 +647,7 @@ void ParticleManager::CreateGraphicsPipeline(DxcCompiler& dxcCompiler)
 	// RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// 裏面(時計回り)を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
@@ -644,6 +732,17 @@ void ParticleManager::DrawParticleGroupImGui(const std::string& name) {
 		ParticleManager::GetInstance()->SetBlendMode(name, static_cast<BlendMode>(mode));
 	}
 
+	float speed[2] = { group.uvScrollSpeed.x, group.uvScrollSpeed.y };
+	if (ImGui::DragFloat2("UV Scroll Speed (U, V)", speed, 0.01f, -5.0f, 5.0f)) {
+		group.uvScrollSpeed.x = speed[0];
+		group.uvScrollSpeed.y = speed[1];
+	}
+
+	float alphaReference = group.alphaReference;
+	if (ImGui::DragFloat("alphaReference", &alphaReference, 0.01f, -1.0f, 1.0f)) {
+		group.alphaReference = alphaReference;
+	}
+
 	ImGui::Checkbox("Billboard", &group.useBillboard_);
 #endif
 }
@@ -676,7 +775,10 @@ json ParticleManager::SaveToJson(const std::string& name) const {
 	return json{
 		{"blendMode", it->second.blendMode_},
 		{"billboard", it->second.useBillboard_},
-		{"modelType", it->second.modelType_}
+		{"modelType", it->second.modelType_},
+		{"scrollSpeedX", it->second.uvScrollSpeed.x },
+		{"scrollSpeedY", it->second.uvScrollSpeed.y },
+		{"alphaReference", it->second.alphaReference }
 	};
 }
 
@@ -694,5 +796,17 @@ void ParticleManager::LoadFromJson(const json& j, const std::string& name) {
 
 	if (j.contains("modelType")) {
 		it->second.modelType_ = static_cast<ParticleModelType>(j.value("modelType", it->second.modelType_));
+	}
+
+	if (j.contains("scrollSpeedX")) {
+		it->second.uvScrollSpeed.x = j.value("scrollSpeedX", it->second.uvScrollSpeed.x);
+	}
+
+	if (j.contains("scrollSpeedY")) {
+		it->second.uvScrollSpeed.y = j.value("scrollSpeedY", it->second.uvScrollSpeed.y);
+	}
+
+	if (j.contains("alphaReference")) {
+		it->second.alphaReference = j.value("alphaReference", it->second.alphaReference);
 	}
 }

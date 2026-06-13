@@ -36,6 +36,11 @@ void TitleScene::Init()
     EmitterManager::GetInstance()->CreateEmitter("RingEffect", hitRingEffectConfig_);
     Editor::GetInstance()->RegisterParticle("RingEffect");
 
+    ParticleManager::GetInstance()->CreateParticleGroup("CylinderEffect", tHGradationLine_);
+    ParticleManager::GetInstance()->SetModelType("CylinderEffect", ParticleModelType::Cylinder);
+    EmitterManager::GetInstance()->CreateEmitter("CylinderEffect", cylinderEffectConfig_);
+    Editor::GetInstance()->RegisterParticle("CylinderEffect");
+
     ImGuiManager::GetInstance()->LoadScenesJson();
 }
 
@@ -96,5 +101,7 @@ void TitleScene::Shutdown()
     EmitterManager::GetInstance()->RemoveEmitter("HitEffect");
     ParticleManager::GetInstance()->RemoveParticleGroup("RingEffect");
     EmitterManager::GetInstance()->RemoveEmitter("RingEffect");
+    ParticleManager::GetInstance()->RemoveParticleGroup("CylinderEffect");
+    EmitterManager::GetInstance()->RemoveEmitter("CylinderEffect");
     Editor::GetInstance()->Clear();
 }
