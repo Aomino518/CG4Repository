@@ -5,6 +5,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "CreateResorceUtils.h"
 
 // 加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);
@@ -53,6 +54,12 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 /// <returns>拡大縮小行列</returns>
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 /// <summary>
+/// 回転行列作成関数
+/// </summary>
+/// <param name="q">クオータニオン</param>
+/// <returns></returns>
+Matrix4x4 MakeRotateMatrix(const Quaternion& q);
+/// <summary>
 /// 透視投影行列の作成関数
 /// </summary>
 /// <param name="fovY">画角Y</param>
@@ -69,6 +76,14 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 /// <param name="translate">平行移動行列</param>
 /// <returns></returns>
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+/// <summary>
+/// 3次元アフィン変換行列
+/// </summary>
+/// <param name="scale">拡大縮小行列</param>
+/// <param name="q">クオータニオン</param>
+/// <param name="translate">平行移動行列</param>
+/// <returns></returns>
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& q, const Vector3& translate);
 /// <summary>
 /// 逆行列
 /// </summary>
@@ -106,3 +121,5 @@ bool IsCollision(const AABB2D& aabb, const Vector3& point);
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 // 線形補間関数Vector4
 Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
+
+Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t);

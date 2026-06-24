@@ -29,10 +29,13 @@ public:
 
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& extension);
 
+	Animation LoadAnimationFile(const std::string& directoryPath, const std::string& filename, const std::string& extension);
+
 	Vector4& GetMaterial() const { return materialData_->color; }
 	bool GetIsLighting() const { return materialData_->enableLighting; }
 	ModelData GetRootNode() const { return modelData_; }
 	float GetEnvironmentColor() { return materialData_->environmentColor; }
+	Animation GetAnimation() { return animation_; }
 
 	void SetMaterial(const Vector4& material) { this->materialData_->color = material; }
 	void SetIsLighting(const bool isLighting) { this->materialData_->enableLighting = isLighting; }
@@ -60,5 +63,7 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE environmentSrvHandleGPU_;
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
+
+	Animation animation_;
 };
 

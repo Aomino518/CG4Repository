@@ -207,6 +207,35 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	return result;
 }
 
+// 回転行列作成関数
+Matrix4x4 MakeRotateMatrix(const Quaternion& q) {
+	Matrix4x4 result = MakeIdentity4x4();
+
+	float xx = q.x * q.x;
+	float yy = q.y * q.y;
+	float zz = q.z * q.z;
+	float xy = q.x * q.y;
+	float xz = q.x * q.z;
+	float yz = q.y * q.z;
+	float wx = q.w * q.x;
+	float wy = q.w * q.y;
+	float wz = q.w * q.z;
+
+	result.m[0][0] = 1.0f - 2.0f * (yy + zz);
+	result.m[0][1] = 2.0f * (xy + wz);
+	result.m[0][2] = 2.0f * (xz - wy);
+
+	result.m[1][0] = 2.0f * (xy - wz);
+	result.m[1][1] = 1.0f - 2.0f * (xx + zz);
+	result.m[1][2] = 2.0f * (yz + wx);
+
+	result.m[2][0] = 2.0f * (xz + wy);
+	result.m[2][1] = 2.0f * (yz - wx);
+	result.m[2][2] = 1.0f - 2.0f * (xx + yy);
+
+	return result;
+}
+
 // 透視投影行列の作成関数
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 	Matrix4x4 perspectiveFovMatrix;
@@ -243,6 +272,16 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
 	Matrix4x4 rotateXYZMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
 	Matrix4x4 scaleRot = Multiply(scaleMatrix, rotateXYZMatrix);
+	Matrix4x4 resultMatrix = Multiply(scaleRot, translateMatrix);
+
+	return resultMatrix;
+}
+
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& q, const Vector3& translate) {
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(q);
+	Matrix4x4 scaleRot = Multiply(scaleMatrix, rotateMatrix);
 	Matrix4x4 resultMatrix = Multiply(scaleRot, translateMatrix);
 
 	return resultMatrix;
@@ -409,4 +448,37 @@ Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t)
 Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t)
 {
 	return v1 + (v2 - v1) * t;
+}
+
+Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t) {
+	float dot = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+
+	Quaternion targetQ2 = q2;
+	if (dot < 0.0f) {
+		dot = -dot;
+		targetQ2.x = -q2.x;
+		targetQ2.y = -q2.y;
+		targetQ2.z = -q2.z;
+		targetQ2.w = -q2.w;
+	}
+
+	if (dot >= 1.0f - 0.0005f) {
+		return Quaternion{
+		q1.x + t * (targetQ2.x - q1.x),
+		q1.y + t * (targetQ2.y - q1.y),
+		q1.z + t * (targetQ2.z - q1.z),
+		q1.w + t * (targetQ2.w - q1.w) };
+	}
+
+	float angle = std::acos(dot);
+	float sinAngle = std::sin(angle);
+	float coeff1 = std::sin((1.0f - t) * angle) / sinAngle;
+	float coeff2 = std::sin(t * angle) / sinAngle;
+
+	return Quaternion{
+		coeff1 * q1.x + coeff2 * targetQ2.x,
+		coeff1 * q1.y + coeff2 * targetQ2.y,
+		coeff1 * q1.z + coeff2 * targetQ2.z,
+		coeff1 * q1.w + coeff2 * targetQ2.w
+	};
 }

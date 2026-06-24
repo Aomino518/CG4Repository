@@ -1,5 +1,45 @@
 #include "CreateResorceUtils.h"
 
+// キーフレームの時刻の値を計算する関数
+Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframes, float time)
+{
+	assert(!keyframes.empty());
+	if (keyframes.size() == 1 || time <= keyframes[0].time) {
+		return keyframes[0].value;
+	}
+
+	for (size_t index = 0; index < keyframes.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		// indexとnextIndexの2つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframes[index].time <= time && time <= keyframes[nextIndex].time) {
+			// 範囲内を補間する
+			float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
+			return Lerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		}
+	}
+	// ここまできた場合は一番後の時刻よりも後ろなので最後の値を返すことにする
+	return (*keyframes.rbegin()).value;
+}
+
+Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframes, float time) {
+	assert(!keyframes.empty());
+	if (keyframes.size() == 1 || time <= keyframes[0].time) {
+		return keyframes[0].value;
+	}
+
+	for (size_t index = 0; index < keyframes.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		// indexとnextIndexの2つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframes[index].time <= time && time <= keyframes[nextIndex].time) {
+			// 範囲内を補間する
+			float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
+			return Slerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		}
+	}
+	// ここまできた場合は一番後の時刻よりも後ろなので最後の値を返すことにする
+	return (*keyframes.rbegin()).value;
+}
+
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 	// 頂点リソース用のヒープを設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};

@@ -24,7 +24,7 @@ class Entity3D
 {
 public:
 	// 初期化
-	void Init();
+	void Init(const std::string& filePath);
 
 	// 更新
 	void Update();
@@ -87,5 +87,8 @@ private:
 
 	// ブレンドモード取得
 	BlendMode mode_ = kBlendModeNone;
+
+	float animationTime_ = 0.0f;
+	Animation animation_;
 };
 

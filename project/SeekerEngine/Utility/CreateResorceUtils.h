@@ -8,9 +8,11 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "Quaternion.h"
 #include <unordered_map>
 #include <algorithm>
 #include "MathFunc.h"
+#include <map>
 
 struct Transform {
 	Vector3 scale;
@@ -210,5 +212,34 @@ enum class FieldSpace {
 	Local,
 	World
 };
+
+// キーフレーム
+template <typename tValue>
+struct Keyframe {
+	float time;
+	tValue value;
+};
+
+using KeyframeVector3 = Keyframe<Vector3>;
+using KeyframeQuaternion = Keyframe<Quaternion>;
+
+template <typename tValue>
+struct AnimationCurve {
+	std::vector<Keyframe<tValue>> keyframes;
+};
+
+struct NodeAnimation {
+	AnimationCurve<Vector3> translate;
+	AnimationCurve<Quaternion> rotate;
+	AnimationCurve<Vector3> scale;
+};
+
+struct Animation {
+	float duration;
+	std::map<std::string, NodeAnimation> nodeAnimations;
+};
+
+Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframes, float time);
+Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframes, float time);
 
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);

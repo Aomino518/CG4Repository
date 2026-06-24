@@ -4,8 +4,10 @@
 #include "ModelManager.h"
 #include "JsonTransform.h"
 #include "JsonMath.h"
+#include "CreateResorceUtils.h"
+#include "MathFunc.h"
 
-void Entity3D::Init()
+void Entity3D::Init(const std::string& filePath)
 {
 	this->camera_ = Entity3DCommon::GetInstance()->GetDefaultCamera();
 	this->debugCamera_ = Entity3DCommon::GetInstance()->GetDebugCamera();
@@ -13,19 +15,23 @@ void Entity3D::Init()
 	cmdList_ = Entity3DCommon::GetInstance()->GetCmdList();
 	mode_ = Entity3DCommon::GetInstance()->GetBlendMode();
 	ModelResourcesSetting();
+	model_ = ModelManager::GetInstance()->FindModel(filePath);
+	animation_ = model_->GetAnimation();
 
 	transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 }
 
 void Entity3D::Update()
 {
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
-	// WVPMatrixを作る
-	Matrix4x4 worldViewProjectionMatrix;
 	// RootNode取得
 	ModelData modelData = model_->GetRootNode();
 	bool isDebug = cameraManager_->GetIsDebug();
 
+	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	// WVPMatrixを作る
+	Matrix4x4 worldViewProjectionMatrix;
+
+	// デバッグカメラとゲームカメラの行列切り替え
 	if (isDebug) {
 		if (debugCamera_) {
 			const Matrix4x4& viewProjectionMatrix = debugCamera_->GetViewProjectionMatrix();
@@ -44,8 +50,21 @@ void Entity3D::Update()
 
 	Matrix4x4 worldInverseTransform = Inverse(worldMatrix);
 
-	transformationMatrixData_->World = modelData.rootNode.localMatrix * worldMatrix;
-	transformationMatrixData_->WVP = modelData.rootNode.localMatrix * worldViewProjectionMatrix;
+	// モデルにアニメーションがある場合アニメーションする
+	if (animation_.duration > 0.0f && !animation_.nodeAnimations.empty()) {
+		animationTime_ += 1.0f / 60.0f;
+		animationTime_ = std::fmod(animationTime_, animation_.duration);
+		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData.rootNode.name];
+		Vector3 rootTranslate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+		Quaternion rootRotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+		Vector3 rootScale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+		Matrix4x4 localMatrix = MakeAffineMatrix(rootScale, rootRotate, rootTranslate);
+		transformationMatrixData_->World = localMatrix * worldMatrix;
+		transformationMatrixData_->WVP = localMatrix * worldViewProjectionMatrix;
+	} else {
+		transformationMatrixData_->World = modelData.rootNode.localMatrix * worldMatrix;
+		transformationMatrixData_->WVP = modelData.rootNode.localMatrix * worldViewProjectionMatrix;
+	}
 	transformationMatrixData_->WorldInverseTranspose = worldInverseTransform;
 
 	if (cameraData_) {

@@ -345,6 +345,7 @@
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
     <ClInclude Include="SeekerEngine\Editor\Editor.h" />
     <ClInclude Include="SeekerEngine\Effect\Emitter2DManager.h" />
+    <ClInclude Include="SeekerEngine\Math\Quaternion.h" />
     <ClInclude Include="SeekerEngine\Utility\JsonMath.h" />
     <ClInclude Include="SeekerEngine\Utility\JsonTransform.h" />
     <ClInclude Include="SeekerEngine\Utility\JsonUtils.h" />

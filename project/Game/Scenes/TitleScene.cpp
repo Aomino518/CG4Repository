@@ -14,18 +14,23 @@ void TitleScene::Init()
     entity_ = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("ball.obj");
     ModelManager::GetInstance()->FindModel("ball")->SetEnviromentTexture(tHTex_);
-    entity_->Init();
-    entity_->SetModel("ball");
+    entity_->Init("ball");
     entity_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("ball", entity_.get());
 
     modelTerrain_ = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("terrain.obj");
     ModelManager::GetInstance()->FindModel("terrain")->SetEnviromentTexture(tHTex_);
-    modelTerrain_->Init();
-    modelTerrain_->SetModel("terrain");
+    modelTerrain_->Init("terrain");
     modelTerrain_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("terrain", modelTerrain_.get());
+
+    animeCube_ = std::make_unique<Entity3D>();
+    ModelManager::GetInstance()->LoadModel("AnimatedCube.gltf");
+    ModelManager::GetInstance()->FindModel("AnimatedCube")->SetEnviromentTexture(tHTex_);
+    animeCube_->Init("AnimatedCube");
+    animeCube_->SetTranslate(Vector3(2.0f, 0.0f, 2.0f));
+    Editor::GetInstance()->RegisterModel("AnimatedCube", animeCube_.get());
 
     ParticleManager::GetInstance()->CreateParticleGroup("HitEffect", tHCircle_);
     EmitterManager::GetInstance()->CreateEmitter("HitEffect", hitEffectConfig_);
@@ -72,6 +77,8 @@ void TitleScene::Update()
     entity_->Update();
     modelTerrain_->SetCamera(camMgr->GetActiveCamera());
     modelTerrain_->Update();
+    animeCube_->SetCamera(camMgr->GetActiveCamera());
+    animeCube_->Update();
 
     EmitterManager::GetInstance()->Update();
     ParticleManager::GetInstance()->Update(camMgr);
@@ -91,6 +98,7 @@ void TitleScene::Draw()
     Skybox::GetInstance()->Draw();
     entity_->Draw();
     modelTerrain_->Draw();
+    animeCube_->Draw();
     ParticleManager::GetInstance()->Draw();
     ImGuiManager::GetInstance()->Draw();
 }

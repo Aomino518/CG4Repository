@@ -9,6 +9,9 @@ void Model::Init(const std::string& directoryPath, const std::string& filename, 
 {
 	cmdList_ = Graphics::GetInstance()->GetCmdList();
 	LoadObjFile(directoryPath, filename, path);
+	if (path == "gltf") {
+		animation_ = LoadAnimationFile(directoryPath, filename, path);
+	}
 	CreateBufferResources();
 	MaterialInit();
 	modelData_.material.textureIndex = TextureManager::GetInstance()->Load(modelData_.material.textureFilePath);
@@ -110,6 +113,47 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 	}
 
 	modelData_.rootNode = ReadNode(scene->mRootNode);
+}
+
+Animation Model::LoadAnimationFile(const std::string& directoryPath, const std::string& filename, const std::string& extension)
+{
+	Animation animation;
+	Assimp::Importer importer;
+	std::string filePath = directoryPath + "/" + filename + "/" + filename + "." + extension;
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), 0);
+	assert(scene->mNumAnimations != 0);
+	aiAnimation* animationAssimp = scene->mAnimations[0];
+	animation.duration = float(animationAssimp->mDuration / animationAssimp->mTicksPerSecond);
+
+	for (uint32_t channelIndex = 0; channelIndex < animationAssimp->mNumChannels; ++channelIndex) {
+		aiNodeAnim* nodeAnimationAssimp = animationAssimp->mChannels[channelIndex];
+		NodeAnimation& nodeAnimation = animation.nodeAnimations[nodeAnimationAssimp->mNodeName.C_Str()];
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumPositionKeys; ++keyIndex) {
+			aiVectorKey& keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
+			KeyframeVector3 keyframe;
+			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);
+			keyframe.value = { -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };
+			nodeAnimation.translate.keyframes.push_back(keyframe);
+		}
+
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumScalingKeys; ++keyIndex) {
+			aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
+			KeyframeVector3 keyframe;
+			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);
+			keyframe.value = { keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };
+			nodeAnimation.scale.keyframes.push_back(keyframe);
+		}
+
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumRotationKeys; ++keyIndex) {
+			aiQuatKey& keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
+			KeyframeQuaternion keyframe;
+			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);
+			keyframe.value = { keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w };
+			nodeAnimation.rotate.keyframes.push_back(keyframe);
+		}
+	}
+
+	return animation;
 }
 
 void Model::SetEnviromentTexture(uint32_t textureId)

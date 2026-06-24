@@ -63,6 +63,33 @@
         }
     },
     "models": {
+        "AnimatedCube": {
+            "blendMode": 1,
+            "environmentColor": 0.0,
+            "material": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": 2.0,
+                    "y": 2.0,
+                    "z": 2.0
+                }
+            }
+        },
         "ball": {
             "blendMode": 1,
             "environmentColor": 0.009999999776482582,
