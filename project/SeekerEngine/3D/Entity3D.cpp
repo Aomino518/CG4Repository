@@ -27,31 +27,26 @@ void Entity3D::Update()
 	ModelData modelData = model_->GetRootNode();
 	bool isDebug = cameraManager_->GetIsDebug();
 
+	// worldMatrixを作る
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	// WVPMatrixを作る
-	Matrix4x4 worldViewProjectionMatrix;
+	Matrix4x4 viewProjectionMatrix = MakeIdentity4x4();;
 
 	// デバッグカメラとゲームカメラの行列切り替え
 	if (isDebug) {
 		if (debugCamera_) {
-			const Matrix4x4& viewProjectionMatrix = debugCamera_->GetViewProjectionMatrix();
-			worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
-		} else {
-			worldViewProjectionMatrix = worldMatrix;
+			viewProjectionMatrix = debugCamera_->GetViewProjectionMatrix();
 		}
 	} else {
 		if (camera_) {
-			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-			worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
-		} else {
-			worldViewProjectionMatrix = worldMatrix;
+			viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 		}
 	}
 
-	Matrix4x4 worldInverseTransform = Inverse(worldMatrix);
-
+	Matrix4x4 finalWorldMatrix;
+	auto keyframe = animation_.nodeAnimations.find(modelData.rootNode.name);
 	// モデルにアニメーションがある場合アニメーションする
-	if (animation_.duration > 0.0f && !animation_.nodeAnimations.empty()) {
+	if (keyframe != animation_.nodeAnimations.end()) {
 		animationTime_ += 1.0f / 60.0f;
 		animationTime_ = std::fmod(animationTime_, animation_.duration);
 		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData.rootNode.name];
@@ -59,19 +54,19 @@ void Entity3D::Update()
 		Quaternion rootRotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
 		Vector3 rootScale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
 		Matrix4x4 localMatrix = MakeAffineMatrix(rootScale, rootRotate, rootTranslate);
-		transformationMatrixData_->World = localMatrix * worldMatrix;
-		transformationMatrixData_->WVP = localMatrix * worldViewProjectionMatrix;
+		finalWorldMatrix = localMatrix * worldMatrix;
 	} else {
-		transformationMatrixData_->World = modelData.rootNode.localMatrix * worldMatrix;
-		transformationMatrixData_->WVP = modelData.rootNode.localMatrix * worldViewProjectionMatrix;
+		finalWorldMatrix = modelData.rootNode.localMatrix * worldMatrix;
 	}
-	transformationMatrixData_->WorldInverseTranspose = worldInverseTransform;
+	// 最終的な行列の適用
+	transformationMatrixData_->World = finalWorldMatrix;
+	transformationMatrixData_->WVP = finalWorldMatrix * viewProjectionMatrix;
+	transformationMatrixData_->WorldInverseTranspose = Transpose(Inverse(finalWorldMatrix));
 
+	// スペキュラー反射計算用に、現在使用中のカメラのワールド座標をシェーダーへ渡す
 	if (cameraData_) {
-		if (isDebug) {
-			if (debugCamera_) {
-				cameraData_->worldPosition = debugCamera_->GetTranslate();
-			}
+		if (isDebug && debugCamera_) {
+			cameraData_->worldPosition = debugCamera_->GetTranslate();
 		} else if (camera_) {
 			cameraData_->worldPosition = camera_->GetTranslate();
 		}
