@@ -1,5 +1,14 @@
 #include "CreateResorceUtils.h"
 
+Vector3 GetMatrix4x4Translate(const Matrix4x4& m)
+{
+	return Vector3{
+		m.m[3][0],
+		m.m[3][1],
+		m.m[3][2],
+	};
+}
+
 // キーフレームの時刻の値を計算する関数
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframes, float time)
 {

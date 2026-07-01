@@ -29,14 +29,14 @@ public:
 	bool GetIsLoop() { return isLoop_; }
 	uint32_t GetCount() const { return count_; }
 	float GetFrenquency() const { return frequency_; }
-	const Transform& GetTransform() const { return transform_; }
+	const EulerTransform& GetTransform() const { return transform_; }
 	const ParticleConfig& GetConfig() const { return config_; }
 	const AccelerationField& GetLocalField() const { return localField_; }
 
 	// Setter関数
 	void SetCount(uint32_t count) { this->count_ = count; }
 	void SetFrenquency(float frequency) { this->frequency_ = frequency; }
-	void SetTransform(Transform transform) { this->transform_ = transform; }
+	void SetTransform(EulerTransform transform) { this->transform_ = transform; }
 	void SetConfig(const ParticleConfig& config) { this->config_ = config; };
 	void SetSpawnShapeBox(const Vector3& min, const Vector3& max);
 	void SetSpawnShapeSphere(float radius);
@@ -50,7 +50,7 @@ public:
 
 private:
 	std::string groupName_;
-	Transform transform_{};
+	EulerTransform transform_{};
 	ParticleConfig config_{};
 	uint32_t count_ = 10; // 1回の発生個数
 	float frequency_ = 0.0f; // 発生頻度

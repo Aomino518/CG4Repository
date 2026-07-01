@@ -45,7 +45,7 @@ public:
 	const BlendMode& GetBlendMode() { return mode_; }
 	const Vector3& GetLightDirection() const { return directionalLightData_->direction; }
 	const Vector3& GetPointLightPos() const { return pointLightData_->position; }
-	const Transform& GetTransform() const { return transform_; }
+	const EulerTransform& GetTransform() const { return transform_; }
 
 	// setter関数
 	void SetModel(const std::string& filePath);
@@ -57,14 +57,16 @@ public:
 	void SetBlendMode(BlendMode mode);
 	void SetLightDirection(const Vector3& pos) { this->directionalLightData_->direction = pos; }
 	void SetPointLightPos(const Vector3& pos) { this->pointLightData_->position = pos; }
-	void SetTransform(const Transform& transform) { this->transform_ = transform; }
+	void SetTransform(const EulerTransform& transform) { this->transform_ = transform; }
+
+	void DrawBorn();
 
 	void DrawImGui();
 
 private:
 	void ModelResourcesSetting();
 
-	Transform transform_;
+	EulerTransform transform_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;
 	TransformationMatrix* transformationMatrixData_ = nullptr;
@@ -90,5 +92,7 @@ private:
 
 	float animationTime_ = 0.0f;
 	Animation animation_;
+	Skeleton skeleton_;
+	Matrix4x4 finalWorldMatrix_;
 };
 

@@ -25,9 +25,9 @@ public:
 		textureSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(textureId);
 	}
 
-	Transform& TransformRef() { return transform_; }
+	EulerTransform& TransformRef() { return transform_; }
 	void SetMaterial(Vector4 material) { materialData->color = material; }
-	void SetUvTransform(Transform uvTransform) { uvTransform_ = uvTransform; }
+	void SetUvTransform(EulerTransform uvTransform) { uvTransform_ = uvTransform; }
 
 	// Getter
 	Vector2 GetPosition() const { return { transform_.translate.x, transform_.translate.y }; }
@@ -39,9 +39,9 @@ public:
 	bool GetFlipY() const { return isFlipY_; }
 	const Vector2& GetTextureLeftTop() const { return textureLeftTop_; }
 	const Vector2& GetTextureSize() const { return textureSize_; }
-	const Transform& GetUV() const { return uvTransform_; }
+	const EulerTransform& GetUV() const { return uvTransform_; }
 	const BlendMode& GetBlendMode() const { return mode_; }
-	const Transform& GetTransform() const { return transform_; }
+	const EulerTransform& GetTransform() const { return transform_; }
 
 	// Setter
 	void SetPosition(const Vector2& position) { 
@@ -66,7 +66,7 @@ public:
 		materialData->color.z = b;
 	}
 	void SetBlendMode(BlendMode mode);
-	void SetTransform(const Transform& transform) { this->transform_ = transform; }
+	void SetTransform(const EulerTransform& transform) { this->transform_ = transform; }
 
 	/// <summary>
 	/// スプライトを生成
@@ -102,10 +102,10 @@ private:
 	TransformationMatrix* transformationMatrixData = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
-	Transform transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	EulerTransform transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_{};
 
-	Transform uvTransform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	EulerTransform uvTransform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 
 	// アンカーポイント
 	Vector2 anchorPoint_ = { 0.0f, 0.0f };

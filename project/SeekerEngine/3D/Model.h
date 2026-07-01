@@ -42,6 +42,11 @@ public:
 	void SetEnviromentTexture(uint32_t textureId);
 	void SetEnvironmentColor(const float environmentColor) { this->materialData_->environmentColor = environmentColor; }
 
+	Skeleton CreateSkeleton(const Node& rootNode);
+	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
+	void UpdateSkeleton(Skeleton& skeleton);
+	void ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animationTime);
+
 private:
 	void CreateBufferResources();
 	void MaterialInit();

@@ -6,6 +6,7 @@
 #include "JsonMath.h"
 #include "CreateResorceUtils.h"
 #include "MathFunc.h"
+#include "DebugDraw.h"
 
 void Entity3D::Init(const std::string& filePath)
 {
@@ -17,6 +18,7 @@ void Entity3D::Init(const std::string& filePath)
 	ModelResourcesSetting();
 	model_ = ModelManager::GetInstance()->FindModel(filePath);
 	animation_ = model_->GetAnimation();
+	skeleton_ = model_->CreateSkeleton(model_->GetRootNode().rootNode);
 
 	transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 }
@@ -43,25 +45,26 @@ void Entity3D::Update()
 		}
 	}
 
-	Matrix4x4 finalWorldMatrix;
 	auto keyframe = animation_.nodeAnimations.find(modelData.rootNode.name);
 	// モデルにアニメーションがある場合アニメーションする
 	if (keyframe != animation_.nodeAnimations.end()) {
 		animationTime_ += 1.0f / 60.0f;
 		animationTime_ = std::fmod(animationTime_, animation_.duration);
+		model_->ApplyAnimation(skeleton_, animation_, animationTime_);
+		model_->UpdateSkeleton(skeleton_);
 		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData.rootNode.name];
 		Vector3 rootTranslate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
 		Quaternion rootRotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
 		Vector3 rootScale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
 		Matrix4x4 localMatrix = MakeAffineMatrix(rootScale, rootRotate, rootTranslate);
-		finalWorldMatrix = localMatrix * worldMatrix;
+		finalWorldMatrix_ = localMatrix * worldMatrix;
 	} else {
-		finalWorldMatrix = modelData.rootNode.localMatrix * worldMatrix;
+		finalWorldMatrix_ = modelData.rootNode.localMatrix * worldMatrix;
 	}
 	// 最終的な行列の適用
-	transformationMatrixData_->World = finalWorldMatrix;
-	transformationMatrixData_->WVP = finalWorldMatrix * viewProjectionMatrix;
-	transformationMatrixData_->WorldInverseTranspose = Transpose(Inverse(finalWorldMatrix));
+	transformationMatrixData_->World = finalWorldMatrix_;
+	transformationMatrixData_->WVP = finalWorldMatrix_ * viewProjectionMatrix;
+	transformationMatrixData_->WorldInverseTranspose = Transpose(Inverse(finalWorldMatrix_));
 
 	// スペキュラー反射計算用に、現在使用中のカメラのワールド座標をシェーダーへ渡す
 	if (cameraData_) {
@@ -156,6 +159,24 @@ void Entity3D::ModelResourcesSetting()
 		camPos = camera_->GetTranslate();
 	}
 	cameraData_->worldPosition = camPos;
+}
+
+void Entity3D::DrawBorn()
+{
+	for (const Joint& joint : skeleton_.joints) {
+		DebugDraw::DrawSphere(joint.transform.translate, Vector3{ 0.1f, 0.1f, 0.1f }, Color::WHITE, DebugDrawMode::Wireframe);
+
+		if (!joint.parent) {
+			continue;
+		}
+
+		const Joint& parent = skeleton_.joints[*joint.parent];
+
+		Vector3 childPos = GetMatrix4x4Translate(joint.skeletonSpaceMatrix * finalWorldMatrix_);
+		Vector3 parentPos = GetMatrix4x4Translate(parent.skeletonSpaceMatrix * finalWorldMatrix_);
+
+		DebugDraw::DrawLine(parentPos, childPos, Color::WHITE);
+	}
 }
 
 void Entity3D::DrawImGui() {

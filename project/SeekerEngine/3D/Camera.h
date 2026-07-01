@@ -18,7 +18,7 @@ public:
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 	Matrix4x4 GetBillboardMatrix();
-	const Transform& GetTransform() { return transform_; }
+	const EulerTransform& GetTransform() { return transform_; }
 
 	// Setter
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
@@ -28,14 +28,14 @@ public:
 	void SetAspectRatio(float aspectRatio) { this->aspectRatio_ = aspectRatio; }
 	void SetNearClip(float nearClip) { this->nearClip_ = nearClip; }
 	void SetFarClip(float farClip) { this->farClip_ = farClip; }
-	void SetTransform(const Transform& transform) { this->transform_ = transform; }
+	void SetTransform(const EulerTransform& transform) { this->transform_ = transform; }
 
 	// json保存と読み込み
 	nlohmann::json SaveToJson() const;
 	void LoadFromJson(const nlohmann::json& j);
 
 private:
-	Transform transform_;
+	EulerTransform transform_;
 	Matrix4x4 worldMatrix_;
 	Matrix4x4 viewMatrix_;
 	Matrix4x4 projectionMatrix_;

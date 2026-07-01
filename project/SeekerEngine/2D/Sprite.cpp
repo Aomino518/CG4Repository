@@ -256,7 +256,7 @@ json Sprite::SaveToJson() const {
 
 void Sprite::LoadFromJson(const json& j) {
 	if (j.contains("transform")) {
-		Transform transform{};
+		EulerTransform transform{};
 		TransformFromJson(j.at("transform"), transform);
 		SetTransform(transform);
 	}

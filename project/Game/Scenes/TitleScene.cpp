@@ -32,6 +32,13 @@ void TitleScene::Init()
     animeCube_->SetTranslate(Vector3(2.0f, 0.0f, 2.0f));
     Editor::GetInstance()->RegisterModel("AnimatedCube", animeCube_.get());
 
+    simpleSkin_ = std::make_unique<Entity3D>();
+    ModelManager::GetInstance()->LoadModel("simpleSkin.gltf");
+    ModelManager::GetInstance()->FindModel("simpleSkin")->SetEnviromentTexture(tHTex_);
+    simpleSkin_->Init("simpleSkin");
+    simpleSkin_->SetTranslate(Vector3{ -2.0f, 0.0f, 2.0f });
+    Editor::GetInstance()->RegisterModel("simpleSkin", simpleSkin_.get());
+
     ParticleManager::GetInstance()->CreateParticleGroup("HitEffect", tHCircle_);
     EmitterManager::GetInstance()->CreateEmitter("HitEffect", hitEffectConfig_);
     Editor::GetInstance()->RegisterParticle("HitEffect");
@@ -79,6 +86,8 @@ void TitleScene::Update()
     modelTerrain_->Update();
     animeCube_->SetCamera(camMgr->GetActiveCamera());
     animeCube_->Update();
+    simpleSkin_->SetCamera(camMgr->GetActiveCamera());
+    simpleSkin_->Update();
 
     EmitterManager::GetInstance()->Update();
     ParticleManager::GetInstance()->Update(camMgr);
@@ -99,7 +108,11 @@ void TitleScene::Draw()
     entity_->Draw();
     modelTerrain_->Draw();
     animeCube_->Draw();
+    simpleSkin_->Draw();
     ParticleManager::GetInstance()->Draw();
+
+    simpleSkin_->DrawBorn();
+    DebugDraw::Draw();
     ImGuiManager::GetInstance()->Draw();
 }
 

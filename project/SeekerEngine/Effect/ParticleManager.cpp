@@ -71,7 +71,7 @@ void ParticleManager::Update(CameraManager* cameraManager)
 
 			// ローカルフィールドの更新
 			for (const auto& emitter : emitters) {
-				Transform transform = emitter->GetTransform();
+				EulerTransform transform = emitter->GetTransform();
 				auto& field = emitter->GetLocalField();
 				if (!field.GetIsActive()) {
 					continue;
