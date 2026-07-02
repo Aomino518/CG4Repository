@@ -167,12 +167,14 @@ void Entity3D::ModelResourcesSetting()
 void Entity3D::DrawBorn()
 {
 	for (const Joint& joint : skeleton_.joints) {
-		DebugDraw::DrawSphere(joint.transform.translate, Vector3{0.1f, 0.1f, 0.1f}, Color::WHITE, DebugDrawMode::Wireframe);
+		Matrix4x4 jointWorldMatrix = joint.skeletonSpaceMatrix * worldMatrix_;
+		DebugDraw::DrawSphere(GetMatrix4x4Translate(jointWorldMatrix), Vector3{0.1f, 0.1f, 0.1f}, Color::WHITE, DebugDrawMode::Wireframe);
 
 		if (joint.parent) {
 			const Joint& parent = skeleton_.joints[*joint.parent];
-			Vector3 childPos = joint.transform.translate;
-			Vector3 parentPos = parent.transform.translate;
+			Matrix4x4 parentWorldMatrix = parent.skeletonSpaceMatrix * worldMatrix_;
+			Vector3 childPos = GetMatrix4x4Translate(jointWorldMatrix);
+			Vector3 parentPos = GetMatrix4x4Translate(parentWorldMatrix);
 
 			DebugDraw::DrawLine(parentPos, childPos, Color::WHITE);
 		}
