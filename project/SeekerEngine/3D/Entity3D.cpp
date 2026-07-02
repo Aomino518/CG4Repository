@@ -30,7 +30,7 @@ void Entity3D::Update()
 	bool isDebug = cameraManager_->GetIsDebug();
 
 	// worldMatrixを作る
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	// WVPMatrixを作る
 	Matrix4x4 viewProjectionMatrix = MakeIdentity4x4();;
 
@@ -45,22 +45,25 @@ void Entity3D::Update()
 		}
 	}
 
+
 	auto keyframe = animation_.nodeAnimations.find(modelData.rootNode.name);
 	// モデルにアニメーションがある場合アニメーションする
 	if (keyframe != animation_.nodeAnimations.end()) {
 		animationTime_ += 1.0f / 60.0f;
 		animationTime_ = std::fmod(animationTime_, animation_.duration);
 		model_->ApplyAnimation(skeleton_, animation_, animationTime_);
-		model_->UpdateSkeleton(skeleton_);
 		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData.rootNode.name];
 		Vector3 rootTranslate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
 		Quaternion rootRotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
 		Vector3 rootScale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
 		Matrix4x4 localMatrix = MakeAffineMatrix(rootScale, rootRotate, rootTranslate);
-		finalWorldMatrix_ = localMatrix * worldMatrix;
+		finalWorldMatrix_ = localMatrix * worldMatrix_;
 	} else {
-		finalWorldMatrix_ = modelData.rootNode.localMatrix * worldMatrix;
+		finalWorldMatrix_ = worldMatrix_;
 	}
+
+	model_->UpdateSkeleton(skeleton_);
+
 	// 最終的な行列の適用
 	transformationMatrixData_->World = finalWorldMatrix_;
 	transformationMatrixData_->WVP = finalWorldMatrix_ * viewProjectionMatrix;
@@ -164,18 +167,15 @@ void Entity3D::ModelResourcesSetting()
 void Entity3D::DrawBorn()
 {
 	for (const Joint& joint : skeleton_.joints) {
-		DebugDraw::DrawSphere(joint.transform.translate, Vector3{ 0.1f, 0.1f, 0.1f }, Color::WHITE, DebugDrawMode::Wireframe);
+		DebugDraw::DrawSphere(joint.transform.translate, Vector3{0.1f, 0.1f, 0.1f}, Color::WHITE, DebugDrawMode::Wireframe);
 
-		if (!joint.parent) {
-			continue;
+		if (joint.parent) {
+			const Joint& parent = skeleton_.joints[*joint.parent];
+			Vector3 childPos = joint.transform.translate;
+			Vector3 parentPos = parent.transform.translate;
+
+			DebugDraw::DrawLine(parentPos, childPos, Color::WHITE);
 		}
-
-		const Joint& parent = skeleton_.joints[*joint.parent];
-
-		Vector3 childPos = GetMatrix4x4Translate(joint.skeletonSpaceMatrix * finalWorldMatrix_);
-		Vector3 parentPos = GetMatrix4x4Translate(parent.skeletonSpaceMatrix * finalWorldMatrix_);
-
-		DebugDraw::DrawLine(parentPos, childPos, Color::WHITE);
 	}
 }
 

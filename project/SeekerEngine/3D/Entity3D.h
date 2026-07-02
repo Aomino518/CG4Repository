@@ -94,5 +94,6 @@ private:
 	Animation animation_;
 	Skeleton skeleton_;
 	Matrix4x4 finalWorldMatrix_;
+	Matrix4x4 worldMatrix_;
 };
 
