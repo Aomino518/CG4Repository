@@ -1,4 +1,5 @@
 #include "ModelManager.h"
+#include "StringUtil.h"
 
 ModelManager* ModelManager::GetInstance()
 {
@@ -17,7 +18,7 @@ void ModelManager::Init()
 
 }
 
-void ModelManager::LoadModel(const std::string& filePath)
+void ModelManager::LoadModel(const std::string& fileName, const std::string& filePath)
 {
 	if (models_.contains(filePath)) {
 		return;
@@ -27,7 +28,7 @@ void ModelManager::LoadModel(const std::string& filePath)
 	
 	// モデル生成とファイル読み込み、初期化
 	std::unique_ptr<Model> model = std::make_unique<Model>();
-	model->Init("resources/models", filePaths[0], filePaths[1]);
+	model->Init("resources/models", fileName + "/" + filePaths[0], filePaths[1]);
 
 	// モデルをマップコンテナに格納する
 	models_.insert(std::make_pair(filePaths[0], std::move(model)));
@@ -49,22 +50,4 @@ void ModelManager::SetIsLighting(bool isLighting) {
 			model.second->SetIsLighting(isModelLighting_);
 		}
 	}
-}
-
-std::vector<std::string> ModelManager::Split(std::string str, char del)
-{
-	std::vector<std::string> result;
-	std::string subStr;
-
-	for (const char c : str) {
-		if (c == del) {
-			result.push_back(subStr);
-			subStr.clear();
-		} else {
-			subStr += c;
-		}
-	}
-
-	result.push_back(subStr);
-	return result;
 }

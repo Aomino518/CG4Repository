@@ -45,13 +45,17 @@ void Entity3D::Update()
 		}
 	}
 
+	if (animation_.duration > 0.0f && !animation_.nodeAnimations.empty()) {
+		animationTime_ += 1.0f / 60.0f;
+		animationTime_ = std::fmod(animationTime_, animation_.duration);
+	}
+
+	model_->ApplyAnimation(skeleton_, animation_, animationTime_);
+	model_->UpdateSkeleton(skeleton_);
 
 	auto keyframe = animation_.nodeAnimations.find(modelData.rootNode.name);
 	// モデルにアニメーションがある場合アニメーションする
 	if (keyframe != animation_.nodeAnimations.end()) {
-		animationTime_ += 1.0f / 60.0f;
-		animationTime_ = std::fmod(animationTime_, animation_.duration);
-		model_->ApplyAnimation(skeleton_, animation_, animationTime_);
 		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData.rootNode.name];
 		Vector3 rootTranslate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
 		Quaternion rootRotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
@@ -61,8 +65,6 @@ void Entity3D::Update()
 	} else {
 		finalWorldMatrix_ = worldMatrix_;
 	}
-
-	model_->UpdateSkeleton(skeleton_);
 
 	// 最終的な行列の適用
 	transformationMatrixData_->World = finalWorldMatrix_;
@@ -168,8 +170,8 @@ void Entity3D::DrawBorn()
 {
 	for (const Joint& joint : skeleton_.joints) {
 		Matrix4x4 jointWorldMatrix = joint.skeletonSpaceMatrix * worldMatrix_;
-		DebugDraw::DrawSphere(GetMatrix4x4Translate(jointWorldMatrix), Vector3{0.1f, 0.1f, 0.1f}, Color::WHITE, DebugDrawMode::Wireframe);
-
+		DebugDraw::DrawBox(GetMatrix4x4Translate(jointWorldMatrix), Vector3{ 0.01f, 0.01f, 0.01f }, Color::WHITE, DebugDrawMode::Wireframe);
+		
 		if (joint.parent) {
 			const Joint& parent = skeleton_.joints[*joint.parent];
 			Matrix4x4 parentWorldMatrix = parent.skeletonSpaceMatrix * worldMatrix_;

@@ -12,32 +12,32 @@ void TitleScene::Init()
     Skybox::GetInstance()->SetTexture(tHTex_);
 
     entity_ = std::make_unique<Entity3D>();
-    ModelManager::GetInstance()->LoadModel("ball.obj");
+    ModelManager::GetInstance()->LoadModel("ball", "ball.obj");
     ModelManager::GetInstance()->FindModel("ball")->SetEnviromentTexture(tHTex_);
     entity_->Init("ball");
     entity_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("ball", entity_.get());
 
     modelTerrain_ = std::make_unique<Entity3D>();
-    ModelManager::GetInstance()->LoadModel("terrain.obj");
+    ModelManager::GetInstance()->LoadModel("terrain", "terrain.obj");
     ModelManager::GetInstance()->FindModel("terrain")->SetEnviromentTexture(tHTex_);
     modelTerrain_->Init("terrain");
     modelTerrain_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("terrain", modelTerrain_.get());
 
     animeCube_ = std::make_unique<Entity3D>();
-    ModelManager::GetInstance()->LoadModel("AnimatedCube.gltf");
+    ModelManager::GetInstance()->LoadModel("AnimatedCube", "AnimatedCube.gltf");
     ModelManager::GetInstance()->FindModel("AnimatedCube")->SetEnviromentTexture(tHTex_);
     animeCube_->Init("AnimatedCube");
     animeCube_->SetTranslate(Vector3(2.0f, 0.0f, 2.0f));
     Editor::GetInstance()->RegisterModel("AnimatedCube", animeCube_.get());
 
     simpleSkin_ = std::make_unique<Entity3D>();
-    ModelManager::GetInstance()->LoadModel("simpleSkin.gltf");
-    ModelManager::GetInstance()->FindModel("simpleSkin")->SetEnviromentTexture(tHTex_);
-    simpleSkin_->Init("simpleSkin");
+    ModelManager::GetInstance()->LoadModel("human", "sneakWalk.gltf");
+    ModelManager::GetInstance()->FindModel("sneakWalk")->SetEnviromentTexture(tHTex_);
+    simpleSkin_->Init("sneakWalk");
     simpleSkin_->SetTranslate(Vector3{ -2.0f, 0.0f, 2.0f });
-    Editor::GetInstance()->RegisterModel("simpleSkin", simpleSkin_.get());
+    Editor::GetInstance()->RegisterModel("sneakWalk", simpleSkin_.get());
 
     ParticleManager::GetInstance()->CreateParticleGroup("HitEffect", tHCircle_);
     EmitterManager::GetInstance()->CreateEmitter("HitEffect", hitEffectConfig_);

@@ -29,3 +29,20 @@ std::string ConvertString(const std::wstring& str) {
 	return result;
 }
 
+std::vector<std::string> Split(std::string str, char del)
+{
+	std::vector<std::string> result;
+	std::string subStr;
+
+	for (const char c : str) {
+		if (c == del) {
+			result.push_back(subStr);
+			subStr.clear();
+		} else {
+			subStr += c;
+		}
+	}
+
+	result.push_back(subStr);
+	return result;
+}

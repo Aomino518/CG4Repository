@@ -93,4 +93,3 @@ public:
 	/// <param name="mode">描画モード</param>
 	static void DrawAABB2D(const Vector2& position, const AABB2D& aabb, const Vector4& color, DebugDrawMode mode);
 };
-

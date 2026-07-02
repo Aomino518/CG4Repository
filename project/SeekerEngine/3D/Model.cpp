@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include <filesystem>
 #include "Graphics.h"
+#include "StringUtil.h"
 
 void Model::Init(const std::string& directoryPath, const std::string& filename, const std::string& path)
 {
@@ -61,7 +62,7 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& extension)
 {
 	Assimp::Importer importer;
-	std::string	filePath = directoryPath + "/" + filename + "/" + filename + "." + extension;
+	std::string	filePath = directoryPath + "/" + filename + "." + extension;
 	Logger::Write(filePath);
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 
@@ -106,7 +107,8 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 			std::string fullPath;
-			fullPath = directoryPath + "/" + filename + "/" + textureFilePath.C_Str();
+			std::vector<std::string> file = Split(filename, '/');
+			fullPath = directoryPath + "/" + file[0] + "/" + textureFilePath.C_Str();
 			Logger::Write("Trying to load texture from: " + fullPath);
 			modelData_.material.textureFilePath = fullPath;
 		}
@@ -119,7 +121,7 @@ Animation Model::LoadAnimationFile(const std::string& directoryPath, const std::
 {
 	Animation animation;
 	Assimp::Importer importer;
-	std::string filePath = directoryPath + "/" + filename + "/" + filename + "." + extension;
+	std::string filePath = directoryPath + "/" + filename + "." + extension;
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), 0);
 	assert(scene->mNumAnimations != 0);
 	aiAnimation* animationAssimp = scene->mAnimations[0];
