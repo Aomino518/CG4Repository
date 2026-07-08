@@ -50,26 +50,6 @@ struct TransformationMatrix {
 	Matrix4x4 WorldInverseTranspose;
 };
 
-// 三つ組のキー
-struct TripletKey {
-	uint32_t v, vt, vn;
-	bool operator == (const TripletKey&) const = default;
-};
-
-struct TripletHash {
-	size_t operator()(const TripletKey& k) const noexcept {
-		size_t h = 0;
-		auto mix = [&](uint32_t x) {
-			h ^= std::hash<uint32_t>{}(x)+0x9e3779b97f4a7c15ULL + (h << 5) + (h >> 2);
-			};
-
-		mix(k.v);
-		mix(k.vt);
-		mix(k.vn);
-		return h;
-	}
-};
-
 struct Node {
 	QuaternionTransform transform;
 	Matrix4x4 localMatrix;

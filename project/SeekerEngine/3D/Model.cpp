@@ -72,17 +72,19 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals()); // 法線がないMeshは非対応
 		assert(mesh->HasTextureCoords(0)); // TexcoordがないMeshは非対応
+
+		modelData_.vertices.resize(mesh->mNumVertices); // 最初に頂点数分のメモリを確保しておく
 		uint32_t baseVertex = uint32_t(modelData_.vertices.size());
 
-		for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
-			aiVector3D& p = mesh->mVertices[i];
-			aiVector3D& n = mesh->mNormals[i];
-			aiVector3D& uv = mesh->mTextureCoords[0][i];
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
+			aiVector3D& p = mesh->mVertices[vertexIndex];
+			aiVector3D& n = mesh->mNormals[vertexIndex];
+			aiVector3D& tex = mesh->mTextureCoords[0][vertexIndex];
 
 			VertexData vertex{};
 			vertex.position = { -p.x, p.y, p.z, 1.0f };
 			vertex.normal = { -n.x, n.y, n.z };
-			vertex.texcoord = { uv.x, uv.y };
+			vertex.texcoord = { tex.x, tex.y };
 
 			modelData_.vertices.push_back(vertex);
 		}
@@ -92,10 +94,9 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 			aiFace& face = mesh->mFaces[faceIndex];
 			assert(face.mNumIndices == 3); // 三角形のみサポート
 			
-			for (uint32_t i = 0; i < 3; ++i) {
-				modelData_.indices.push_back(
-					baseVertex + face.mIndices[i]
-				);
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				uint32_t vertexIndex = face.mIndices[element];
+				modelData_.indices.push_back(baseVertex + vertexIndex);
 			}
 		}
 	}
