@@ -73,8 +73,8 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 		assert(mesh->HasNormals()); // 法線がないMeshは非対応
 		assert(mesh->HasTextureCoords(0)); // TexcoordがないMeshは非対応
 
-		modelData_.vertices.resize(mesh->mNumVertices); // 最初に頂点数分のメモリを確保しておく
 		uint32_t baseVertex = uint32_t(modelData_.vertices.size());
+		modelData_.vertices.resize(baseVertex + mesh->mNumVertices); // 最初に頂点数分のメモリを確保しておく
 
 		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
 			aiVector3D& p = mesh->mVertices[vertexIndex];
@@ -86,7 +86,7 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 			vertex.normal = { -n.x, n.y, n.z };
 			vertex.texcoord = { tex.x, tex.y };
 
-			modelData_.vertices.push_back(vertex);
+			modelData_.vertices[baseVertex + vertexIndex] = vertex;
 		}
 
 		// Meshの中身の解析を行う
