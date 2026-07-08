@@ -62,8 +62,19 @@ struct MaterialData {
 	uint32_t textureIndex = 0;
 };
 
+struct VertexWeightData {
+	float weight;
+	uint32_t vertexIndex;
+};
+
+struct JointWeightData {
+	Matrix4x4 inverseBindPoseMatrix;
+	std::vector<VertexWeightData> vertexWeights;
+};
+
 // モデル関係の構造体
 struct ModelData {
+	std::map <std::string, JointWeightData> skinClusterData;
 	std::vector<VertexData> vertices;
 	std::vector<uint32_t> indices;
 	MaterialData material;
