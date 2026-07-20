@@ -10,15 +10,18 @@ public:
 	D3D12_INPUT_LAYOUT_DESC CreateInputLayout2D();
 	D3D12_INPUT_LAYOUT_DESC CreateInputLayoutDebug2D();
 	D3D12_INPUT_LAYOUT_DESC CreateInputLayoutDebug3D();
+	D3D12_INPUT_LAYOUT_DESC CreateInputLayout3dSkinning();
 
 private:
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs3D_[3] = {};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs2D_[2] = {};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescsDebug2D_[2] = {};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescsDebug3D_[2] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDesc3dSkinning_[5] = {};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc3D_{};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc2D_{};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDescDebug2D_{};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDescDebug3D_{};
+	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc3dSkinning_{};
 };
 

@@ -24,7 +24,7 @@ class Entity3D
 {
 public:
 	// 初期化
-	void Init(const std::string& filePath);
+	void Init(const std::string& filePath, bool isSkinned);
 
 	// 更新
 	void Update();
@@ -64,7 +64,7 @@ public:
 	void DrawImGui();
 
 private:
-	void ModelResourcesSetting();
+	void CreateModelResources();
 
 	EulerTransform transform_;
 
@@ -89,10 +89,15 @@ private:
 
 	// ブレンドモード取得
 	BlendMode mode_ = kBlendModeNone;
+	// モデルレンダータイプ
+	ModelRenderType renderType_ = ModelRenderType::Normal;
+	// Skinningフラグ
+	bool isSkinned_ = false;
 
 	float animationTime_ = 0.0f;
 	Animation animation_;
 	Skeleton skeleton_;
+	SkinCluster skinCluster_;
 	Matrix4x4 finalWorldMatrix_;
 	Matrix4x4 worldMatrix_;
 };

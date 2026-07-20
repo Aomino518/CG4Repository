@@ -70,3 +70,33 @@ D3D12_INPUT_LAYOUT_DESC InputLayout::CreateInputLayoutDebug3D()
 
 	return inputLayoutDescDebug3D_;
 }
+
+D3D12_INPUT_LAYOUT_DESC InputLayout::CreateInputLayout3dSkinning()
+{
+	inputElementDesc3dSkinning_[0].SemanticName = "POSITION";
+	inputElementDesc3dSkinning_[0].SemanticIndex = 0;
+	inputElementDesc3dSkinning_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDesc3dSkinning_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDesc3dSkinning_[1].SemanticName = "TEXCOORD";
+	inputElementDesc3dSkinning_[1].SemanticIndex = 0;
+	inputElementDesc3dSkinning_[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDesc3dSkinning_[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDesc3dSkinning_[2].SemanticName = "NORMAL";
+	inputElementDesc3dSkinning_[2].SemanticIndex = 0;
+	inputElementDesc3dSkinning_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDesc3dSkinning_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDesc3dSkinning_[3].SemanticName = "WEIGHT";
+	inputElementDesc3dSkinning_[3].SemanticIndex = 0;
+	inputElementDesc3dSkinning_[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDesc3dSkinning_[3].InputSlot = 1;
+	inputElementDesc3dSkinning_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDesc3dSkinning_[4].SemanticName = "INDEX";
+	inputElementDesc3dSkinning_[4].SemanticIndex = 0;
+	inputElementDesc3dSkinning_[4].Format = DXGI_FORMAT_R32G32B32A32_SINT;
+	inputElementDesc3dSkinning_[4].InputSlot = 1;
+	inputElementDesc3dSkinning_[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputLayoutDesc3dSkinning_.pInputElementDescs = inputElementDesc3dSkinning_;
+	inputLayoutDesc3dSkinning_.NumElements = _countof(inputElementDesc3dSkinning_);
+
+	return inputLayoutDesc3dSkinning_;
+}

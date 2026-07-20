@@ -14,28 +14,28 @@ void TitleScene::Init()
     entity_ = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("ball", "ball.obj");
     ModelManager::GetInstance()->FindModel("ball")->SetEnviromentTexture(tHTex_);
-    entity_->Init("ball");
+    entity_->Init("ball", false);
     entity_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("ball", entity_.get());
 
     modelTerrain_ = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("terrain", "terrain.obj");
     ModelManager::GetInstance()->FindModel("terrain")->SetEnviromentTexture(tHTex_);
-    modelTerrain_->Init("terrain");
+    modelTerrain_->Init("terrain", false);
     modelTerrain_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
     Editor::GetInstance()->RegisterModel("terrain", modelTerrain_.get());
 
     animeCube_ = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("AnimatedCube", "AnimatedCube.gltf");
     ModelManager::GetInstance()->FindModel("AnimatedCube")->SetEnviromentTexture(tHTex_);
-    animeCube_->Init("AnimatedCube");
+    animeCube_->Init("AnimatedCube", false);
     animeCube_->SetTranslate(Vector3(2.0f, 0.0f, 2.0f));
     Editor::GetInstance()->RegisterModel("AnimatedCube", animeCube_.get());
 
     simpleSkin_ = std::make_unique<Entity3D>();
     ModelManager::GetInstance()->LoadModel("human", "sneakWalk.gltf");
     ModelManager::GetInstance()->FindModel("sneakWalk")->SetEnviromentTexture(tHTex_);
-    simpleSkin_->Init("sneakWalk");
+    simpleSkin_->Init("sneakWalk", true);
     simpleSkin_->SetTranslate(Vector3{ -2.0f, 0.0f, 2.0f });
     Editor::GetInstance()->RegisterModel("sneakWalk", simpleSkin_.get());
 

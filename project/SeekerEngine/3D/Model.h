@@ -19,6 +19,8 @@ public:
 
 	void Draw();
 
+	void DrawSkinning(SkinCluster& skinCluster);
+
 	/// <summary>
 	/// mtlファイルの読み取り
 	/// </summary>
@@ -47,6 +49,9 @@ public:
 	void UpdateSkeleton(Skeleton& skeleton);
 	void ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animationTime);
 
+	SkinCluster CreateSkinCluster(const Skeleton& skeleton, const ModelData& modelData);
+	void UpdateSkinCluster(SkinCluster& skinCluster, const Skeleton& skeleton);
+
 private:
 	void CreateBufferResources();
 	void MaterialInit();
@@ -66,6 +71,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
 	D3D12_GPU_DESCRIPTOR_HANDLE environmentSrvHandleGPU_;
+	SkinCluster skinCluster_;
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
 
