@@ -25,6 +25,8 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSkybox();
 
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> Create3DSkinning();
+
 private:
 
 	Graphics* graphics_;

@@ -8,18 +8,35 @@
 #include "MathFunc.h"
 #include "DebugDraw.h"
 
-void Entity3D::Init(const std::string& filePath)
+void Entity3D::Init(const std::string& filePath, bool isSkinned)
 {
 	this->camera_ = Entity3DCommon::GetInstance()->GetDefaultCamera();
 	this->debugCamera_ = Entity3DCommon::GetInstance()->GetDebugCamera();
 	this->cameraManager_ = Entity3DCommon::GetInstance()->GetCameraManager();
 	cmdList_ = Entity3DCommon::GetInstance()->GetCmdList();
 	mode_ = Entity3DCommon::GetInstance()->GetBlendMode();
-	ModelResourcesSetting();
-	model_ = ModelManager::GetInstance()->FindModel(filePath);
-	animation_ = model_->GetAnimation();
-	skeleton_ = model_->CreateSkeleton(model_->GetRootNode().rootNode);
 
+	// モデルリソース作成
+	CreateModelResources();
+	// 使用モデル検索
+	model_ = ModelManager::GetInstance()->FindModel(filePath);
+	// アニメーションを取得
+	animation_ = model_->GetAnimation();
+	// Skinningフラグ取得
+	isSkinned_ = isSkinned;
+	// SkinningのときレンダータイプをSkinningに
+	if (isSkinned_) {
+		renderType_ = ModelRenderType::Skinning;
+	}
+
+	if (renderType_ == ModelRenderType::Skinning) {
+		// スケルトンを作成
+		skeleton_ = model_->CreateSkeleton(model_->GetRootNode().rootNode);
+		// スキンクラスターを作成
+		skinCluster_ = model_->CreateSkinCluster(skeleton_, model_->GetRootNode());
+	}
+	
+	// 初期位置
 	transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 }
 
@@ -50,8 +67,12 @@ void Entity3D::Update()
 		animationTime_ = std::fmod(animationTime_, animation_.duration);
 	}
 
-	model_->ApplyAnimation(skeleton_, animation_, animationTime_);
-	model_->UpdateSkeleton(skeleton_);
+	// スキニングのときはskeleton,skinningを更新
+	if (renderType_ == ModelRenderType::Skinning) {
+		model_->ApplyAnimation(skeleton_, animation_, animationTime_);
+		model_->UpdateSkeleton(skeleton_);
+		model_->UpdateSkinCluster(skinCluster_, skeleton_);
+	}
 
 	auto keyframe = animation_.nodeAnimations.find(modelData.rootNode.name);
 	// モデルにアニメーションがある場合アニメーションする
@@ -83,8 +104,8 @@ void Entity3D::Update()
 
 void Entity3D::Draw()
 {
-	Entity3DCommon::GetInstance()->SetBlendMode(mode_);
-	Entity3DCommon::GetInstance()->ApplyPipeline();
+	Entity3DCommon::GetInstance()->SetBlendMode(mode_, renderType_);
+	Entity3DCommon::GetInstance()->ApplyPipeline(renderType_);
 
 	// wvp用のCBufferの場所を設定
 	cmdList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
@@ -94,7 +115,11 @@ void Entity3D::Draw()
 	cmdList_->SetGraphicsRootConstantBufferView(6, LightManager::GetInstance()->GetSpotLightGroupResource()->GetGPUVirtualAddress());
 
 	if (model_) {
-		model_->Draw();
+		if (isSkinned_) {
+			model_->DrawSkinning(skinCluster_);
+		} else {
+			model_->Draw();
+		}
 	}
 }
 
@@ -139,10 +164,11 @@ void Entity3D::SetModel(const std::string& filePath)
 void Entity3D::SetBlendMode(BlendMode mode)
 {
 	this->mode_ = mode;
-	Entity3DCommon::GetInstance()->SetBlendMode(mode);
+	Entity3DCommon::GetInstance()->SetBlendMode(mode, renderType_);
 }
 
-void Entity3D::ModelResourcesSetting()
+// モデルリソース作成関数
+void Entity3D::CreateModelResources()
 {
 	// TransformationMatrix用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
 	transformationMatrixResource_ = CreateBufferResource(Graphics::GetDevice(), sizeof(TransformationMatrix));
@@ -166,12 +192,13 @@ void Entity3D::ModelResourcesSetting()
 	cameraData_->worldPosition = camPos;
 }
 
+// ボーン描画する関数
 void Entity3D::DrawBorn()
 {
 	for (const Joint& joint : skeleton_.joints) {
 		Matrix4x4 jointWorldMatrix = joint.skeletonSpaceMatrix * worldMatrix_;
 		DebugDraw::DrawBox(GetMatrix4x4Translate(jointWorldMatrix), Vector3{ 0.01f, 0.01f, 0.01f }, Color::WHITE, DebugDrawMode::Wireframe);
-		
+
 		if (joint.parent) {
 			const Joint& parent = skeleton_.joints[*joint.parent];
 			Matrix4x4 parentWorldMatrix = parent.skeletonSpaceMatrix * worldMatrix_;
@@ -183,6 +210,7 @@ void Entity3D::DrawBorn()
 	}
 }
 
+// ImGuiの設定情報表示
 void Entity3D::DrawImGui() {
 #ifdef USE_IMGUI
 	Vector4 material = model_->GetMaterial();

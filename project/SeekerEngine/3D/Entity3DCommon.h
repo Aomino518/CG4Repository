@@ -16,9 +16,10 @@ public:
 	// シングルトンインスタンスの取得
 	static Entity3DCommon* GetInstance();
 
-	void Init(DxcCompiler dxcCompiler, ID3D12RootSignature* rootSignature);
+	void Init(DxcCompiler dxcCompiler, ID3D12RootSignature* normalRootSignature,
+		ID3D12RootSignature* skinningRootSignature);
 
-	void ApplyPipeline();
+	void ApplyPipeline(ModelRenderType renderType);
 
 	void Shutdown();
 
@@ -33,7 +34,7 @@ public:
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
 	void SetCameraManager(CameraManager* cameraManager) { this->cameraManager_ = cameraManager; }
 	void SetDebugCamera(DebugCamera* debugCamera) { this->debugCamera_ = debugCamera; }
-	void SetBlendMode(BlendMode mode);
+	void SetBlendMode(BlendMode mode, ModelRenderType type);
 
 private:
 	Entity3DCommon() = default;
@@ -43,17 +44,24 @@ private:
 
 	// グラフィックパイプラインの作成
 	void CreateGraphicPipeline(DxcCompiler dxcCompiler);
+	void CreateNormalPso();
+	void CreateSkinningPso();
 
-	void RebuildPso();
+	void RebuildPso(ModelRenderType type);
 
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
+	// ルートシグネチャ
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> normalRootSignature_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> skinningRootSignature_;
+
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_;
 	Graphics* graphics_;
 
-	Microsoft::WRL::ComPtr<IDxcBlob> vs3DBlob_;
-	Microsoft::WRL::ComPtr<IDxcBlob> ps3DBlob_;
+	Microsoft::WRL::ComPtr<IDxcBlob> normalVsBlob_;
+	Microsoft::WRL::ComPtr<IDxcBlob> skinningVsBlob_;
+	Microsoft::WRL::ComPtr<IDxcBlob> objectPsBlob_;
 
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> pso3D_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> normalPso_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> skinningPso_;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
 
 	Camera* defaultCamera_ = nullptr;
@@ -62,7 +70,7 @@ private:
 
 	D3D12_BLEND_DESC blendDesc_{};
 	BlendMode mode_ = kBlendModeNormal;
-	std::unordered_map<BlendMode, Microsoft::WRL::ComPtr<ID3D12PipelineState>> psoCache_;
+	std::unordered_map<BlendMode, Microsoft::WRL::ComPtr<ID3D12PipelineState>> normalPsoCache_;
+	std::unordered_map<BlendMode, Microsoft::WRL::ComPtr<ID3D12PipelineState>> skinningPsoCache_;
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};
 };
-
