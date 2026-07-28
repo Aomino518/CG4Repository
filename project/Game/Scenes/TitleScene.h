@@ -19,17 +19,19 @@ public:
 
 	const char* GetSceneName() const override { return "TITLE"; }
 
+	void UpdatePlayer();
+	void ResolveTerrainCollision();
+	void UpdateThirdPersonCamera();
+
 private:
-	std::unique_ptr<Entity3D> entity_;
 	std::unique_ptr<Entity3D> modelTerrain_;
-	std::unique_ptr<Entity3D> animeCube_;
 	std::unique_ptr<Entity3D> simpleSkin_;
 	uint32_t tHTex_;
-	uint32_t tHCircle_;
-	uint32_t tHGradationLine_;
 
-	// パーティクル設定
-	ParticleConfig hitEffectConfig_;
-	ParticleConfig hitRingEffectConfig_;
-	ParticleConfig cylinderEffectConfig_;
+	float moveSpeed_ = 0.12f;
+	float playerHalfHeight_ = 0.9f;
+
+	// 三人称カメラ
+	Vector3 cameraOffset_ = { 0.0f, 3.0f, -7.0f };
+	float cameraPitch_ = 0.3f;
 };

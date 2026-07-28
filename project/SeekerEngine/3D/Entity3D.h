@@ -33,7 +33,7 @@ public:
 	void Draw();
 
 	// Json保存と読み込み
-	json SaveToJson() const ;
+	json SaveToJson() const;
 	void LoadFromJson(const json& j);
 
 	// getter関数
@@ -58,6 +58,9 @@ public:
 	void SetLightDirection(const Vector3& pos) { this->directionalLightData_->direction = pos; }
 	void SetPointLightPos(const Vector3& pos) { this->pointLightData_->position = pos; }
 	void SetTransform(const EulerTransform& transform) { this->transform_ = transform; }
+
+	void SetAnimationPlaying(bool isPlaying);
+	bool GetAnimationPlaying() const { return isAnimationPlaying_; }
 
 	void DrawBorn();
 
@@ -94,6 +97,8 @@ private:
 	// Skinningフラグ
 	bool isSkinned_ = false;
 
+	bool isAnimationPlaying_ = true;
+
 	float animationTime_ = 0.0f;
 	Animation animation_;
 	Skeleton skeleton_;
@@ -101,4 +106,3 @@ private:
 	Matrix4x4 finalWorldMatrix_;
 	Matrix4x4 worldMatrix_;
 };
-

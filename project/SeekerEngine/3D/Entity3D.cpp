@@ -35,7 +35,7 @@ void Entity3D::Init(const std::string& filePath, bool isSkinned)
 		// スキンクラスターを作成
 		skinCluster_ = model_->CreateSkinCluster(skeleton_, model_->GetRootNode());
 	}
-	
+
 	// 初期位置
 	transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 }
@@ -62,7 +62,7 @@ void Entity3D::Update()
 		}
 	}
 
-	if (animation_.duration > 0.0f && !animation_.nodeAnimations.empty()) {
+	if (isAnimationPlaying_ && animation_.duration > 0.0f && !animation_.nodeAnimations.empty()) {
 		animationTime_ += 1.0f / 60.0f;
 		animationTime_ = std::fmod(animationTime_, animation_.duration);
 	}
@@ -190,6 +190,14 @@ void Entity3D::CreateModelResources()
 		camPos = camera_->GetTranslate();
 	}
 	cameraData_->worldPosition = camPos;
+}
+
+void Entity3D::SetAnimationPlaying(bool isPlaying)
+{
+	isAnimationPlaying_ = isPlaying;
+	if (!isAnimationPlaying_) {
+		animationTime_ = 0.0f;
+	}
 }
 
 // ボーン描画する関数
