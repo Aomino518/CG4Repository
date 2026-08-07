@@ -66,6 +66,12 @@ public:
 private:
 	void CreateModelResources();
 
+	void DispatchSkinning();
+
+	void TransitionToVertexBuffer();
+
+	void TransitionToUnorderedAccess();
+
 	EulerTransform transform_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;
@@ -100,5 +106,13 @@ private:
 	SkinCluster skinCluster_;
 	Matrix4x4 finalWorldMatrix_;
 	Matrix4x4 worldMatrix_;
-};
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> skinningInformationResource_;
+	SkinningInformation* skinningInformationData_ = nullptr;
+	
+	// ComputeSkinning用
+	D3D12_GPU_DESCRIPTOR_HANDLE paletteHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE inputVertexHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE influenceHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE outputVertexHandle;
+};

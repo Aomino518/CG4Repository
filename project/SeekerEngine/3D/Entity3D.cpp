@@ -34,6 +34,12 @@ void Entity3D::Init(const std::string& filePath, bool isSkinned)
 		skeleton_ = model_->CreateSkeleton(model_->GetRootNode().rootNode);
 		// スキンクラスターを作成
 		skinCluster_ = model_->CreateSkinCluster(skeleton_, model_->GetRootNode());
+		constexpr size_t kConstantBufferAlignment = 255;
+		size_t bufferSize = sizeof(SkinningInformation) + kConstantBufferAlignment;
+		skinningInformationResource_ = CreateBufferResource(Graphics::GetDevice(), bufferSize);
+		HRESULT hr = skinningInformationResource_->Map(0, nullptr, reinterpret_cast<void**>(&skinningInformationData_));
+		assert(SUCCEEDED(hr));
+		skinningInformationData_->numVertices = static_cast<uint32_t>(model_->GetRootNode().vertices.size());
 	}
 	
 	// 初期位置
@@ -104,8 +110,13 @@ void Entity3D::Update()
 
 void Entity3D::Draw()
 {
-	Entity3DCommon::GetInstance()->SetBlendMode(mode_, renderType_);
-	Entity3DCommon::GetInstance()->ApplyPipeline(renderType_);
+	if (isSkinned_) {
+		DispatchSkinning();
+		TransitionToVertexBuffer();
+	}
+
+	Entity3DCommon::GetInstance()->SetBlendMode(mode_, ModelRenderType::Normal);
+	Entity3DCommon::GetInstance()->ApplyPipeline(ModelRenderType::Normal);
 
 	// wvp用のCBufferの場所を設定
 	cmdList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
@@ -116,7 +127,7 @@ void Entity3D::Draw()
 
 	if (model_) {
 		if (isSkinned_) {
-			model_->DrawSkinning(skinCluster_);
+			model_->DrawComputedSkinning(skinCluster_);
 		} else {
 			model_->Draw();
 		}
@@ -190,6 +201,83 @@ void Entity3D::CreateModelResources()
 		camPos = camera_->GetTranslate();
 	}
 	cameraData_->worldPosition = camPos;
+}
+
+void Entity3D::DispatchSkinning()
+{
+	if (!isSkinned_ || !model_) {
+		return;
+	}
+
+	TransitionToUnorderedAccess();
+
+	Entity3DCommon::GetInstance()->ApplyComputeSkinningPipeline();
+
+	auto modelData = model_->GetRootNode();
+
+	// MatrixPalette
+	cmdList_->SetComputeRootDescriptorTable(0, skinCluster_.paletteSrvHandle.second);
+
+	// 入力頂点
+	cmdList_->SetComputeRootDescriptorTable(1, model_->GetVertexSrvHandle().second);
+
+	// Influence
+	cmdList_->SetComputeRootDescriptorTable(2, skinCluster_.influenceSrvHandle.second);
+
+	// スキニング後の出力頂点
+	cmdList_->SetComputeRootDescriptorTable(3, skinCluster_.outputUavHandle.second);
+
+	// 頂点数
+	cmdList_->SetComputeRootConstantBufferView(4, skinningInformationResource_->GetGPUVirtualAddress());
+
+	cmdList_->Dispatch(UINT(modelData.vertices.size() + 1023) / 1024, 1, 1);
+}
+
+void Entity3D::TransitionToVertexBuffer()
+{
+	if (!skinCluster_.outputVertexResource) {
+		return;
+	}
+
+	if (skinCluster_.outputVertexState == D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER) {
+		return;
+	}
+
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = skinCluster_.outputVertexResource.Get();
+	barrier.Transition.StateBefore = skinCluster_.outputVertexState;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	cmdList_->ResourceBarrier(1, &barrier);
+
+	// 現在のStateを更新
+	skinCluster_.outputVertexState = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+}
+
+void Entity3D::TransitionToUnorderedAccess()
+{
+	if (!skinCluster_.outputVertexResource) {
+		return;
+	}
+
+	if (skinCluster_.outputVertexState == D3D12_RESOURCE_STATE_UNORDERED_ACCESS) {
+		return;
+	}
+
+	D3D12_RESOURCE_BARRIER barrier{};
+	
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = skinCluster_.outputVertexResource.Get();
+	barrier.Transition.StateBefore = skinCluster_.outputVertexState;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	cmdList_->ResourceBarrier(1, &barrier);
+
+	// 現在のStateを更新
+	skinCluster_.outputVertexState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 }
 
 // ボーン描画する関数

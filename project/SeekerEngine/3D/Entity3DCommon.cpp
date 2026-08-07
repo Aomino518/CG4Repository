@@ -9,11 +9,12 @@ Entity3DCommon* Entity3DCommon::GetInstance()
 }
 
 void Entity3DCommon::Init(DxcCompiler dxcCompiler, ID3D12RootSignature* normalRootSignature,
-	ID3D12RootSignature* skinningRootSignature)
+	ID3D12RootSignature* skinningRootSignature, ID3D12RootSignature* computeSkinningRootSignature)
 {
 	graphics_ = Graphics::GetInstance();
 	normalRootSignature_ = normalRootSignature;
 	skinningRootSignature_ = skinningRootSignature;
+	computeSkinningRootSignature_ = computeSkinningRootSignature;
 	CreateGraphicPipeline(dxcCompiler);
 	cmdList_ = Graphics::GetInstance()->GetCmdList();
 }
@@ -29,6 +30,12 @@ void Entity3DCommon::ApplyPipeline(ModelRenderType renderType)
 		cmdList_->SetPipelineState(skinningPso_.Get());
 	}
 	cmdList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void Entity3DCommon::ApplyComputeSkinningPipeline()
+{
+	cmdList_->SetComputeRootSignature(computeSkinningRootSignature_.Get());
+	cmdList_->SetPipelineState(computeSkinningPso_.Get());
 }
 
 void Entity3DCommon::Shutdown()
@@ -73,23 +80,19 @@ void Entity3DCommon::SetBlendMode(BlendMode mode, ModelRenderType type)
 
 void Entity3DCommon::CreateGraphicPipeline(DxcCompiler dxcCompiler)
 {
-	normalVsBlob_ = dxcCompiler.CompileShader(
-		L"resources/hlsl/Object3D.VS.hlsl",
-		L"vs_6_0"
-	);
+	normalVsBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.VS.hlsl", L"vs_6_0");
 
-	skinningVsBlob_ = dxcCompiler.CompileShader(
-		L"resources/hlsl/SkinningObject3d.VS.hlsl",
-		L"vs_6_0"
-	);
+	skinningVsBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/SkinningObject3d.VS.hlsl", L"vs_6_0");
 
-	objectPsBlob_ = dxcCompiler.CompileShader(
-		L"resources/hlsl/Object3D.PS.hlsl",
-		L"ps_6_0"
-	);
+	objectPsBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/Object3D.PS.hlsl", L"ps_6_0");
+
+	// ComputeShader
+	computeSkinningCsBlob_ = dxcCompiler.CompileShader(L"resources/hlsl/Skinning.CS.hlsl", L"cs_6_0");
 
 	CreateNormalPso();
 	CreateSkinningPso();
+	CreateComputeSkinningPso();
+	
 }
 
 void Entity3DCommon::CreateNormalPso()
@@ -180,6 +183,22 @@ void Entity3DCommon::CreateSkinningPso()
 
 	skinningPso_ = builder.BuildPso(psoDesc);
 	Logger::Write("SkinningPso生成完了");
+}
+
+void Entity3DCommon::CreateComputeSkinningPso()
+{
+	PsoBuilder psoBuilder;
+	psoBuilder.Init(graphics_);
+
+	D3D12_COMPUTE_PIPELINE_STATE_DESC desc =
+		psoBuilder.CreateComputePsoDesc(
+			computeSkinningRootSignature_,
+			computeSkinningCsBlob_
+		);
+
+	computeSkinningPso_ = psoBuilder.BuildComputePso(desc);
+
+	Logger::Write("ComputeSkinningPso生成完了");
 }
 
 void Entity3DCommon::RebuildPso(ModelRenderType type)

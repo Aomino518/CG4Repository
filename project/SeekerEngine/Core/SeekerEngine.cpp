@@ -61,6 +61,7 @@ void SeekerEngine::Init()
 	rsDebugShape3D_ = rootSignatureFactory_.CreateDebugShape3D();
 	rsSkybox_ = rootSignatureFactory_.CreateSkybox();
 	rs3dSkinning_ = rootSignatureFactory_.Create3DSkinning();
+	rsComputeSkinning_ = rootSignatureFactory_.CreateComputeSkinning();
 
 	SoundManager::GetInstance()->Init();
 
@@ -72,7 +73,7 @@ void SeekerEngine::Init()
 	SpriteCommon::GetInstance()->Init(dxcCompiler_, rs2D_.Get());
 
 	// モデル共通部の作成
-	Entity3DCommon::GetInstance()->Init(dxcCompiler_, rs3D_.Get(), rs3dSkinning_.Get());
+	Entity3DCommon::GetInstance()->Init(dxcCompiler_, rs3D_.Get(), rs3dSkinning_.Get(), rsComputeSkinning_.Get());
 	Entity3DCommon::GetInstance()->SetCameraManager(CameraManager::GetInstance());
 	Entity3DCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 	Entity3DCommon::GetInstance()->SetDebugCamera(CameraManager::GetInstance()->GetDebugCamera());

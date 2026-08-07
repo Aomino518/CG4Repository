@@ -53,3 +53,30 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PsoBuilder::BuildPso(D3D12_GRAPHICS_
 
 	return pso_;
 }
+
+D3D12_COMPUTE_PIPELINE_STATE_DESC PsoBuilder::CreateComputePsoDesc(Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, Microsoft::WRL::ComPtr<IDxcBlob> csBlob)
+{
+	D3D12_COMPUTE_PIPELINE_STATE_DESC computePsoDesc{};
+
+	computePsoDesc.CS = {
+		.pShaderBytecode = csBlob->GetBufferPointer(),
+		.BytecodeLength = csBlob->GetBufferSize()
+	};
+
+	computePsoDesc.pRootSignature = rootSignature.Get();
+
+	return computePsoDesc;
+}
+
+Microsoft::WRL::ComPtr<ID3D12PipelineState> PsoBuilder::BuildComputePso(const D3D12_COMPUTE_PIPELINE_STATE_DESC& desc)
+{
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> pso;
+
+	HRESULT hr = graphics_->GetDevice()->CreateComputePipelineState(
+			&desc,
+			IID_PPV_ARGS(&pso)
+		);
+
+	assert(SUCCEEDED(hr));
+	return pso;
+}

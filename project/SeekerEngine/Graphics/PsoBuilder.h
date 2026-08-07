@@ -22,6 +22,15 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> BuildPso(D3D12_GRAPHICS_PIPELINE_STATE_DESC desc);
 
+	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateComputePsoDesc(
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,
+		Microsoft::WRL::ComPtr<IDxcBlob> csBlob
+		);
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> BuildComputePso(
+		const D3D12_COMPUTE_PIPELINE_STATE_DESC& desc
+	);
+
 private:
 	Graphics* graphics_;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc_ = {};

@@ -27,6 +27,8 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> Create3DSkinning();
 
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateComputeSkinning();
+
 private:
 
 	Graphics* graphics_;

@@ -264,7 +264,7 @@ struct VertexInfluence {
 };
 
 struct WellForGPU {
-	Matrix4x4 skeletonSpceMatrix; // 位置用
+	Matrix4x4 skeletonSpaceMatrix; // 位置用
 	Matrix4x4 skeletonSpaceInverseTransposeMatrix; // 法線用
 };
 
@@ -276,6 +276,15 @@ struct SkinCluster {
 	Microsoft::WRL::ComPtr<ID3D12Resource> paletteResource;
 	std::span<WellForGPU> mappedPalette;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> paletteSrvHandle;
+	Microsoft::WRL::ComPtr<ID3D12Resource> outputVertexResource;
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> outputUavHandle;
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> influenceSrvHandle;
+	D3D12_VERTEX_BUFFER_VIEW outputVertexBufferView;
+	D3D12_RESOURCE_STATES outputVertexState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+};
+
+struct SkinningInformation {
+	uint32_t numVertices;
 };
 
 enum class ModelRenderType {

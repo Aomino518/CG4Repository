@@ -538,3 +538,76 @@ Microsoft::WRL::ComPtr<ID3D12RootSignature> RootSignatureFactory::Create3DSkinni
 
 	return rootSignature;
 }
+
+Microsoft::WRL::ComPtr<ID3D12RootSignature> RootSignatureFactory::CreateComputeSkinning()
+{
+	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
+
+	// ComputeShader専用なのでGraphics側のステージを拒否
+	descriptionRootSignature.Flags =
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS |
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
+
+	D3D12_DESCRIPTOR_RANGE ranges[4]{};
+
+	// MarixPalette
+	ranges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	ranges[0].NumDescriptors = 1;
+	ranges[0].BaseShaderRegister = 0;
+	ranges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	// InputVertices
+	ranges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	ranges[1].NumDescriptors = 1;
+	ranges[1].BaseShaderRegister = 1;
+	ranges[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	// Influemces
+	ranges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	ranges[2].NumDescriptors = 1;
+	ranges[2].BaseShaderRegister = 2;
+	ranges[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	// OutputVertices
+	ranges[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+	ranges[3].NumDescriptors = 1;
+	ranges[3].BaseShaderRegister = 0;
+	ranges[3].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	D3D12_ROOT_PARAMETER rootParameters[5]{};
+
+	for (uint32_t index = 0; index < 4; ++index) {
+		rootParameters[index].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParameters[index].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		rootParameters[index].DescriptorTable.pDescriptorRanges = &ranges[index];
+		rootParameters[index].DescriptorTable.NumDescriptorRanges = 1;
+	}
+
+	// SkinningInformation
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParameters[4].Descriptor.ShaderRegister = 0;
+	descriptionRootSignature.pParameters = rootParameters;
+	descriptionRootSignature.NumParameters = _countof(rootParameters);
+
+	// シリアライズしてバイナリにする
+	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
+	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature,
+		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	if (FAILED(hr)) {
+		Logger::Write(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+	// バイナリ元に作成
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+	hr = graphics_->GetDevice()->CreateRootSignature(0,
+		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
+		IID_PPV_ARGS(&rootSignature));
+	assert(SUCCEEDED(hr));
+
+	return rootSignature;
+}

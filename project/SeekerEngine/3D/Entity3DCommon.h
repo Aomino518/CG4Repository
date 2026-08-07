@@ -17,9 +17,11 @@ public:
 	static Entity3DCommon* GetInstance();
 
 	void Init(DxcCompiler dxcCompiler, ID3D12RootSignature* normalRootSignature,
-		ID3D12RootSignature* skinningRootSignature);
+		ID3D12RootSignature* skinningRootSignature, ID3D12RootSignature* computeSkinningRootSignature);
 
 	void ApplyPipeline(ModelRenderType renderType);
+
+	void ApplyComputeSkinningPipeline();
 
 	void Shutdown();
 
@@ -30,6 +32,8 @@ public:
 	DebugCamera* GetDebugCamera() const { return debugCamera_; }
 	CameraManager* GetCameraManager() const { return cameraManager_; }
 	BlendMode& GetBlendMode() { return mode_; }
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> GetComputeSkinningRootSignature() const { return computeSkinningRootSignature_; }
+	Microsoft::WRL::ComPtr<IDxcBlob> GetComputeShaderBlob() const { return computeSkinningCsBlob_; }
 	// Setter
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
 	void SetCameraManager(CameraManager* cameraManager) { this->cameraManager_ = cameraManager; }
@@ -46,12 +50,14 @@ private:
 	void CreateGraphicPipeline(DxcCompiler dxcCompiler);
 	void CreateNormalPso();
 	void CreateSkinningPso();
+	void CreateComputeSkinningPso();
 
 	void RebuildPso(ModelRenderType type);
 
 	// ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> normalRootSignature_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> skinningRootSignature_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> computeSkinningRootSignature_;
 
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_;
 	Graphics* graphics_;
@@ -59,9 +65,11 @@ private:
 	Microsoft::WRL::ComPtr<IDxcBlob> normalVsBlob_;
 	Microsoft::WRL::ComPtr<IDxcBlob> skinningVsBlob_;
 	Microsoft::WRL::ComPtr<IDxcBlob> objectPsBlob_;
+	Microsoft::WRL::ComPtr<IDxcBlob> computeSkinningCsBlob_;
 
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> normalPso_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> skinningPso_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> computeSkinningPso_;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
 
 	Camera* defaultCamera_ = nullptr;

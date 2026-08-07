@@ -21,6 +21,8 @@ public:
 
 	void DrawSkinning(SkinCluster& skinCluster);
 
+	void DrawComputedSkinning(SkinCluster& skinCluster);
+
 	/// <summary>
 	/// mtlファイルの読み取り
 	/// </summary>
@@ -38,6 +40,7 @@ public:
 	ModelData GetRootNode() const { return modelData_; }
 	float GetEnvironmentColor() { return materialData_->environmentColor; }
 	Animation GetAnimation() { return animation_; }
+	const std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE>& GetVertexSrvHandle() const { return vertexSrvHandle_; }
 
 	void SetMaterial(const Vector4& material) { this->materialData_->color = material; }
 	void SetIsLighting(const bool isLighting) { this->materialData_->enableLighting = isLighting; }
@@ -74,7 +77,7 @@ private:
 	SkinCluster skinCluster_;
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdList_;
-
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> vertexSrvHandle_;
 	Animation animation_;
 };
 

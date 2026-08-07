@@ -353,6 +353,7 @@
     <FxCompile Include="resources\hlsl\Skybox.VS.hlsl" />
     <FxCompile Include="resources\hlsl\Skybox.PS.hlsl" />
     <FxCompile Include="resources\hlsl\SkinningObject3d.VS.hlsl" />
+    <FxCompile Include="resources\hlsl\Skinning.CS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\Audio\SoundManager.h">
